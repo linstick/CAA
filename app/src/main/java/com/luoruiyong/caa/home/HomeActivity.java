@@ -174,12 +174,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
                 updateFragmentByIndex(MESSAGE_TAB_INDEX, true);
                 break;
             case R.id.iv_user_avatar:
-                boolean isLonin = true;
+                boolean isLonin = false;
                 if (isLonin) {
                     mDrawerLayout.openDrawer(GravityCompat.START);
                     mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                 } else {
-                    startActivity(new Intent(this, LoginActivity.class));
+                    LoginActivity.startAction(this, LoginActivity.LOGIN_TAB);
                 }
                 break;
             case R.id.iv_search:

@@ -7,10 +7,10 @@
 
     <include layout="@layout/layout_back_toolbar"/>
 
-    <TextView
+    <FrameLayout
+        android:id="@+id/fl_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="Login Activity"/>
+        android:layout_height="match_parent">
+    </FrameLayout>
 
 </LinearLayout>

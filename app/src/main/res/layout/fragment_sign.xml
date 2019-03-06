@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="40dp"
+    android:paddingStart="40dp"
+    android:paddingRight="40dp"
+    android:paddingEnd="40dp"
+    android:gravity="center_horizontal">
+
+    <ImageView
+        android:id="@+id/iv_user_avatar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/ic_account_light_gray"
+        android:layout_marginTop="40dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="8dp"
+        android:background="@drawable/bg_input_circle_border">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_phone_light_gray"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"/>
+
+        <EditText
+            android:id="@+id/et_cell_phone_number"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textColor="#444444"
+            android:hint="@string/fm_sign_str_cell_phone_number"
+            android:inputType="phone"
+            android:background="@null"
+            android:maxLines="1"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="8dp"
+        android:background="@drawable/bg_input_circle_border">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_account_light_gray"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"/>
+
+        <EditText
+            android:id="@+id/et_nick_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textColor="#444444"
+            android:hint="@string/fm_sign_str_nickname"
+            android:background="@null"
+            android:maxLines="1"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="8dp"
+        android:background="@drawable/bg_input_circle_border">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_lock_light_gray"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"/>
+
+        <EditText
+            android:id="@+id/et_password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textColor="#444444"
+            android:inputType="textPassword"
+            android:hint="@string/fm_sign_str_password"
+            android:background="@null"
+            android:maxLines="1"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="8dp"
+        android:background="@drawable/bg_input_circle_border">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_lock_light_gray"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"/>
+
+        <EditText
+            android:id="@+id/et_confirm_password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textColor="#444444"
+            android:inputType="textPassword"
+            android:hint="@string/fm_sign_str_confirm_password"
+            android:background="@null"
+            android:maxLines="1"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_sign_up"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:padding="8dp"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:text="@string/fm_sign_str_sign_up"
+        android:background="@drawable/bg_navigate_button" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="right|end"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:id="@+id/tv_has_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:textSize="13sp"
+            android:textColor="#AAAAAA"
+            android:text="@string/fm_sign_str_has_account" />
+    </LinearLayout>
+
+</LinearLayout>

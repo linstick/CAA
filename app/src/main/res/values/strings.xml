@@ -1,11 +1,50 @@
 <resources>
     <string name="app_name">CAA</string>
 
+    <!--工具栏标题文案-->
     <string name="title_activity">Activities</string>
     <string name="title_tag">Tags</string>
     <string name="title_discover">Discovers</string>
     <string name="title_message">Messages</string>
     <string name="title_login">Login</string>
+    <string name="title_sign">Sign Up</string>
+    <string name="title_find_password">Find Password</string>
 
+    <!--登录页面相关文案-->
+    <string name="fm_login_str_account">account</string>
+    <string name="fm_login_str_password">password</string>
+    <string name="fm_login_str_login">Login</string>
+    <string name="fm_login_str_no_account">No account?</string>
+    <string name="fm_login_str_forget_password">Forget password?</string>
+    <string name="fm_login_tip_empty_account">Sorry,the account can\'t be empty.</string>
+    <string name="fm_login_tip_empty_password">Sorry,the password can\'t be empty.</string>
+    <string name="fm_login_tip_login_success">Login success</string>
+    <string name="fm_login_tip_login_fail">Fail to login,please check your account and password.</string>
+
+    <!--注册页面相关文案-->
+    <string name="fm_sign_str_cell_phone_number">cell phone number</string>
+    <string name="fm_sign_str_nickname">nickname</string>
+    <string name="fm_sign_str_password">password</string>
+    <string name="fm_sign_str_confirm_password">confirm password</string>
+    <string name="fm_sign_str_sign_up">Sign up</string>
+    <string name="fm_sign_str_has_account">Had account,go to login</string>
+    <string name="fm_sign_tip_empty_cell_number">Sorry,the cell phone number can\'t be empty.</string>
+    <string name="fm_sign_tip_empty_nickname">Sorry,the nickname can\'t be empty.</string>
+    <string name="fm_sign_tip_empty_password">Sorry,the password can\'t be empty.</string>
+    <string name="fm_sign_tip_empty_confirm_password">Sorry,the confirm password can\'t be empty.</string>
+    <string name="fm_sign_tip_different_password">Sorry,the two passwords must be same.</string>
+    <string name="fm_sign_tip_sign_up_success">Sign up success</string>
+    <string name="fm_sign_tip_sign_up_fail">Fail to sign up.</string>
+
+    <!--找回密码页面相关文案-->
+    <string name="fm_find_password_str_cell_phone_number">cell phone number</string>
+    <string name="fm_find_password_str_verification_code">verify code</string>
+    <string name="fm_find_password_str_get_verification_code">Get code</string>
+    <string name="fm_find_password_str_resend">Resend</string>
+    <string name="fm_find_password_confirm">Confirm</string>
+    <string name="fm_find_password_tip_empty_cell_phone_number">Sorry,the cell phone number can\'t be empty.</string>
+    <string name="fm_find_password_tip_empty_verify_code">Sorry,the verify code can\'t be empty.</string>
+
+    <!--搜索页面相关文案-->
     <string name="str_search">search</string>
 </resources>
