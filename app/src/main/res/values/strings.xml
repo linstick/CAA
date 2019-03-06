@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">CAA</string>
+
+    <string name="title_activity">Activities</string>
+    <string name="title_tag">Tags</string>
+    <string name="title_discover">Discovers</string>
+    <string name="title_message">Messages</string>
+    <string name="title_login">Login</string>
+
+    <string name="str_search">search</string>
 </resources>
