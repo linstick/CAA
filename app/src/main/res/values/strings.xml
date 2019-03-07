@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name">CAA</string>
 
+    <!--公共文案-->
+    <string name="common_str_confirm">Confirm</string>
+    <string name="common_str_cancel">Cancel</string>
+    <string name="common_str_search">Search</string>
+    <string name="common_str_finish">Finish</string>
+    <string name="common_str_ok">Ok</string>
+
     <!--工具栏标题文案-->
     <string name="title_activity">Activities</string>
     <string name="title_tag">Tags</string>
@@ -44,7 +51,4 @@
     <string name="fm_find_password_confirm">Confirm</string>
     <string name="fm_find_password_tip_empty_cell_phone_number">Sorry,the cell phone number can\'t be empty.</string>
     <string name="fm_find_password_tip_empty_verify_code">Sorry,the verify code can\'t be empty.</string>
-
-    <!--搜索页面相关文案-->
-    <string name="str_search">search</string>
 </resources>

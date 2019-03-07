@@ -42,8 +42,8 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="5dp"
         android:paddingEnd="5dp"
-        android:text="@string/str_search"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp" />
+        android:text="@string/common_str_search"
+        android:textColor="#EEEEEE"
+        android:textSize="15sp" />
 
 </LinearLayout>

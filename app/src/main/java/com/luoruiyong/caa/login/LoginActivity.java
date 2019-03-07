@@ -24,6 +24,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
     private ImageView mBackIv;
     private TextView mTitleTv;
+    private TextView mCancelTv;
 
     private String mCurTab;
 
@@ -46,9 +47,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     private void initView() {
         mBackIv = findViewById(R.id.iv_back);
         mTitleTv = findViewById(R.id.tv_title);
+        mCancelTv = findViewById(R.id.tv_cancel);
 
         mBackIv.setOnClickListener(this);
-        mTitleTv.setText(getString(R.string.title_login));
+        mCancelTv.setOnClickListener(this);
     }
 
     private void handleIntent() {
@@ -78,21 +80,27 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         manager.beginTransaction().replace(R.id.fl_container, fm, tab).commit();
         mCurTab = tab;
         String title;
+        int cancelVisibleFlag;
         switch (tab) {
             case LOGIN_TAB:
                 title = getString(R.string.title_login);
+                cancelVisibleFlag = View.GONE;
                 break;
             case SIGN_TAB:
                 title = getString(R.string.title_sign);
+                cancelVisibleFlag = View.VISIBLE;
                 break;
             case FIND_PASSWORD_TAB:
                 title = getString(R.string.title_find_password);
+                cancelVisibleFlag = View.VISIBLE;
                 break;
             default:
                 title = "";
+                cancelVisibleFlag = View.GONE;
                 break;
         }
         mTitleTv.setText(title);
+        mCancelTv.setVisibility(cancelVisibleFlag);
     }
 
     public void doLogin(String account, String password) {
@@ -120,6 +128,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         switch (v.getId()) {
             case R.id.iv_back:
                 onBackPressed();
+                break;
+            case R.id.tv_cancel:
+                finish();
                 break;
         }
     }
