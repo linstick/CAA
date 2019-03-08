@@ -1,26 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="180dp"
-    android:background="@drawable/bg_setting_header"
-    android:gravity="center"
+    android:layout_height="200dp"
     android:orientation="vertical">
 
-
     <ImageView
-        android:id="@+id/iv_user_icon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/ic_user_default_avatar_white" />
+        android:id="@+id/iv_user_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/bg_setting_header"
+        android:scaleType="fitXY"/>
 
-    <TextView
-        android:id="@+id/tv_nickname"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="未登录"
-        android:textColor="#666666"
-        android:textSize="15sp" />
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical">
 
+        <ImageView
+            android:id="@+id/iv_user_avatar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_user_default_avatar_white" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/tv_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#AAAAAA"
+            android:textSize="15sp"
+            android:text="nickname" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="12dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <LinearLayout
+            android:id="@+id/ll_notes_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="3dp"
+                android:layout_marginEnd="3dp"
+                android:textColor="#AAAAAA"
+                android:textSize="13sp"
+                android:text="@string/side_bar_str_notes" />
+
+            <TextView
+                android:id="@+id/tv_notes_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#AAAAAA"
+                android:textSize="13sp"
+                android:text="8"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="10dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_marginEnd="6dp"
+            android:background="#AAAAAA"/>
+
+        <LinearLayout
+            android:id="@+id/ll_tags_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="3dp"
+                android:layout_marginEnd="3dp"
+                android:textColor="#AAAAAA"
+                android:textSize="13sp"
+                android:text="@string/side_bar_str_tags" />
+
+            <TextView
+                android:id="@+id/tv_tags_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#AAAAAA"
+                android:textSize="13sp"
+                android:text="8"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="10dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_marginEnd="6dp"
+            android:background="#AAAAAA"/>
+
+        <LinearLayout
+            android:id="@+id/ll_fans_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="3dp"
+                android:layout_marginEnd="3dp"
+                android:textColor="#AAAAAA"
+                android:textSize="13sp"
+                android:text="@string/side_bar_str_fans" />
+
+            <TextView
+                android:id="@+id/tv_fans_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#AAAAAA"
+                android:textSize="13sp"
+                android:text="8"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="10dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_marginEnd="6dp"
+            android:background="#AAAAAA"/>
+
+        <LinearLayout
+            android:id="@+id/ll_follows_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="3dp"
+                android:layout_marginEnd="3dp"
+                android:textColor="#AAAAAA"
+                android:textSize="13sp"
+                android:text="@string/side_bar_str_follows" />
+
+            <TextView
+                android:id="@+id/tv_follows_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#AAAAAA"
+                android:textSize="13sp"
+                android:text="8"/>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

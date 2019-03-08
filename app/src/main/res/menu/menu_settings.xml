@@ -1,8 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/menu_test1"
-        android:title="test1"/>
+    <group android:id="@+id/group1">
+        <item android:id="@+id/menu_edit_info"
+            android:title="@string/menu_str_edit_info"/>
 
-    <item android:id="@+id/menu_test2"
-        android:title="test2"/>
+        <item android:id="@+id/menu_modify_password"
+            android:title="@string/menu_str_modify_password"/>
+    </group>
+
+    <group android:id="@+id/group2">
+        <item android:id="@+id/menu_clear_cache"
+            android:title="@string/menu_str_clear_cache" />
+
+        <item android:id="@+id/menu_feedback"
+            android:title="@string/menu_str_feedback"/>
+
+        <item android:id="@+id/menu_about_us"
+            android:title="@string/menu_str_about_us"/>
+    </group>
+
+    <group android:id="@+id/group3">
+        <item android:id="@+id/menu_logout"
+            android:title="@string/menu_str_logout"/>
+    </group>
 </menu>

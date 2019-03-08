@@ -7,6 +7,7 @@
     <string name="common_str_search">Search</string>
     <string name="common_str_finish">Finish</string>
     <string name="common_str_ok">Ok</string>
+    <string name="common_str_submit">Submit</string>
 
     <!--工具栏标题文案-->
     <string name="title_activity">Activities</string>
@@ -16,6 +17,22 @@
     <string name="title_login">Login</string>
     <string name="title_sign">Sign Up</string>
     <string name="title_find_password">Find Password</string>
+    <string name="title_edit_profile">Edit Basic Info</string>
+    <string name="title_modify_password">Modify Password</string>
+    <string name="title_feedback">Feedback</string>
+
+    <!--侧边栏文案-->
+    <string name="menu_str_edit_info">Edit Basic Info</string>
+    <string name="menu_str_modify_password">Modify Password</string>
+    <string name="menu_str_clear_cache">Clear Cache</string>
+    <string name="menu_str_feedback">Feedback</string>
+    <string name="menu_str_about_us">About Us</string>
+    <string name="menu_str_logout">Logout</string>
+
+    <string name="side_bar_str_notes">Notes</string>
+    <string name="side_bar_str_tags">Tags</string>
+    <string name="side_bar_str_fans">Fans</string>
+    <string name="side_bar_str_follows">Follows</string>
 
     <!--登录页面相关文案-->
     <string name="fm_login_str_account">account</string>
@@ -51,6 +68,21 @@
     <string name="fm_find_password_confirm">Confirm</string>
     <string name="fm_find_password_tip_empty_cell_phone_number">Sorry,the cell phone number can\'t be empty.</string>
     <string name="fm_find_password_tip_empty_verify_code">Sorry,the verify code can\'t be empty.</string>
+
+    <!--修改密码页面相关文案-->
+    <string name="modify_password_str_original_password">original password</string>
+    <string name="modify_password_str_new_password">new password</string>
+    <string name="modify_password_str_confirm_new_password">confirm new password</string>
+    <string name="modify_password_str_confirm_modify">Confirm modify</string>
+    <string name="modify_password_tip_empty_original_pass">Sorry,the original password can\'t be empty.</string>
+    <string name="modify_password_tip_empty_new_pass">Sorry,the new password can\'t be empty.</string>
+    <string name="modify_password_tip_empty_confirm_new_pass">Sorry,the confirm new password can\'t be empty.</string>
+    <string name="modify_password_tip_different_new_pass">Sorry,the two new passwords must be same.</string>
+
+    <!--反馈页面相关文案-->
+    <string name="feedback_tip_hint">Please write down the problems you meet or some advices to improve our product</string>
+    <string name="feedback_tip_result">We have received your precious advices, Thanks for your support in using our product!</string>
+    <string name="feedback_tip_empty_content">Sorry,the content you want to submit can\'t be empty.</string>
 
     <!--搜索页面相关文案-->
     <string name="search_tip_empty_search_input">Sorry,you can\'t search for empty content.</string>

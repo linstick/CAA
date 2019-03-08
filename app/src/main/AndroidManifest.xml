@@ -21,6 +21,9 @@
 
         <activity android:name=".search.SearchActivity"/>
         <activity android:name=".login.LoginActivity"/>
+        <activity android:name=".profile.EditProfileActivity"/>
+        <activity android:name=".profile.ModifyPasswordActivity"/>
+        <activity android:name=".feedback.FeedbackActivity"/>
     </application>
 
 </manifest>
