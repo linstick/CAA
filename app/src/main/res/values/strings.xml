@@ -51,4 +51,7 @@
     <string name="fm_find_password_confirm">Confirm</string>
     <string name="fm_find_password_tip_empty_cell_phone_number">Sorry,the cell phone number can\'t be empty.</string>
     <string name="fm_find_password_tip_empty_verify_code">Sorry,the verify code can\'t be empty.</string>
+
+    <!--搜索页面相关文案-->
+    <string name="search_tip_empty_search_input">Sorry,you can\'t search for empty content.</string>
 </resources>

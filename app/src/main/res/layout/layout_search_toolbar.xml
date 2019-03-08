@@ -4,7 +4,9 @@
     android:layout_height="?attr/actionBarSize"
     android:background="@color/colorPrimary"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <ImageView
         android:id="@+id/iv_back"
@@ -18,6 +20,7 @@
 
 
     <EditText
+        android:id="@+id/et_search_input"
         android:layout_width="0dp"
         android:layout_height="26dp"
         android:layout_weight="1"
@@ -32,6 +35,7 @@
         android:gravity="center_vertical"
         android:background="@drawable/bg_search_layout"
         android:textSize="14sp"
+        android:textColor="#666666"
         android:singleLine="true"
         android:hint="Search for note/tag/account">
     </EditText>
@@ -44,6 +48,6 @@
         android:paddingEnd="5dp"
         android:text="@string/common_str_search"
         android:textColor="#EEEEEE"
-        android:textSize="15sp" />
+        android:textSize="14sp" />
 
 </LinearLayout>
