@@ -24,7 +24,9 @@ import com.luoruiyong.caa.home.discover.DiscoverFragment;
 import com.luoruiyong.caa.home.message.MessageFragment;
 import com.luoruiyong.caa.home.tag.TagFragment;
 import com.luoruiyong.caa.login.LoginActivity;
+import com.luoruiyong.caa.mine.MineActivity;
 import com.luoruiyong.caa.search.SearchActivity;
+import com.luoruiyong.caa.settings.SettingsActivity;
 import com.luoruiyong.caa.user.EditBasicInfoActivity;
 import com.luoruiyong.caa.user.ModifyPasswordActivity;
 
@@ -46,10 +48,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     private ImageView mSideBarUserAvatarIv;
     private TextView mSideBarNicknameTv;
-    private TextView mSideBarNotesTv;
-    private TextView mSideBarTagsTv;
-    private TextView mSideBarFansTv;
-    private TextView mSideBarFollowsTv;
 
     private ImageView mUserAvatarIv;
 
@@ -83,10 +81,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         FrameLayout headerLayout = (FrameLayout) mSideBarView.getHeaderView(0);
         mSideBarUserAvatarIv = headerLayout.findViewById(R.id.iv_user_avatar);
         mSideBarNicknameTv = headerLayout.findViewById(R.id.tv_nickname);
-        mSideBarNotesTv = headerLayout.findViewById(R.id.tv_notes_count);
-        mSideBarTagsTv = headerLayout.findViewById(R.id.tv_tags_count);
-        mSideBarFansTv = headerLayout.findViewById(R.id.tv_fans_count);
-        mSideBarFollowsTv = headerLayout.findViewById(R.id.tv_follows_count);
 
         mUserAvatarIv = findViewById(R.id.iv_user_avatar);
         mUserAvatarIv.setOnClickListener(this);
@@ -97,11 +91,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         findViewById(R.id.ll_tag_tab_layout).setOnClickListener(this);
         findViewById(R.id.ll_discover_layout).setOnClickListener(this);
         findViewById(R.id.ll_message_tab_layout).setOnClickListener(this);
-
-        headerLayout.findViewById(R.id.ll_notes_layout).setOnClickListener(this);
-        headerLayout.findViewById(R.id.ll_tags_layout).setOnClickListener(this);
-        headerLayout.findViewById(R.id.ll_fans_layout).setOnClickListener(this);
-        headerLayout.findViewById(R.id.ll_follows_layout).setOnClickListener(this);
 
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         mDrawerLayout.setDrawerListener(new DrawerLayout.SimpleDrawerListener() {
@@ -174,14 +163,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         mTitleTv.setText(title);
     }
 
-    private void doClearCache() {
-        Toast.makeText(this, "clear cache", Toast.LENGTH_SHORT).show();
-    }
-
-    private void showAboutUsInfo() {
-        Toast.makeText(this, "about us", Toast.LENGTH_SHORT).show();
-    }
-
     private void doLogout() {
         Toast.makeText(this, "logout", Toast.LENGTH_SHORT).show();
     }
@@ -220,18 +201,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             case R.id.iv_add:
                 showEditTypeChooseDialog();
                 break;
-            case R.id.ll_notes_layout:
-                Toast.makeText(this, "notes", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.ll_tags_layout:
-                Toast.makeText(this, "tags", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.ll_fans_layout:
-                Toast.makeText(this, "fans", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.ll_follows_layout:
-                Toast.makeText(this, "follows", Toast.LENGTH_SHORT).show();
-                break;
             default:
                 break;
         }
@@ -240,6 +209,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_my_notes:
+                MineActivity.startAction(this, MineActivity.TAB_NOTES);
+                break;
+            case R.id.menu_str_my_tags:
+                MineActivity.startAction(this, MineActivity.TAB_TAGS);
+                break;
+            case R.id.menu_str_my_collections:
+                MineActivity.startAction(this, MineActivity.TAB_COLLECTIONS);
+                break;
             case R.id.menu_edit_info:
                 startActivity(new Intent(this, EditBasicInfoActivity.class));
                 break;
@@ -248,16 +226,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 startActivity(new Intent(this, ModifyPasswordActivity.class));
                 break;
 
-            case R.id.menu_clear_cache:
-                doClearCache();
-                break;
-
-            case R.id.menu_feedback:
-                startActivity(new Intent(this, FeedbackActivity.class));
-                break;
-
-            case R.id.menu_about_us:
-                showAboutUsInfo();
+            case R.id.menu_str_setting:
+                startActivity(new Intent(this, SettingsActivity.class));
                 break;
 
             case R.id.menu_logout:

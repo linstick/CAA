@@ -20,14 +20,17 @@
     <string name="title_edit_profile">Edit Basic Info</string>
     <string name="title_modify_password">Modify Password</string>
     <string name="title_feedback">Feedback</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_mine">Mine</string>
 
     <!--侧边栏文案-->
+    <string name="menu_str_my_notes">My Notes</string>
+    <string name="menu_str_my_tags">My Tags</string>
+    <string name="menu_str_my_collections">My Collections</string>
     <string name="menu_str_edit_info">Edit Basic Info</string>
     <string name="menu_str_modify_password">Modify Password</string>
-    <string name="menu_str_clear_cache">Clear Cache</string>
-    <string name="menu_str_feedback">Feedback</string>
-    <string name="menu_str_about_us">About Us</string>
     <string name="menu_str_logout">Logout</string>
+    <string name="menu_str_setting">Settings</string>
 
     <string name="side_bar_str_notes">Notes</string>
     <string name="side_bar_str_tags">Tags</string>
