@@ -94,4 +94,14 @@
     <string name="common_dialog_str_tips_title">Tips</string>
     <string name="common_dialog_str_input_title">Please input</string>
     <string name="common_dialog_tip_empty_input">Sorry, the input can\'t be empty.</string>
+
+    <!--设置页面相关文案-->
+    <string name="settings_str_feedback">Feedback</string>
+    <string name="settings_str_clear_cache">Clear Cache</string>
+    <string name="settings_str_about_us">About Us</string>
+    <string name="settings_str_check_for_update">Check For Update</string>
+    <string name="settings_tip_clear_success">Clear success</string>
+    <string name="settings_tip_no_new_version">The current version has been the lasted version.</string>
+    <string name="settings_tip_about_us_info">The developer of the application is Ruiyong Luo, a senior student of Guangdong University Of Technology. You can contact us with the email:linstick@163.com, Thanks.</string>
+
 </resources>
