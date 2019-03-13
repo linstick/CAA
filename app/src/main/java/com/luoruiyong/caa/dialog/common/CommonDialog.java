@@ -115,6 +115,7 @@ public class CommonDialog extends Dialog implements View.OnClickListener, Adapte
             mInputBottomLineView.setVisibility(View.VISIBLE);
             mInputEt.setHint(mBuilder.mInputHint);
             mInputEt.setText(mBuilder.mPreInputText);
+            mInputEt.setSelection(mBuilder.mPreInputText == null ? 0 : mBuilder.mPreInputText.length());
             if (mBuilder.mHasInputTypeSet) {
                 mInputEt.setInputType(mBuilder.mInputType);
             }
