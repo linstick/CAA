@@ -1,8 +1,5 @@
-package com.luoruiyong.caa.profile;
+package com.luoruiyong.caa.user;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;

@@ -24,9 +24,9 @@ import com.luoruiyong.caa.home.discover.DiscoverFragment;
 import com.luoruiyong.caa.home.message.MessageFragment;
 import com.luoruiyong.caa.home.tag.TagFragment;
 import com.luoruiyong.caa.login.LoginActivity;
-import com.luoruiyong.caa.profile.EditProfileActivity;
-import com.luoruiyong.caa.profile.ModifyPasswordActivity;
 import com.luoruiyong.caa.search.SearchActivity;
+import com.luoruiyong.caa.user.EditBasicInfoActivity;
+import com.luoruiyong.caa.user.ModifyPasswordActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -241,7 +241,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_edit_info:
-                startActivity(new Intent(this, EditProfileActivity.class));
+                startActivity(new Intent(this, EditBasicInfoActivity.class));
                 break;
 
             case R.id.menu_modify_password:

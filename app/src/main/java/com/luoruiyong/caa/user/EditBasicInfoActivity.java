@@ -1,4 +1,4 @@
-package com.luoruiyong.caa.profile;
+package com.luoruiyong.caa.user;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,7 +8,7 @@ import android.widget.TextView;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 
-public class EditProfileActivity extends BaseActivity implements View.OnClickListener{
+public class EditBasicInfoActivity extends BaseActivity implements View.OnClickListener{
 
     private TextView mTitleTv;
     private TextView mFinishTv;

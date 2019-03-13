@@ -86,4 +86,9 @@
 
     <!--搜索页面相关文案-->
     <string name="search_tip_empty_search_input">Sorry,you can\'t search for empty content.</string>
+
+    <!--公用对话框相关文案-->
+    <string name="common_dialog_str_tips_title">Tips</string>
+    <string name="common_dialog_str_input_title">Please input</string>
+    <string name="common_dialog_tip_empty_input">Sorry, the input can\'t be empty.</string>
 </resources>
