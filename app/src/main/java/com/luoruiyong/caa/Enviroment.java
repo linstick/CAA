@@ -29,6 +29,10 @@ public class Enviroment {
         return sUser.getUid() == user.getUid();
     }
 
+    public static void clearCurUser() {
+        sUser = null;
+    }
+
     public static void createVirtualUser() {
         sUser = new User();
         sUser.setUid(128463);

@@ -9,10 +9,9 @@
 
     <ImageView
         android:id="@+id/iv_back"
-        android:layout_width="26dp"
-        android:layout_height="26dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:padding="10dp"
         android:src="@drawable/ic_back_white" />
 
     <TextView
@@ -20,8 +19,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
         android:layout_marginRight="5dp"
         android:text="CAA"
         android:textColor="#FFFFFF"
@@ -37,5 +34,13 @@
         android:textSize="15sp"
         android:text="@string/common_str_cancel"
         android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/iv_right_operate"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="10dp"
+        android:src="@drawable/ic_settings_white"
+        android:visibility="gone"/>
 
 </LinearLayout>

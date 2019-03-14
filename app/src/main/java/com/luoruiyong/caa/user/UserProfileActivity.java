@@ -17,6 +17,7 @@ import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.home.activity.ActivityFragment;
 import com.luoruiyong.caa.home.discover.DiscoverFragment;
 import com.luoruiyong.caa.home.tag.TagFragment;
+import com.luoruiyong.caa.settings.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
 
     private ImageView mBackIv;
     private TextView mTitleTv;
-    private TextView mEditTv;
+    private ImageView mSettingsIv;
     private ImageView mUserAvatarIv;
     private TextView mUserIdTv;
     private TextView mNicknameTv;
@@ -59,7 +60,7 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
     private void initView() {
         mBackIv = findViewById(R.id.iv_back);
         mTitleTv = findViewById(R.id.tv_title);
-        mEditTv = findViewById(R.id.tv_cancel);
+        mSettingsIv = findViewById(R.id.iv_right_operate);
         mUserAvatarIv = findViewById(R.id.iv_user_avatar);
         mUserIdTv = findViewById(R.id.tv_id);
         mNicknameTv = findViewById(R.id.tv_nickname);
@@ -70,11 +71,10 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
         mViewPager = findViewById(R.id.view_pager);
 
         mTitleTv.setText(R.string.title_user_profile);
-        mEditTv.setText(R.string.common_str_edit);
-        mEditTv.setVisibility(View.VISIBLE);
+        mSettingsIv.setVisibility(View.VISIBLE);
 
         mBackIv.setOnClickListener(this);
-        mEditTv.setOnClickListener(this);
+        mSettingsIv.setOnClickListener(this);
     }
 
     private void initFragment() {
@@ -102,8 +102,8 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
             case R.id.iv_back:
                 finish();
                 break;
-            case R.id.tv_cancel:
-                startActivity(new Intent(this, EditBasicInfoActivity.class));
+            case R.id.iv_right_operate:
+                startActivity(new Intent(this, SettingsActivity.class));
                 break;
             default:
                 break;

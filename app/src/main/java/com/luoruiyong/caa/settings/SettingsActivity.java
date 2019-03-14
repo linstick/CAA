@@ -9,10 +9,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.dialog.common.DialogHelper;
 import com.luoruiyong.caa.feedback.FeedbackActivity;
+import com.luoruiyong.caa.user.EditBasicInfoActivity;
+import com.luoruiyong.caa.user.ModifyPasswordActivity;
 
 /**
  * Author: luoruiyong
@@ -22,11 +25,15 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
 
     private ImageView mBackIv;
     private TextView mTitleTv;
+
+    private LinearLayout mEditProfileLayout;
+    private LinearLayout mModifyPassLayout;
     private LinearLayout mFeedbackLayout;
     private LinearLayout mClearCacheLayout;
     private TextView mCacheSizeTv;
     private TextView mAboutUsTv;
     private TextView mCheckUpdateTv;
+    private TextView mLogoutTv;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,19 +46,25 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
     private void initView() {
         mBackIv = findViewById(R.id.iv_back);
         mTitleTv = findViewById(R.id.tv_title);
+        mEditProfileLayout = findViewById(R.id.ll_edit_info_layout);
+        mModifyPassLayout = findViewById(R.id.ll_modify_pass_layout);
         mFeedbackLayout = findViewById(R.id.ll_feedback_layout);
         mClearCacheLayout = findViewById(R.id.ll_clear_cache_layout);
         mCacheSizeTv = findViewById(R.id.tv_cache_size);
         mAboutUsTv = findViewById(R.id.tv_about_us);
         mCheckUpdateTv = findViewById(R.id.tv_check_for_update);
+        mLogoutTv = findViewById(R.id.tv_logout);
 
         mTitleTv.setText(R.string.title_settings);
 
         mBackIv.setOnClickListener(this);
+        mEditProfileLayout.setOnClickListener(this);
+        mModifyPassLayout.setOnClickListener(this);
         mFeedbackLayout.setOnClickListener(this);
         mClearCacheLayout.setOnClickListener(this);
         mAboutUsTv.setOnClickListener(this);
         mCheckUpdateTv.setOnClickListener(this);
+        mLogoutTv.setOnClickListener(this);
     }
 
     private void doClearCache() {
@@ -65,11 +78,25 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
         Toast.makeText(this, R.string.settings_tip_no_new_version, Toast.LENGTH_SHORT).show();
     }
 
+    private void doLogout() {
+        // do logout
+        Toast.makeText(this, "do logout", Toast.LENGTH_SHORT).show();
+
+        // for test
+        Enviroment.clearCurUser();
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_back:
                 finish();
+                break;
+            case R.id.ll_edit_info_layout:
+                startActivity(new Intent(this, EditBasicInfoActivity.class));
+                break;
+            case R.id.ll_modify_pass_layout:
+                startActivity(new Intent(this, ModifyPasswordActivity.class));
                 break;
             case R.id.ll_feedback_layout:
                 startActivity(new Intent(this, FeedbackActivity.class));
@@ -86,6 +113,11 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
                 break;
             case R.id.tv_check_for_update:
                 doCheckForUpdate();
+                break;
+            case R.id.tv_logout:
+                doLogout();
+                break;
+            default:
                 break;
         }
     }

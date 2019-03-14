@@ -7,6 +7,68 @@
 
     <include layout="@layout/layout_back_toolbar"/>
 
+    <LinearLayout
+        android:id="@+id/ll_edit_info_layout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/selector_list_item">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
+            android:textColor="#666666"
+            android:textSize="16sp"
+            android:text="Edit Profile"
+            android:gravity="center_vertical" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_right_light_gray" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD"/>
+
+    <LinearLayout
+        android:id="@+id/ll_modify_pass_layout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/selector_list_item">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
+            android:textColor="#666666"
+            android:textSize="16sp"
+            android:text="Modify Password"
+            android:gravity="center_vertical" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_right_light_gray" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD"/>
+
    <LinearLayout
        android:id="@+id/ll_feedback_layout"
        android:layout_width="match_parent"
@@ -42,7 +104,8 @@
         android:id="@+id/ll_clear_cache_layout"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@drawable/selector_list_item">
 
         <TextView
             android:layout_width="0dp"
@@ -53,8 +116,7 @@
             android:textColor="#666666"
             android:textSize="16sp"
             android:text="Clear Cache"
-            android:gravity="center_vertical"
-            android:background="@drawable/selector_list_item"/>
+            android:gravity="center_vertical"/>
 
         <TextView
             android:id="@+id/tv_cache_size"
@@ -66,6 +128,23 @@
             android:layout_marginRight="12dp"
             android:layout_marginEnd="12dp"/>
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD"/>
+
+    <TextView
+        android:id="@+id/tv_check_for_update"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:paddingLeft="16dp"
+        android:paddingStart="16dp"
+        android:textColor="#666666"
+        android:textSize="16sp"
+        android:text="Check For Update"
+        android:gravity="center_vertical"
+        android:background="@drawable/selector_list_item"/>
 
     <View
         android:layout_width="match_parent"
@@ -90,14 +169,14 @@
         android:background="#DDDDDD"/>
 
     <TextView
-        android:id="@+id/tv_check_for_update"
+        android:id="@+id/tv_logout"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:paddingLeft="16dp"
         android:paddingStart="16dp"
         android:textColor="#666666"
         android:textSize="16sp"
-        android:text="Check For Update"
+        android:text="Logout"
         android:gravity="center_vertical"
         android:background="@drawable/selector_list_item"/>
 
