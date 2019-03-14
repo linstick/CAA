@@ -26,99 +26,75 @@
         android:orientation="horizontal">
 
         <LinearLayout
-            android:id="@+id/ll_activity_tab_layout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/iv_activity_icon"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:src="@mipmap/ic_launcher" />
-
             <TextView
-                android:id="@+id/tv_activity_title"
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_activity_tab"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:gravity="center"
                 android:text="@string/title_activity"
-                android:textColor="#666666"
-                android:textSize="11sp" />
+                android:textColor="@color/selector_bottom_tab"
+                android:textSize="11sp"
+                android:drawableTop="@drawable/selector_home_tab" />
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ll_tag_tab_layout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/iv_tag_icon"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:src="@mipmap/ic_launcher" />
-
             <TextView
-                android:id="@+id/tv_tag_title"
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_tag_tab"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:gravity="center"
                 android:text="@string/title_tag"
-                android:textColor="#666666"
-                android:textSize="11sp" />
+                android:textColor="@color/selector_bottom_tab"
+                android:textSize="11sp"
+                android:drawableTop="@drawable/selector_tag_tab"/>
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ll_discover_layout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/iv_discover_icon"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:src="@mipmap/ic_launcher" />
-
             <TextView
-                android:id="@+id/tv_discover_title"
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_discover_tab"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:gravity="center"
                 android:text="@string/title_discover"
-                android:textColor="#666666"
-                android:textSize="11sp" />
+                android:textColor="@color/selector_bottom_tab"
+                android:textSize="11sp"
+                android:drawableTop="@drawable/selector_discover_tab"/>
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ll_message_tab_layout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/iv_message_icon"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:src="@mipmap/ic_launcher" />
-
             <TextView
-                android:id="@+id/tv_message_title"
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_message_tab"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:gravity="center"
                 android:text="@string/title_message"
-                android:textColor="#666666"
-                android:textSize="11sp" />
+                android:textColor="@color/selector_bottom_tab"
+                android:textSize="11sp"
+                android:drawableTop="@drawable/selector_message_tab"/>
 
         </LinearLayout>
     </LinearLayout>

@@ -39,7 +39,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
     private ViewPager mViewPager;
 
     private ImageView mUserAvatarIv;
+    private TextView mActivityTabTv;
+    private TextView mTagTabTv;
+    private TextView mDiscoverTabTv;
+    private TextView mMessageTabTv;
 
+    private List<TextView> mBottomTabList;
     private List<Fragment> mFragmentList;
     private ViewPagerAdapter mAdapter;
     private List<String> mEditTypeList;
@@ -65,16 +70,19 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
     private void initView() {
         mTitleTv = findViewById(R.id.tv_title);
         mViewPager = findViewById(R.id.view_pager);
-
         mUserAvatarIv = findViewById(R.id.iv_user_avatar);
+        mActivityTabTv = findViewById(R.id.tv_activity_tab);
+        mTagTabTv = findViewById(R.id.tv_tag_tab);
+        mDiscoverTabTv = findViewById(R.id.tv_discover_tab);
+        mMessageTabTv = findViewById(R.id.tv_message_tab);
+
         mUserAvatarIv.setOnClickListener(this);
+        mActivityTabTv.setOnClickListener(this);
+        mTagTabTv.setOnClickListener(this);
+        mDiscoverTabTv.setOnClickListener(this);
+        mMessageTabTv.setOnClickListener(this);
         findViewById(R.id.iv_search).setOnClickListener(this);
         findViewById(R.id.iv_add).setOnClickListener(this);
-
-        findViewById(R.id.ll_activity_tab_layout).setOnClickListener(this);
-        findViewById(R.id.ll_tag_tab_layout).setOnClickListener(this);
-        findViewById(R.id.ll_discover_layout).setOnClickListener(this);
-        findViewById(R.id.ll_message_tab_layout).setOnClickListener(this);
     }
 
     private void initFragment() {
@@ -83,6 +91,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
         mFragmentList.add(new TagFragment());
         mFragmentList.add(new DiscoverFragment());
         mFragmentList.add(new MessageFragment());
+
+        mBottomTabList = new ArrayList<>();
+        mBottomTabList.add(mActivityTabTv);
+        mBottomTabList.add(mTagTabTv);
+        mBottomTabList.add(mDiscoverTabTv);
+        mBottomTabList.add(mMessageTabTv);
 
         mAdapter = new ViewPagerAdapter(getSupportFragmentManager(), mFragmentList);
         mViewPager.setAdapter(mAdapter);
@@ -103,8 +117,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
     private void handleIntent() {
         Intent intent = getIntent();
         if (intent != null) {
-            int tabIndex = intent.getIntExtra(KEY_TAB_INDEX, 0);
-            updateFragmentByIndex(tabIndex, true);
+            int tabIndex = intent.getIntExtra(KEY_TAB_INDEX, ACTIVITY_TAB_INDEX);
+            updateFragmentByIndex(tabIndex, false);
         } else {
             updateFragmentByIndex(ACTIVITY_TAB_INDEX, false);
         }
@@ -134,6 +148,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
                 break;
         }
         mTitleTv.setText(title);
+        for (int i = 0; i < mBottomTabList.size(); i++) {
+            if (i == index) {
+                mBottomTabList.get(i).setSelected(true);
+            } else {
+                mBottomTabList.get(i).setSelected(false);
+            }
+        }
     }
 
     private void doLogout() {
@@ -170,16 +191,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.ll_activity_tab_layout:
+            case R.id.tv_activity_tab:
                 updateFragmentByIndex(ACTIVITY_TAB_INDEX, true);
                 break;
-            case R.id.ll_tag_tab_layout:
+            case R.id.tv_tag_tab:
                 updateFragmentByIndex(TAG_TAB_INDEX, true);
                 break;
-            case R.id.ll_discover_layout:
+            case R.id.tv_discover_tab:
                 updateFragmentByIndex(DISCOVER_TAB_INDEX, true);
                 break;
-            case R.id.ll_message_tab_layout:
+            case R.id.tv_message_tab:
                 updateFragmentByIndex(MESSAGE_TAB_INDEX, true);
                 break;
             case R.id.iv_user_avatar:
