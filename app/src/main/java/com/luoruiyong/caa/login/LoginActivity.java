@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 
@@ -105,6 +106,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
     public void doLogin(String account, String password) {
         Toast.makeText(this, "doLogin", Toast.LENGTH_SHORT).show();
+
+        // for test
+        Enviroment.createVirtualUser();
+        Toast.makeText(this, "doLogin", Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     public void doSignUp(String cellPhoneNumber, String nickname, String password) {

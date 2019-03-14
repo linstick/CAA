@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.feedback.FeedbackActivity;
@@ -29,11 +30,12 @@ import com.luoruiyong.caa.search.SearchActivity;
 import com.luoruiyong.caa.settings.SettingsActivity;
 import com.luoruiyong.caa.user.EditBasicInfoActivity;
 import com.luoruiyong.caa.user.ModifyPasswordActivity;
+import com.luoruiyong.caa.user.UserProfileActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends BaseActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener{
+public class HomeActivity extends BaseActivity implements View.OnClickListener{
 
     private final static String KEY_TAB_INDEX = "tab_index";
     public final static int ACTIVITY_TAB_INDEX = 0;
@@ -42,12 +44,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public final static int MESSAGE_TAB_INDEX = 3;
 
     private TextView mTitleTv;
-    private DrawerLayout mDrawerLayout;
-    private NavigationView mSideBarView;
     private ViewPager mViewPager;
-
-    private ImageView mSideBarUserAvatarIv;
-    private TextView mSideBarNicknameTv;
 
     private ImageView mUserAvatarIv;
 
@@ -74,13 +71,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     private void initView() {
         mTitleTv = findViewById(R.id.tv_title);
-        mDrawerLayout = findViewById(R.id.drawer_layout);
         mViewPager = findViewById(R.id.view_pager);
-
-        mSideBarView = findViewById(R.id.view_side_bar);
-        FrameLayout headerLayout = (FrameLayout) mSideBarView.getHeaderView(0);
-        mSideBarUserAvatarIv = headerLayout.findViewById(R.id.iv_user_avatar);
-        mSideBarNicknameTv = headerLayout.findViewById(R.id.tv_nickname);
 
         mUserAvatarIv = findViewById(R.id.iv_user_avatar);
         mUserAvatarIv.setOnClickListener(this);
@@ -91,17 +82,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         findViewById(R.id.ll_tag_tab_layout).setOnClickListener(this);
         findViewById(R.id.ll_discover_layout).setOnClickListener(this);
         findViewById(R.id.ll_message_tab_layout).setOnClickListener(this);
-
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        mDrawerLayout.setDrawerListener(new DrawerLayout.SimpleDrawerListener() {
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            }
-        });
-
-        mSideBarView.setNavigationItemSelectedListener(this);
     }
 
     private void initFragment() {
@@ -187,12 +167,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 updateFragmentByIndex(MESSAGE_TAB_INDEX, true);
                 break;
             case R.id.iv_user_avatar:
-                boolean isLogin = true;
-                if (isLogin) {
-                    mDrawerLayout.openDrawer(GravityCompat.START);
-                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-                } else {
+                if (Enviroment.isVistor()) {
                     LoginActivity.startAction(this, LoginActivity.LOGIN_TAB);
+                } else {
+                    startActivity(new Intent(this, UserProfileActivity.class));
                 }
                 break;
             case R.id.iv_search:
@@ -204,38 +182,5 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             default:
                 break;
         }
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_my_notes:
-                MineActivity.startAction(this, MineActivity.TAB_NOTES);
-                break;
-            case R.id.menu_str_my_tags:
-                MineActivity.startAction(this, MineActivity.TAB_TAGS);
-                break;
-            case R.id.menu_str_my_collections:
-                MineActivity.startAction(this, MineActivity.TAB_COLLECTIONS);
-                break;
-            case R.id.menu_edit_info:
-                startActivity(new Intent(this, EditBasicInfoActivity.class));
-                break;
-
-            case R.id.menu_modify_password:
-                startActivity(new Intent(this, ModifyPasswordActivity.class));
-                break;
-
-            case R.id.menu_str_setting:
-                startActivity(new Intent(this, SettingsActivity.class));
-                break;
-
-            case R.id.menu_logout:
-                doLogout();
-                break;
-        }
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        mDrawerLayout.closeDrawer(GravityCompat.START);
-        return true;
     }
 }

@@ -11,8 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".home.HomeActivity"
-            android:theme="@style/HomeActivityTheme">
+            android:name=".home.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,6 +26,7 @@
         <activity android:name=".feedback.FeedbackActivity"/>
         <activity android:name=".mine.MineActivity"/>
         <activity android:name=".settings.SettingsActivity"/>
+        <activity android:name=".user.UserProfileActivity"/>
     </application>
 
 </manifest>

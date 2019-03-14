@@ -4,6 +4,7 @@
     <!--公共文案-->
     <string name="common_str_confirm">Confirm</string>
     <string name="common_str_cancel">Cancel</string>
+    <string name="common_str_edit">Edit</string>
     <string name="common_str_search">Search</string>
     <string name="common_str_finish">Finish</string>
     <string name="common_str_ok">Ok</string>
@@ -22,6 +23,7 @@
     <string name="title_feedback">Feedback</string>
     <string name="title_settings">Settings</string>
     <string name="title_mine">Mine</string>
+    <string name="title_user_profile">User Profile</string>
 
     <!--侧边栏文案-->
     <string name="menu_str_my_notes">My Notes</string>
@@ -104,4 +106,5 @@
     <string name="settings_tip_no_new_version">The current version has been the lasted version.</string>
     <string name="settings_tip_about_us_info">The developer of the application is Ruiyong Luo, a senior student of Guangdong University Of Technology. You can contact us with the email:linstick@163.com, Thanks.</string>
 
+    <!--个人页相关文案-->
 </resources>

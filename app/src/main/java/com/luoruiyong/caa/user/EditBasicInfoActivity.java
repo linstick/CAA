@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
@@ -59,7 +60,7 @@ public class EditBasicInfoActivity extends BaseActivity implements View.OnClickL
 
     private void initUserBasicMap() {
         mList = new ArrayList<>();
-        mCurUser = MyApplication.getCurUser();
+        mCurUser = Enviroment.getCurUser();
         if (mCurUser == null) {
             return;
         }
