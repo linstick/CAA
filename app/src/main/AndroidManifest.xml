@@ -24,7 +24,6 @@
         <activity android:name=".user.EditBasicInfoActivity"/>
         <activity android:name=".user.ModifyPasswordActivity"/>
         <activity android:name=".feedback.FeedbackActivity"/>
-        <activity android:name=".mine.MineActivity"/>
         <activity android:name=".settings.SettingsActivity"/>
         <activity android:name=".user.UserProfileActivity"/>
     </application>
