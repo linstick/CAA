@@ -24,6 +24,9 @@
     <string name="title_settings">Settings</string>
     <string name="title_mine">Mine</string>
     <string name="title_user_profile">User Profile</string>
+    <string name="title_create_activity">Create Activity</string>
+    <string name="title_create_tag">Create Tag</string>
+    <string name="title_create_discover">Create Discover</string>
 
     <!--侧边栏文案-->
     <string name="menu_str_my_notes">My Notes</string>

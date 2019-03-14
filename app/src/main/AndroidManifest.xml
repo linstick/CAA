@@ -26,6 +26,7 @@
         <activity android:name=".feedback.FeedbackActivity"/>
         <activity android:name=".settings.SettingsActivity"/>
         <activity android:name=".user.UserProfileActivity"/>
+        <activity android:name=".edit.EditorActivity"/>
     </application>
 
 </manifest>

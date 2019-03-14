@@ -13,6 +13,9 @@ import android.widget.Toast;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
+import com.luoruiyong.caa.dialog.common.CommonDialog;
+import com.luoruiyong.caa.dialog.common.DialogHelper;
+import com.luoruiyong.caa.edit.EditorActivity;
 import com.luoruiyong.caa.home.activity.ActivityFragment;
 import com.luoruiyong.caa.home.discover.DiscoverFragment;
 import com.luoruiyong.caa.home.message.MessageFragment;
@@ -39,6 +42,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
 
     private List<Fragment> mFragmentList;
     private ViewPagerAdapter mAdapter;
+    private List<String> mEditTypeList;
 
     private static void startAction(Context context, int tabIndex) {
         Intent intent = new Intent(context, HomeActivity.class);
@@ -137,7 +141,30 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
     }
 
     private void showEditTypeChooseDialog() {
-        Toast.makeText(this, "add", Toast.LENGTH_SHORT).show();
+        if (mEditTypeList == null) {
+            mEditTypeList = new ArrayList<>();
+            mEditTypeList.add("Create a activity");
+            mEditTypeList.add("Create a tag");
+            mEditTypeList.add("Create a discover");
+        }
+        DialogHelper.showListDialog(this, mEditTypeList, new CommonDialog.Builder.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                switch (position) {
+                    case 0:
+                        EditorActivity.startAction(HomeActivity.this, EditorActivity.TAB_CREATE_ACTIVITY);
+                        break;
+                    case 1:
+                        EditorActivity.startAction(HomeActivity.this, EditorActivity.TAB_CREATE_TAG);
+                        break;
+                    case 2:
+                        EditorActivity.startAction(HomeActivity.this, EditorActivity.TAB_CREATE_DISCOVER);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
     }
 
     @Override
