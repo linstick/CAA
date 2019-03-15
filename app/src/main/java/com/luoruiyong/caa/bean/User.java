@@ -1,4 +1,4 @@
-package com.luoruiyong.caa.user;
+package com.luoruiyong.caa.bean;
 
 /**
  * Author: luoruiyong

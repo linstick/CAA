@@ -14,10 +14,12 @@ import android.widget.TextView;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
-import com.luoruiyong.caa.home.activity.SwipeActivityFragment;
+import com.luoruiyong.caa.bean.User;
+import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
+import com.luoruiyong.caa.common.fragment.SwipeActivityFragment;
 import com.luoruiyong.caa.home.discover.DiscoverFragment;
 import com.luoruiyong.caa.home.tag.TagFragment;
-import com.luoruiyong.caa.settings.SettingsActivity;
+import com.luoruiyong.caa.simple.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,34 +109,6 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
                 break;
             default:
                 break;
-        }
-    }
-
-    class ViewPagerAdapter extends FragmentPagerAdapter {
-
-        private List<Fragment> mList;
-        private List<String> mTitleList;
-
-        public ViewPagerAdapter(FragmentManager fm, List<Fragment> list, List<String> titleList) {
-            super(fm);
-            mList = list;
-            mTitleList = titleList;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mList == null ? 0 : mList.size();
-        }
-
-        @Nullable
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mTitleList.get(position);
         }
     }
 }

@@ -13,7 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.luoruiyong.caa.R;
-import com.luoruiyong.caa.home.tag.TagFragment;
+import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
+import com.luoruiyong.caa.common.fragment.SwipeActivityFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,33 +77,5 @@ public class ActivityFragment extends Fragment{
         mTabLayout.setupWithViewPager(mViewPager);
         mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         mViewPager.setOffscreenPageLimit(1);
-    }
-
-    class ViewPagerAdapter extends FragmentPagerAdapter {
-
-        private List<Fragment> mList;
-        private List<String> mTitleList;
-
-        public ViewPagerAdapter(FragmentManager fm, List<Fragment> list, List<String> titleList) {
-            super(fm);
-            mList = list;
-            mTitleList = titleList;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mList == null ? 0 : mList.size();
-        }
-
-        @Nullable
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mTitleList.get(position);
-        }
     }
 }

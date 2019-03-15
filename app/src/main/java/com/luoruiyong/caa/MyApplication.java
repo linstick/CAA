@@ -2,9 +2,6 @@ package com.luoruiyong.caa;
 
 import android.app.Application;
 import android.content.Context;
-import android.os.Environment;
-
-import com.luoruiyong.caa.user.User;
 
 /**
  * Author: luoruiyong

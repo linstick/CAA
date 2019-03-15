@@ -1,6 +1,6 @@
 package com.luoruiyong.caa;
 
-import com.luoruiyong.caa.user.User;
+import com.luoruiyong.caa.bean.User;
 
 /**
  * Author: luoruiyong

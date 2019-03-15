@@ -1,9 +1,10 @@
-package com.luoruiyong.caa.dialog.common;
+package com.luoruiyong.caa.utils;
 
 import android.content.Context;
 import android.text.InputType;
 
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.common.dialog.CommonDialog;
 
 import java.util.List;
 

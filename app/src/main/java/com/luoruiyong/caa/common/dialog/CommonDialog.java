@@ -1,4 +1,4 @@
-package com.luoruiyong.caa.dialog.common;
+package com.luoruiyong.caa.common.dialog;
 
 import android.app.Dialog;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.luoruiyong.caa.feedback;
+package com.luoruiyong.caa.simple;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

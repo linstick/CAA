@@ -1,4 +1,4 @@
-package com.luoruiyong.caa.settings;
+package com.luoruiyong.caa.simple;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,8 +12,7 @@ import android.widget.Toast;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
-import com.luoruiyong.caa.dialog.common.DialogHelper;
-import com.luoruiyong.caa.feedback.FeedbackActivity;
+import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.user.EditBasicInfoActivity;
 import com.luoruiyong.caa.user.ModifyPasswordActivity;
 

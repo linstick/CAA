@@ -23,8 +23,8 @@
         <activity android:name=".login.LoginActivity"/>
         <activity android:name=".user.EditBasicInfoActivity"/>
         <activity android:name=".user.ModifyPasswordActivity"/>
-        <activity android:name=".feedback.FeedbackActivity"/>
-        <activity android:name=".settings.SettingsActivity"/>
+        <activity android:name=".simple.FeedbackActivity"/>
+        <activity android:name=".simple.SettingsActivity"/>
         <activity android:name=".user.UserProfileActivity"/>
         <activity android:name=".edit.EditorActivity"/>
     </application>

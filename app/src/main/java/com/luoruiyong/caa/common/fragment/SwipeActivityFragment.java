@@ -1,4 +1,4 @@
-package com.luoruiyong.caa.home.activity;
+package com.luoruiyong.caa.common.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;

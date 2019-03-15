@@ -13,11 +13,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.luoruiyong.caa.Enviroment;
-import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
-import com.luoruiyong.caa.dialog.common.CommonDialog;
-import com.luoruiyong.caa.dialog.common.DialogHelper;
+import com.luoruiyong.caa.bean.User;
+import com.luoruiyong.caa.bean.UserBasicMap;
+import com.luoruiyong.caa.common.dialog.CommonDialog;
 
 import java.util.ArrayList;
 import java.util.List;
