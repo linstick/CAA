@@ -27,6 +27,8 @@
         <activity android:name=".simple.SettingsActivity"/>
         <activity android:name=".user.UserProfileActivity"/>
         <activity android:name=".edit.EditorActivity"/>
+        <activity android:name=".simple.PictureBrowseActivity"
+            android:theme="@style/PictureBrowseActivityTheme"/>
     </application>
 
 </manifest>

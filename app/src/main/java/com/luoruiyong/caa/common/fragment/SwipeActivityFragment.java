@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.ActivitySimpleData;
+import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.widget.ImageViewLayout;
 
 import java.util.List;
@@ -119,6 +120,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
             holder.mTopicTv.setTag(data);
             holder.mCollectTv.setTag(data);
             holder.mCommentTv.setTag(data);
+            holder.mImageViewLayout.setTag(data);
         }
 
         @Override
@@ -154,8 +156,9 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
         }
 
         @Override
-        public void onImageClick(int position) {
-            Toast.makeText(getContext(), "click image " + position, Toast.LENGTH_SHORT).show();
+        public void onImageClick(View parent, int position) {
+            ActivitySimpleData data = (ActivitySimpleData) parent.getTag();
+            PictureBrowseActivity.startAction(getContext(), data.getPictureList(), position);
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {

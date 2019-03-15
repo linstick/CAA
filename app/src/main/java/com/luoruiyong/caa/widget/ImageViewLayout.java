@@ -279,11 +279,11 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         if (mListener != null) {
-            mListener.onImageClick((Integer) v.getTag());
+            mListener.onImageClick(this, (Integer) v.getTag());
         }
     }
 
     public interface OnImageClickListener {
-        void onImageClick(int position);
+        void onImageClick(View parent, int position);
     }
 }
