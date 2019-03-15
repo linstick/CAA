@@ -46,10 +46,31 @@ public class ActivityFragment extends Fragment{
     private void initFragment() {
         mFragmentList = new ArrayList<>();
         mTitleTabList = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
-            mFragmentList.add(new TagFragment());
-            mTitleTabList.add("Tab " + (i + 1));
-        }
+
+        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_ALL));
+        mTitleTabList.add("All");
+
+        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_PREACH));
+        mTitleTabList.add("Preach");
+
+        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_VOLUNTEER));
+        mTitleTabList.add("Volunteer");
+
+        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_CLUB));
+        mTitleTabList.add("Club");
+
+        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_LECTURE));
+        mTitleTabList.add("Lecture");
+
+        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_SPORT));
+        mTitleTabList.add("Sport");
+
+        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_CAMPUS));
+        mTitleTabList.add("Campus");
+
+        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_OTHER));
+        mTitleTabList.add("Other");
+
         mAdapter = new ViewPagerAdapter(getChildFragmentManager(), mFragmentList, mTitleTabList);
         mViewPager.setAdapter(mAdapter);
         mTabLayout.setupWithViewPager(mViewPager);

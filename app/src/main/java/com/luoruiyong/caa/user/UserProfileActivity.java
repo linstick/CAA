@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
-import com.luoruiyong.caa.home.activity.ActivityFragment;
+import com.luoruiyong.caa.home.activity.SwipeActivityFragment;
 import com.luoruiyong.caa.home.discover.DiscoverFragment;
 import com.luoruiyong.caa.home.tag.TagFragment;
 import com.luoruiyong.caa.settings.SettingsActivity;
@@ -79,10 +79,10 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
 
     private void initFragment() {
         mFragmentList = new ArrayList<>();
-        mFragmentList.add(new ActivityFragment());
+        mFragmentList.add(SwipeActivityFragment.newInstance());
         mFragmentList.add(new TagFragment());
         mFragmentList.add(new DiscoverFragment());
-        mFragmentList.add(new ActivityFragment());
+        mFragmentList.add(SwipeActivityFragment.newInstance());
 
         mTabTitleList = new ArrayList<>();
         mTabTitleList.add("Notes");
