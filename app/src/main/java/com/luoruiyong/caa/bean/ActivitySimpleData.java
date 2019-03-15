@@ -1,5 +1,6 @@
 package com.luoruiyong.caa.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,6 +41,11 @@ public class ActivitySimpleData {
         topicId = 10000 + i;
         collectCount = (int) (Math.random() * 100);
         commentCount = (int) (Math.random() * 100);
+        pictureList = new ArrayList<>();
+        int pictureCount = (int) (Math.random() * 9);
+        for (int j = 0; j < pictureCount; j++) {
+            pictureList.add("https://www.baidu.com/" + (j + 1) + ".jpg");
+        }
     }
 
     public int getUid() {

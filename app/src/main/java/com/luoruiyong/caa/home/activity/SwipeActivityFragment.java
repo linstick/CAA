@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.ActivitySimpleData;
+import com.luoruiyong.caa.widget.ImageViewLayout;
 
 import java.util.List;
 
@@ -84,7 +85,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
         Toast.makeText(getContext(), "doLoadMore: type = " + mActivityType, Toast.LENGTH_SHORT).show();
     }
 
-    private class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> implements View.OnClickListener{
+    private class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> implements View.OnClickListener, ImageViewLayout.OnImageClickListener{
 
         private List<ActivitySimpleData> mList;
 
@@ -110,6 +111,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
             holder.mTopicTv.setOnClickListener(this);
             holder.mCollectTv.setOnClickListener(this);
             holder.mCommentTv.setOnClickListener(this);
+            holder.mImageViewLayout.setOnImageClickListener(this);
             holder.itemView.setTag(data);
             holder.mUserAvatarIv.setTag(data);
             holder.mNicknameTv.setTag(data);
@@ -151,6 +153,11 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
             }
         }
 
+        @Override
+        public void onImageClick(int position) {
+            Toast.makeText(getContext(), "click image " + position, Toast.LENGTH_SHORT).show();
+        }
+
         class ViewHolder extends RecyclerView.ViewHolder {
 
             private ImageView mUserAvatarIv;
@@ -163,6 +170,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
             private TextView mTopicTv;
             private TextView mCollectTv;
             private TextView mCommentTv;
+            private ImageViewLayout mImageViewLayout;
 
             public ViewHolder(View itemView) {
                 super(itemView);
@@ -176,6 +184,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
                 mTopicTv = itemView.findViewById(R.id.tv_topic);
                 mCollectTv = itemView.findViewById(R.id.tv_collect);
                 mCommentTv = itemView.findViewById(R.id.tv_comment);
+                mImageViewLayout = itemView.findViewById(R.id.image_view_layout);
             }
 
             public void bindData(ActivitySimpleData data) {
@@ -201,6 +210,8 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
 
                 mCollectTv.setText(data.getCollectCount() == 0 ? "Collect" : data.getCollectCount() + "");
                 mCommentTv.setText(data.getCommentCount() == 0 ? "Comment" : data.getCommentCount() + "");
+
+                mImageViewLayout.setPictureUrls(data.getPictureList());
             }
         }
     }
