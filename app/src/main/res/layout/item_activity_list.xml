@@ -75,9 +75,9 @@
         android:id="@+id/tv_activity_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="60dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginRight="60dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:ellipsize="end"
@@ -90,9 +90,9 @@
         android:id="@+id/tv_activity_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="18dp"
+        android:layout_marginEnd="60dp"
         android:layout_marginLeft="18dp"
-        android:layout_marginRight="18dp"
+        android:layout_marginRight="60dp"
         android:layout_marginStart="18dp"
         android:layout_marginTop="6dp"
         android:ellipsize="end"
@@ -105,11 +105,10 @@
         android:id="@+id/image_view_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="18dp"
         android:layout_marginStart="18dp"
-        android:layout_marginRight="18dp"
-        android:layout_marginEnd="18dp"/>
+        android:layout_marginRight="60dp"
+        android:layout_marginEnd="60dp"/>
 
     <TextView
         android:id="@+id/tv_location"
