@@ -8,8 +8,9 @@ public class Function {
     public final static int TYPE_WITH_NONE = 1;
     public final static int TYPE_ONLY_WITH_RIGHT_SIGN = 2;
     public final static int TYPE_ONLY_WITH_RIGHT_INFO = 3;
-    public final static int TYPE_WITH_RED_POINT_AND_RIGHT_SIGN = 4;
-    public final static int TYPE_WITH_LITTLE_RED_POINT_AND_RIGHT_SIGN = 5;
+    public final static int TYPE_ONLY_WITH_LITTLE_RED_POINT = 4;
+    public final static int TYPE_WITH_RED_POINT_AND_RIGHT_SIGN = 5;
+    public final static int TYPE_WITH_LITTLE_RED_POINT_AND_RIGHT_SIGN = 6;
 
     private int type;
     private String name;

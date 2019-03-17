@@ -4,35 +4,30 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
+import com.luoruiyong.caa.bean.Function;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.user.EditBasicInfoActivity;
 import com.luoruiyong.caa.user.ModifyPasswordActivity;
+import com.luoruiyong.caa.widget.UniversalFunctionContainer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Author: luoruiyong
  * Date: 2019/3/13/013
  **/
-public class SettingsActivity extends BaseActivity implements View.OnClickListener{
+public class SettingsActivity extends BaseActivity implements View.OnClickListener, UniversalFunctionContainer.OnFunctionClickListener{
 
-    private ImageView mBackIv;
-    private TextView mTitleTv;
+    private UniversalFunctionContainer mFunctionContainer;
+    private List<Function> mFunctionList;
 
-    private LinearLayout mEditProfileLayout;
-    private LinearLayout mModifyPassLayout;
-    private LinearLayout mFeedbackLayout;
-    private LinearLayout mClearCacheLayout;
-    private TextView mCacheSizeTv;
-    private TextView mAboutUsTv;
-    private TextView mCheckUpdateTv;
-    private TextView mLogoutTv;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,32 +38,29 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void initView() {
-        mBackIv = findViewById(R.id.iv_back);
-        mTitleTv = findViewById(R.id.tv_title);
-        mEditProfileLayout = findViewById(R.id.ll_edit_info_layout);
-        mModifyPassLayout = findViewById(R.id.ll_modify_pass_layout);
-        mFeedbackLayout = findViewById(R.id.ll_feedback_layout);
-        mClearCacheLayout = findViewById(R.id.ll_clear_cache_layout);
-        mCacheSizeTv = findViewById(R.id.tv_cache_size);
-        mAboutUsTv = findViewById(R.id.tv_about_us);
-        mCheckUpdateTv = findViewById(R.id.tv_check_for_update);
-        mLogoutTv = findViewById(R.id.tv_logout);
+        mFunctionContainer = findViewById(R.id.scroll_view_function_container);
+        findViewById(R.id.iv_back).setOnClickListener(this);
+        ((TextView)findViewById(R.id.tv_title)).setText(R.string.title_settings);
 
-        mTitleTv.setText(R.string.title_settings);
+        mFunctionList = new ArrayList<>();
+        mFunctionList.add(new Function(Function.TYPE_ONLY_WITH_RIGHT_SIGN, "Edit Profile"));
+        mFunctionList.add(new Function(Function.TYPE_ONLY_WITH_RIGHT_SIGN, "Modify Password"));
+        mFunctionList.add(new Function(Function.TYPE_ONLY_WITH_RIGHT_SIGN, "Feedback"));
+        mFunctionList.add(new Function(Function.TYPE_ONLY_WITH_RIGHT_INFO, "Clear Cache"));
+        mFunctionList.add(new Function("Check For Update"));
+        mFunctionList.add(new Function("About Us"));
+        mFunctionList.add(new Function("Logout"));
 
-        mBackIv.setOnClickListener(this);
-        mEditProfileLayout.setOnClickListener(this);
-        mModifyPassLayout.setOnClickListener(this);
-        mFeedbackLayout.setOnClickListener(this);
-        mClearCacheLayout.setOnClickListener(this);
-        mAboutUsTv.setOnClickListener(this);
-        mCheckUpdateTv.setOnClickListener(this);
-        mLogoutTv.setOnClickListener(this);
+        mFunctionContainer.setFunctionList(mFunctionList);
+        mFunctionContainer.setOnFunctionClickListener(this);
+
+        // for test
+        mFunctionContainer.showRightInfo(3, "6.3M");
     }
 
-    private void doClearCache() {
+    private void doClearCache(int position) {
         // do clear
-        mCacheSizeTv.setText("");
+        mFunctionContainer.hideRightInfo(position);
         Toast.makeText(this, R.string.settings_tip_clear_success, Toast.LENGTH_SHORT).show();
     }
 
@@ -91,29 +83,37 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
             case R.id.iv_back:
                 finish();
                 break;
-            case R.id.ll_edit_info_layout:
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onFunctionClick(int position) {
+        switch (position) {
+            case 0:
                 startActivity(new Intent(this, EditBasicInfoActivity.class));
                 break;
-            case R.id.ll_modify_pass_layout:
+            case 1:
                 startActivity(new Intent(this, ModifyPasswordActivity.class));
                 break;
-            case R.id.ll_feedback_layout:
+            case 2:
                 startActivity(new Intent(this, FeedbackActivity.class));
                 break;
-            case R.id.ll_clear_cache_layout:
-                doClearCache();
+            case 3:
+                doClearCache(position);
                 break;
-            case R.id.tv_about_us:
+            case 4:
                 DialogHelper.showConfirmDialog(
                         this,
                         getString(R.string.settings_str_about_us),
                         getString(R.string.settings_tip_about_us_info),
                         getString(R.string.common_str_ok));
                 break;
-            case R.id.tv_check_for_update:
+            case 5:
                 doCheckForUpdate();
                 break;
-            case R.id.tv_logout:
+            case 6:
                 doLogout();
                 break;
             default:

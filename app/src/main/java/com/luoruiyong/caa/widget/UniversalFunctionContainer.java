@@ -90,6 +90,7 @@ public class UniversalFunctionContainer extends ScrollView implements View.OnCli
                     holder.mRightSignIv.setVisibility(VISIBLE);
                     break;
                 case Function.TYPE_ONLY_WITH_RIGHT_INFO:
+                case Function.TYPE_ONLY_WITH_LITTLE_RED_POINT:
                 case Function.TYPE_WITH_NONE:
                 default:
                     break;
