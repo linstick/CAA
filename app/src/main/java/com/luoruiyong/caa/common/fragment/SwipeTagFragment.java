@@ -1,5 +1,6 @@
 package com.luoruiyong.caa.common.fragment;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.TagSimpleData;
+import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.utils.DisplayUtils;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
@@ -106,7 +108,8 @@ public class SwipeTagFragment extends BaseSwipeFragment<TagSimpleData> {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.ll_item_layout:
-                    Toast.makeText(getContext(), "item layout click", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "item layout click", Toast.LENGTH_SHORT).show();
+                    getContext().startActivity(new Intent(getContext(), TopicActivity.class));
                     break;
                 case R.id.iv_more:
                     Toast.makeText(getContext(), "more click", Toast.LENGTH_SHORT).show();

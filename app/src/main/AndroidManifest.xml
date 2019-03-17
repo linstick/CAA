@@ -28,7 +28,9 @@
         <activity android:name=".user.UserProfileActivity"/>
         <activity android:name=".edit.EditorActivity"/>
         <activity android:name=".simple.PictureBrowseActivity"
-            android:theme="@style/PictureBrowseActivityTheme"/>
+            android:theme="@style/TransparentBarTheme"/>
+        <activity android:name=".topic.TopicActivity"
+            android:theme="@style/TransparentBarTheme"/>
     </application>
 
 </manifest>

@@ -19,8 +19,6 @@ import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.fragment.SwipeActivityFragment;
 import com.luoruiyong.caa.common.fragment.SwipeDiscoverFragment;
 import com.luoruiyong.caa.common.fragment.SwipeTagFragment;
-import com.luoruiyong.caa.home.discover.DiscoverFragment;
-import com.luoruiyong.caa.home.tag.TagFragment;
 import com.luoruiyong.caa.simple.SettingsActivity;
 
 import java.util.ArrayList;

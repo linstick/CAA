@@ -20,9 +20,7 @@ import com.luoruiyong.caa.common.fragment.SwipeTagFragment;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.edit.EditorActivity;
 import com.luoruiyong.caa.home.activity.ActivityFragment;
-import com.luoruiyong.caa.home.discover.DiscoverFragment;
 import com.luoruiyong.caa.home.message.MessageFragment;
-import com.luoruiyong.caa.home.tag.TagFragment;
 import com.luoruiyong.caa.login.LoginActivity;
 import com.luoruiyong.caa.search.SearchActivity;
 import com.luoruiyong.caa.user.UserProfileActivity;
@@ -138,7 +136,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
                 title = getString(R.string.title_activity);
                 break;
             case TAG_TAB_INDEX:
-                title = getString(R.string.title_tag);
+                title = getString(R.string.title_topic);
                 break;
             case DISCOVER_TAB_INDEX:
                 title = getString(R.string.title_discover);

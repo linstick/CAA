@@ -8,8 +8,10 @@
     <color name="colorAccent">#ff00beb4</color>
     <color name="colorDDDDDD">#DDDDDD</color>
     <color name="colorEEEEEE">#EEEEEE</color>
+    <color name="color888888">#888888</color>
     <color name="colorF6F6F6">#F6F6F6</color>
     <color name="colorTopic">#d9e25c</color>
     <color name="colorRedPoint">#ec4a4a</color>
+    <color name="white">#FFFFFF</color>
 
 </resources>

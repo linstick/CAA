@@ -37,7 +37,7 @@ public class ResourcesUtils {
         return getResources().getDisplayMetrics();
     }
 
-    private static Resources getResources() {
+    public static Resources getResources() {
         return MyApplication.getAppContext().getResources();
     }
 }

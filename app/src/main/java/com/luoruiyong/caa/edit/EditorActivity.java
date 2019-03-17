@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -63,7 +62,7 @@ public class EditorActivity extends BaseActivity implements View.OnClickListener
                 break;
             case TAB_CREATE_TAG:
                 fm = new CreateTagFragment();
-                titleResId = R.string.title_create_tag;
+                titleResId = R.string.title_create_topic;
                 break;
             case TAB_CREATE_ACTIVITY:
             default:

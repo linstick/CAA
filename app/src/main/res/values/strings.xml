@@ -12,7 +12,7 @@
 
     <!--工具栏标题文案-->
     <string name="title_activity">Activities</string>
-    <string name="title_tag">Tags</string>
+    <string name="title_topic">Topics</string>
     <string name="title_discover">Discovers</string>
     <string name="title_message">Messages</string>
     <string name="title_login">Login</string>
@@ -25,8 +25,9 @@
     <string name="title_mine">Mine</string>
     <string name="title_user_profile">User Profile</string>
     <string name="title_create_activity">Create Activity</string>
-    <string name="title_create_tag">Create Tag</string>
+    <string name="title_create_topic">Create Topic</string>
     <string name="title_create_discover">Create Discover</string>
+    <string name="title_topic_detail">Topic Detail</string>
 
     <!--侧边栏文案-->
     <string name="menu_str_my_notes">My Notes</string>
