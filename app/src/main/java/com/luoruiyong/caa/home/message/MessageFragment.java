@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.bean.Function;
 import com.luoruiyong.caa.widget.UniversalFunctionContainer;
 
 import java.util.ArrayList;
@@ -18,8 +19,7 @@ import java.util.List;
 public class MessageFragment extends Fragment implements UniversalFunctionContainer.OnFunctionClickListener{
 
     private UniversalFunctionContainer mFunctionContainer;
-    private List<String> mFunctionList;
-    private List<Integer> mRedPointCountList;
+    private List<Function> mFunctionList;
 
     @Nullable
     @Override
@@ -31,19 +31,20 @@ public class MessageFragment extends Fragment implements UniversalFunctionContai
 
     private void initView() {
         mFunctionList = new ArrayList<>();
-        mFunctionList.add("Reply Activity");
-        mFunctionList.add("Reply Discover");
-        mFunctionList.add("Join Topic");
-        mFunctionList.add("Collect Activity");
-        mFunctionList.add("Like Discover");
+        mFunctionList.add(new Function(Function.TYPE_WITH_RED_POINT_AND_RIGHT_SIGN, "Reply Activity"));
+        mFunctionList.add(new Function(Function.TYPE_WITH_RED_POINT_AND_RIGHT_SIGN, "Reply Discover"));
+        mFunctionList.add(new Function(Function.TYPE_WITH_RED_POINT_AND_RIGHT_SIGN, "Join Topic"));
+        mFunctionList.add(new Function(Function.TYPE_WITH_RED_POINT_AND_RIGHT_SIGN, "Collect Activity"));
+        mFunctionList.add(new Function(Function.TYPE_WITH_RED_POINT_AND_RIGHT_SIGN, "Like Discover"));
 
-        mRedPointCountList = new ArrayList<>();
-        mRedPointCountList.add(0);
-        mRedPointCountList.add(1);
-        mRedPointCountList.add(9);
-        mRedPointCountList.add(99);
-        mRedPointCountList.add(999);
-        mFunctionContainer.setFunctionList(mFunctionList, mRedPointCountList);
+        List<Integer> list = new ArrayList<>();
+        int count = 0;
+        for (int i = 0; i < mFunctionList.size(); i++) {
+            list.add(count);
+            count = count * 10 + 9;
+        }
+        mFunctionContainer.setFunctionList(mFunctionList);
+        mFunctionContainer.showRedPoints(list);
         mFunctionContainer.setOnFunctionClickListener(this);
     }
 
@@ -68,6 +69,6 @@ public class MessageFragment extends Fragment implements UniversalFunctionContai
             default:
                 break;
         }
-        mFunctionContainer.updateRedPoint(position, -1);
+        mFunctionContainer.showRedPoint(position, -1);
     }
 }
