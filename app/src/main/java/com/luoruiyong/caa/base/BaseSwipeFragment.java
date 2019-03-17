@@ -1,6 +1,8 @@
 package com.luoruiyong.caa.base;
 
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.utils.DisplayUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +27,12 @@ import java.util.List;
 public abstract class BaseSwipeFragment<Item> extends Fragment {
 
     private final int DEFAULT_LOAD_MORE_THRESHOLD = 5;
+    protected final int DEFAULT_ITEM_MARGIN_PX = DisplayUtils.dp2px(10);
 
-    private TextView mTopTipTv;
-    private SwipeRefreshLayout mRefreshLayout;
-    private RecyclerView mRecyclerView;
+    protected View mRootView;
+    protected TextView mTopTipTv;
+    protected SwipeRefreshLayout mRefreshLayout;
+    protected RecyclerView mRecyclerView;
 
     protected List<Item> mList;
     protected RecyclerView.Adapter mAdapter;
@@ -50,11 +55,11 @@ public abstract class BaseSwipeFragment<Item> extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = LayoutInflater.from(container.getContext()).inflate(R.layout.base_fragment_swipe_activity, container, false);
+        mRootView = LayoutInflater.from(container.getContext()).inflate(R.layout.base_fragment_swipe_activity, container, false);
 
-        initView(view);
+        initView(mRootView);
 
-        return view;
+        return mRootView;
     }
 
     private void initView(View rootView) {

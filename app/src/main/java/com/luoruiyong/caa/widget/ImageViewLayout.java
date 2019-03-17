@@ -22,10 +22,12 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener{
 
     private final int CHILD_MARGIN_PX = DisplayUtils.dp2px(2);
     private final int DEFAULT_PARENT_PADDING_TOP_PX = DisplayUtils.dp2px(8);
+    private final int DEFAULT_PARENT_PADDING_BOTTOM_PX = DisplayUtils.dp2px(4);
     private final int DEFAULT_MAX_CHILD_COUNT = 5;
 
     private int mMaxCount = DEFAULT_MAX_CHILD_COUNT;
     private int mParentPaddingTop = DEFAULT_PARENT_PADDING_TOP_PX;
+    private int mParentPaddingBottom = DEFAULT_PARENT_PADDING_BOTTOM_PX;
     private List<String> mUrls;
     private OnImageClickListener mListener;
 
@@ -93,7 +95,7 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener{
         applyLayoutParams(getChildAt(3), thirdWidth, thirdHeight);
         applyLayoutParams(getChildAt(4), secondWidth, thirdHeight);
 
-        return mParentPaddingTop + firstHeight + thirdHeight + CHILD_MARGIN_PX;
+        return mParentPaddingTop + mParentPaddingBottom + firstHeight + thirdHeight + CHILD_MARGIN_PX;
     }
 
     private int measureChildWith4(int widgetWidth) {
@@ -107,7 +109,7 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener{
         applyLayoutParams(getChildAt(2), secondWidth, height);
         applyLayoutParams(getChildAt(3), firstWidth, height);
 
-        return mParentPaddingTop + height * 2 + CHILD_MARGIN_PX;
+        return mParentPaddingTop + mParentPaddingBottom + height * 2 + CHILD_MARGIN_PX;
     }
 
     private int measureChildWith3(int widgetWidth) {
@@ -119,7 +121,7 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener{
         applyLayoutParams(getChildAt(0), firstWidth, firstHeight);
         applyLayoutParams(getChildAt(1), otherWidth, otherHeight);
         applyLayoutParams(getChildAt(2), otherWidth, otherHeight);
-        return mParentPaddingTop + firstHeight;
+        return mParentPaddingTop + mParentPaddingBottom + firstHeight;
     }
 
     private int measureChildWith2(int widgetWidth) {
@@ -130,14 +132,14 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener{
 
         applyLayoutParams(getChildAt(0), firstWidth, height);
         applyLayoutParams(getChildAt(1), secondWidth, height);
-        return mParentPaddingTop + height;
+        return mParentPaddingTop + mParentPaddingBottom + height;
     }
 
     private int measureChildWith1(int widgetWidth) {
         int width = widgetWidth / 7 * 3;
         int height = width / 8 * 5;
         applyLayoutParams(getChildAt(0), width, height);
-        return mParentPaddingTop + height;
+        return mParentPaddingTop + mParentPaddingBottom + height;
     }
 
     private void applyLayoutParams(View view, int width, int height) {

@@ -15,6 +15,8 @@ import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
+import com.luoruiyong.caa.common.fragment.SwipeDiscoverFragment;
+import com.luoruiyong.caa.common.fragment.SwipeTagFragment;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.edit.EditorActivity;
 import com.luoruiyong.caa.home.activity.ActivityFragment;
@@ -89,8 +91,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
     private void initFragment() {
         mFragmentList = new ArrayList<>();
         mFragmentList.add(new ActivityFragment());
-        mFragmentList.add(new TagFragment());
-        mFragmentList.add(new DiscoverFragment());
+        mFragmentList.add(new SwipeTagFragment());
+        mFragmentList.add(new SwipeDiscoverFragment());
         mFragmentList.add(new MessageFragment());
 
         mBottomTabList = new ArrayList<>();
