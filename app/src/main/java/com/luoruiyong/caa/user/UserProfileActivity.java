@@ -17,6 +17,8 @@ import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.fragment.SwipeActivityFragment;
+import com.luoruiyong.caa.common.fragment.SwipeDiscoverFragment;
+import com.luoruiyong.caa.common.fragment.SwipeTagFragment;
 import com.luoruiyong.caa.home.discover.DiscoverFragment;
 import com.luoruiyong.caa.home.tag.TagFragment;
 import com.luoruiyong.caa.simple.SettingsActivity;
@@ -82,8 +84,8 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
     private void initFragment() {
         mFragmentList = new ArrayList<>();
         mFragmentList.add(SwipeActivityFragment.newInstance());
-        mFragmentList.add(new TagFragment());
-        mFragmentList.add(new DiscoverFragment());
+        mFragmentList.add(new SwipeTagFragment());
+        mFragmentList.add(new SwipeDiscoverFragment());
         mFragmentList.add(SwipeActivityFragment.newInstance());
 
         mTabTitleList = new ArrayList<>();

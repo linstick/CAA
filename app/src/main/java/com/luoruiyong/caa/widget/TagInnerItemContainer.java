@@ -43,9 +43,9 @@ public class TagInnerItemContainer extends LinearLayout implements View.OnClickL
     }
 
     public void setItems(List<String> list) {
+        removeAllViews();
         this.mItems = list;
         if (ListUtils.isEmpty(mItems)) {
-            removeAllViews();
             return;
         }
         int count = Math.min(list.size(), mMaxChildrenCount);

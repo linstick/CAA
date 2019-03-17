@@ -90,9 +90,11 @@ public class SwipeTagFragment extends BaseSwipeFragment<TagSimpleData> {
             holder.bindData(data);
 
             holder.itemView.setOnClickListener(this);
+            holder.mMoreIv.setOnClickListener(this);
             holder.mInnerContainerLayout.setOnItemClickListener(this);
             holder.itemView.setTag(data);
             holder.mInnerContainerLayout.setTag(data);
+            holder.mMoreIv.setTag(data);
         }
 
         @Override
@@ -105,6 +107,9 @@ public class SwipeTagFragment extends BaseSwipeFragment<TagSimpleData> {
             switch (v.getId()) {
                 case R.id.ll_item_layout:
                     Toast.makeText(getContext(), "item layout click", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.iv_more:
+                    Toast.makeText(getContext(), "more click", Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     break;
@@ -123,6 +128,8 @@ public class SwipeTagFragment extends BaseSwipeFragment<TagSimpleData> {
             private TextView mTagNameTv;
             private TextView mVisitedCountTv;
             private TextView mJoinedCountTv;
+            private ImageView mMoreIv;
+            private View mHeaderDividerView;
             private TagInnerItemContainer mInnerContainerLayout;
 
             public ViewHolder(View itemView) {
@@ -131,6 +138,8 @@ public class SwipeTagFragment extends BaseSwipeFragment<TagSimpleData> {
                 mTagNameTv = itemView.findViewById(R.id.tv_tag_name);
                 mVisitedCountTv = itemView.findViewById(R.id.tv_visit_count);
                 mJoinedCountTv = itemView.findViewById(R.id.tv_join_count);
+                mMoreIv = itemView.findViewById(R.id.iv_more);
+                mHeaderDividerView = itemView.findViewById(R.id.view_header_divider);
                 mInnerContainerLayout = itemView.findViewById(R.id.inner_container_layout);
             }
 
@@ -139,6 +148,7 @@ public class SwipeTagFragment extends BaseSwipeFragment<TagSimpleData> {
                 mTagNameTv.setText(data.getName());
                 mVisitedCountTv.setText(data.getVisitedCount() + "");
                 mJoinedCountTv.setText(data.getJoinCount() + "");
+                mHeaderDividerView.setVisibility(ListUtils.isEmpty(data.getDiscoverList()) ? View.GONE : View.VISIBLE);
                 mInnerContainerLayout.setItems(data.getDiscoverList());
             }
         }

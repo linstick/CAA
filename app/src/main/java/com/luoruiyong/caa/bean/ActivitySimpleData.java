@@ -37,7 +37,7 @@ public class ActivitySimpleData {
         title = "This is the title of activity " + i;
         content = "This is the content of activity, long long long long long long long long long sentence!!! " + i;
         location = Math.random() > 0.5 ? "Guangdong·Guangzhou " + i : null;
-        topic = Math.random() > 0.5 ? "Topic " + i : null;
+        topic = Math.random() > 0.5 ? "#Topic" + i + "#" : null;
         topicId = 10000 + i;
         collectCount = (int) (Math.random() * 100);
         commentCount = (int) (Math.random() * 100);
