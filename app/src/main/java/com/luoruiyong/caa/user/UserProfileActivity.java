@@ -37,9 +37,9 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
     private ImageView mUserAvatarIv;
     private TextView mUserIdTv;
     private TextView mNicknameTv;
-    private TextView mAgeTv;
-    private TextView mGenderTv;
-    private TextView mCollegeTv;
+    private ImageView mEditIv;
+    private TextView mBaseInfoTv;
+    private TextView mCollegeInfoTv;
 
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
@@ -66,9 +66,9 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
         mUserAvatarIv = findViewById(R.id.iv_user_avatar);
         mUserIdTv = findViewById(R.id.tv_id);
         mNicknameTv = findViewById(R.id.tv_nickname);
-        mAgeTv = findViewById(R.id.tv_age);
-        mGenderTv = findViewById(R.id.tv_gender);
-        mCollegeTv = findViewById(R.id.tv_college);
+        mEditIv = findViewById(R.id.iv_edit_profile);
+        mBaseInfoTv = findViewById(R.id.tv_basic_info);
+        mCollegeInfoTv = findViewById(R.id.tv_college_info);
         mTabLayout = findViewById(R.id.tab_layout);
         mViewPager = findViewById(R.id.view_pager);
 

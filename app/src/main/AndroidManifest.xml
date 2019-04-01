@@ -31,6 +31,7 @@
             android:theme="@style/TransparentBarTheme"/>
         <activity android:name=".topic.TopicActivity"
             android:theme="@style/TransparentBarTheme"/>
+        <activity android:name=".detail.DetailActivity"/>
     </application>
 
 </manifest>

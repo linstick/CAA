@@ -43,7 +43,6 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
         ((TextView)findViewById(R.id.tv_title)).setText(R.string.title_settings);
 
         mFunctionList = new ArrayList<>();
-        mFunctionList.add(new Function(Function.TYPE_ONLY_WITH_RIGHT_SIGN, "Edit Profile"));
         mFunctionList.add(new Function(Function.TYPE_ONLY_WITH_RIGHT_SIGN, "Modify Password"));
         mFunctionList.add(new Function(Function.TYPE_ONLY_WITH_RIGHT_SIGN, "Feedback"));
         mFunctionList.add(new Function(Function.TYPE_ONLY_WITH_RIGHT_INFO, "Clear Cache"));
@@ -55,7 +54,7 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
         mFunctionContainer.setOnFunctionClickListener(this);
 
         // for test
-        mFunctionContainer.showRightInfo(3, "6.3M");
+        mFunctionContainer.showRightInfo(2, "6.3M");
     }
 
     private void doClearCache(int position) {
@@ -92,28 +91,25 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
     public void onFunctionClick(int position) {
         switch (position) {
             case 0:
-                startActivity(new Intent(this, EditBasicInfoActivity.class));
-                break;
-            case 1:
                 startActivity(new Intent(this, ModifyPasswordActivity.class));
                 break;
-            case 2:
+            case 1:
                 startActivity(new Intent(this, FeedbackActivity.class));
                 break;
-            case 3:
+            case 2:
                 doClearCache(position);
                 break;
-            case 4:
+            case 3:
                 DialogHelper.showConfirmDialog(
                         this,
                         getString(R.string.settings_str_about_us),
                         getString(R.string.settings_tip_about_us_info),
                         getString(R.string.common_str_ok));
                 break;
-            case 5:
+            case 4:
                 doCheckForUpdate();
                 break;
-            case 6:
+            case 5:
                 doLogout();
                 break;
             default:

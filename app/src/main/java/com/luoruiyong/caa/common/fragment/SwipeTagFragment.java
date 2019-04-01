@@ -122,7 +122,8 @@ public class SwipeTagFragment extends BaseSwipeFragment<TagSimpleData> {
         @Override
         public void onItemClick(View view, int position) {
             TagSimpleData data = (TagSimpleData) view.getTag();
-            Toast.makeText(getContext(), "inner item click " + position, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), "inner item click " + position, Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(getContext(), TopicActivity.class));
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {

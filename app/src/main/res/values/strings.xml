@@ -28,6 +28,7 @@
     <string name="title_create_topic">Create Topic</string>
     <string name="title_create_discover">Create Discover</string>
     <string name="title_topic_detail">Topic Detail</string>
+    <string name="title_activity_detail">Activity Detail</string>
 
     <!--侧边栏文案-->
     <string name="menu_str_my_notes">My Notes</string>
