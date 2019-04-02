@@ -60,7 +60,7 @@
                             android:layout_marginTop="6dp"
                             android:layout_toEndOf="@+id/iv_user_avatar"
                             android:layout_toRightOf="@+id/iv_user_avatar"
-                            android:text="ID:"
+                            android:text="@string/profile_str_id"
                             android:textColor="#666666"
                             android:textSize="16sp" />
 
@@ -87,7 +87,7 @@
                             android:layout_marginStart="16dp"
                             android:layout_toEndOf="@+id/iv_user_avatar"
                             android:layout_toRightOf="@+id/iv_user_avatar"
-                            android:text="Nickname:"
+                            android:text="@string/profile_str_nickname"
                             android:textColor="#666666"
                             android:textSize="16sp" />
 
@@ -199,7 +199,7 @@
                                 android:layout_height="wrap_content"
                                 android:textColor="#777777"
                                 android:textSize="14sp"
-                                android:text="Basic info"/>
+                                android:text="@string/profile_str_basic_info"/>
 
                             <TextView
                                 android:id="@+id/tv_basic_info"
@@ -239,7 +239,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="#777777"
                             android:textSize="14sp"
-                            android:text="College info"/>
+                            android:text="@string/profile_str_college_info"/>
 
                         <TextView
                             android:id="@+id/tv_college_info"

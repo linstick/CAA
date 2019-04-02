@@ -2,6 +2,7 @@ package com.luoruiyong.caa.utils;
 
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.ArrayRes;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
@@ -19,6 +20,10 @@ public class ResourcesUtils {
 
     public static String getString(@StringRes int resId) {
         return getResources().getString(resId);
+    }
+
+    public static String[] getStringArray(@ArrayRes int resId) {
+        return getResources().getStringArray(resId);
     }
 
     public static int getColor(@ColorRes int resId) {

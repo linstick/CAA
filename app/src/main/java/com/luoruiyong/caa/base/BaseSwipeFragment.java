@@ -13,9 +13,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.common.dialog.CommonDialog;
+import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.DisplayUtils;
+import com.luoruiyong.caa.utils.ListUtils;
+import com.luoruiyong.caa.utils.ResourcesUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +50,8 @@ public abstract class BaseSwipeFragment<Item> extends Fragment {
     private boolean mIsLoadingMore = false;
     private boolean mHasMore = true;
     private int mLoadMoreThreshold = DEFAULT_LOAD_MORE_THRESHOLD;
+
+    private List<String> mItemMoreStringArray;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -138,6 +146,43 @@ public abstract class BaseSwipeFragment<Item> extends Fragment {
 
     protected void onLoadMoreResult() {
         mIsLoadingMore = false;
+    }
+
+    protected void showMoreOperateDialog(final int itemPosition, long uid) {
+        if (mItemMoreStringArray == null) {
+            mItemMoreStringArray = Enviroment.getItemMoreNewStringArray();
+        }
+        List<String> items = new ArrayList<>();
+        if (Enviroment.isSelf(uid)) {
+            items.addAll(mItemMoreStringArray);
+            items.add(ResourcesUtils.getString(R.string.common_str_delete));
+        } else {
+            items = mItemMoreStringArray;
+        }
+        DialogHelper.showListDialog(getContext(), items, new CommonDialog.Builder.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                onMoreItemClick(itemPosition, position);
+            }
+        });
+    }
+
+    protected void onMoreItemClick(int itemPosition, int moreItemPosition) {
+        switch (moreItemPosition) {
+            case 0:
+                // 举报
+                Toast.makeText(getContext(), getString(R.string.common_str_impeach), Toast.LENGTH_SHORT).show();
+                break;
+            case 1:
+                if (!ListUtils.isIndexBetween(mList, itemPosition)) {
+                    return;
+                }
+                mList.remove(itemPosition);
+                mAdapter.notifyDataSetChanged();
+                break;
+            default:
+                break;
+        }
     }
 
     protected abstract void initListAdapter(List<Item> list);

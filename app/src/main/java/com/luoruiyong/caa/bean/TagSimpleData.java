@@ -8,15 +8,17 @@ import java.util.List;
  * Date: 2019/3/17/017
  **/
 public class TagSimpleData {
-    int id;
-    String name;
-    String coverUrl;
-    int visitCount;
-    int joinCount;
+    private long uid;
+    private int id;
+    private String name;
+    private String coverUrl;
+    private int visitCount;
+    private int joinCount;
 
-    List<String> discoverList;
+    private List<String> discoverList;
 
     public TagSimpleData(int i) {
+        uid = 1000 + i;
         id = 1000 + i;
         name = "#Topic" + (i + 1) + "#";
         coverUrl = "https:www.baidu.com/1.jpg";
@@ -31,6 +33,18 @@ public class TagSimpleData {
     }
 
     public TagSimpleData() {
+    }
+
+    public long getUid() {
+        return uid;
+    }
+
+    public void setUid(long uid) {
+        this.uid = uid;
+    }
+
+    public int getVisitCount() {
+        return visitCount;
     }
 
     public int getId() {

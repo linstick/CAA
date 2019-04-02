@@ -6,6 +6,7 @@ import android.text.InputType;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -73,6 +74,10 @@ public class DialogHelper {
 
     public static void showListDialog(Context context, List<String> items, CommonDialog.Builder.OnItemClickListener mItemListener) {
         showListDialog(context, null, items, mItemListener);
+    }
+
+    public static void showListDialog(Context context, String[] items, CommonDialog.Builder.OnItemClickListener mItemListener) {
+        showListDialog(context, null, Arrays.asList(items), mItemListener);
     }
 
     public static void showListDialog(Context context, String title, List<String> items, CommonDialog.Builder.OnItemClickListener mItemListener) {

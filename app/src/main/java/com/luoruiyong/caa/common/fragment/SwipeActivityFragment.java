@@ -14,17 +14,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.ActivitySimpleData;
-import com.luoruiyong.caa.bean.User;
+import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.detail.DetailActivity;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.user.UserProfileActivity;
+import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.ListUtils;
+import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.ImageViewLayout;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -64,7 +69,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
         handleArguments();
 
         // for test
-        for (int i = 1; i <= 30; i++) {
+        for (int i = 0; i < 30; i++) {
             if (mActivityType == TYPE_ALL) {
                 mList.add(new ActivitySimpleData(i, (int)(Math.random() * 6 + 1)));
             } else {
@@ -139,15 +144,15 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
             holder.mCommentTv.setOnClickListener(this);
             holder.mMoreIv.setOnClickListener(this);
             holder.mImageViewLayout.setOnImageClickListener(this);
-            holder.itemView.setTag(data);
-            holder.mUserAvatarIv.setTag(data);
-            holder.mNicknameTv.setTag(data);
-            holder.mActivityTypeTv.setTag(data);
-            holder.mTopicTv.setTag(data);
-            holder.mCollectTv.setTag(data);
-            holder.mCommentTv.setTag(data);
-            holder.mMoreIv.setTag(data);
-            holder.mImageViewLayout.setTag(data);
+            holder.itemView.setTag(position);
+            holder.mUserAvatarIv.setTag(position);
+            holder.mNicknameTv.setTag(position);
+            holder.mActivityTypeTv.setTag(position);
+            holder.mTopicTv.setTag(position);
+            holder.mCollectTv.setTag(position);
+            holder.mCommentTv.setTag(position);
+            holder.mMoreIv.setTag(position);
+            holder.mImageViewLayout.setTag(position);
         }
 
         @Override
@@ -157,6 +162,8 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
 
         @Override
         public void onClick(View v) {
+            int position = (int) v.getTag();
+            ActivitySimpleData data = mList.get(position);
             switch (v.getId()) {
                 case R.id.ll_item_layout:
 //                    Toast.makeText(getContext(), "click item layout", Toast.LENGTH_SHORT).show();
@@ -181,7 +188,8 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
                     Toast.makeText(getContext(), "click comment", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.tv_more:
-                    Toast.makeText(getContext(), "click more", Toast.LENGTH_SHORT).show();
+                    showMoreOperateDialog(position, data.getUid());
+//                    Toast.makeText(getContext(), "click more", Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     break;

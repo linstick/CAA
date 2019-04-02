@@ -31,13 +31,13 @@ public class ActivitySimpleData {
         // for test
         uid = 1000 + i;
         avatarUrl = "https://www.baidu.com/1.jpg";
-        nickname = "nickname " + i;
+        nickname = "昵称" + i;
         publishTime = System.currentTimeMillis();
         this.type = type;
         title = "This is the title of activity " + i;
         content = "This is the content of activity, long long long long long long long long long sentence!!! " + i;
-        location = Math.random() > 0.5 ? "Guangdong·Guangzhou " + i : null;
-        topic = Math.random() > 0.5 ? "#Topic" + i + "#" : null;
+        location = Math.random() > 0.5 ? "广东·广州" + i : null;
+        topic = Math.random() > 0.5 ? "#话题" + i + "#" : null;
         topicId = 10000 + i;
         collectCount = (int) (Math.random() * 100);
         commentCount = (int) (Math.random() * 100);

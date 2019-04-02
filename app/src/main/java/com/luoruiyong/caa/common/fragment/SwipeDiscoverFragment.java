@@ -107,13 +107,13 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
             holder.mLikeTv.setOnClickListener(this);
             holder.mCommentTv.setOnClickListener(this);
             holder.mImageViewLayout.setOnImageClickListener(this);
-            holder.mUserAvatarIv.setTag(data);
-            holder.mNicknameTv.setTag(data);
-            holder.mMoreIv.setTag(data);
-            holder.mTopicTv.setTag(data);
-            holder.mLikeTv.setTag(data);
-            holder.mCommentTv.setTag(data);
-            holder.mImageViewLayout.setTag(data);
+            holder.mUserAvatarIv.setTag(position);
+            holder.mNicknameTv.setTag(position);
+            holder.mMoreIv.setTag(position);
+            holder.mTopicTv.setTag(position);
+            holder.mLikeTv.setTag(position);
+            holder.mCommentTv.setTag(position);
+            holder.mImageViewLayout.setTag(position);
         }
 
         @Override
@@ -123,6 +123,8 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
 
         @Override
         public void onClick(View v) {
+            int position = (int) v.getTag();
+            DiscoverData data = mList.get(position);
             switch (v.getId()) {
                 case R.id.iv_user_avatar:
                 case R.id.tv_nickname:
@@ -130,7 +132,8 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
 //                    Toast.makeText(getContext(), "click user info", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.iv_more:
-                    Toast.makeText(getContext(), "click more", Toast.LENGTH_SHORT).show();
+                    showMoreOperateDialog(position, data.getUid());
+//                    Toast.makeText(getContext(), "click more", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.tv_topic:
                     startActivity(new Intent(getContext(), TopicActivity.class));

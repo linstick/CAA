@@ -94,9 +94,9 @@ public class SwipeTagFragment extends BaseSwipeFragment<TagSimpleData> {
             holder.itemView.setOnClickListener(this);
             holder.mMoreIv.setOnClickListener(this);
             holder.mInnerContainerLayout.setOnItemClickListener(this);
-            holder.itemView.setTag(data);
-            holder.mInnerContainerLayout.setTag(data);
-            holder.mMoreIv.setTag(data);
+            holder.itemView.setTag(position);
+            holder.mInnerContainerLayout.setTag(position);
+            holder.mMoreIv.setTag(position);
         }
 
         @Override
@@ -106,13 +106,16 @@ public class SwipeTagFragment extends BaseSwipeFragment<TagSimpleData> {
 
         @Override
         public void onClick(View v) {
+            int position = (int) v.getTag();
+            TagSimpleData data = mList.get(position);
             switch (v.getId()) {
                 case R.id.ll_item_layout:
 //                    Toast.makeText(getContext(), "item layout click", Toast.LENGTH_SHORT).show();
                     getContext().startActivity(new Intent(getContext(), TopicActivity.class));
                     break;
                 case R.id.iv_more:
-                    Toast.makeText(getContext(), "more click", Toast.LENGTH_SHORT).show();
+                    showMoreOperateDialog(position, data.getUid());
+//                    Toast.makeText(getContext(), "more click", Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     break;

@@ -77,6 +77,7 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
 
         mBackIv.setOnClickListener(this);
         mSettingsIv.setOnClickListener(this);
+        mEditIv.setOnClickListener(this);
     }
 
     private void initFragment() {
@@ -87,10 +88,10 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
         mFragmentList.add(SwipeActivityFragment.newInstance());
 
         mTabTitleList = new ArrayList<>();
-        mTabTitleList.add("Notes");
-        mTabTitleList.add("Tags");
-        mTabTitleList.add("Discovers");
-        mTabTitleList.add("Collects");
+        mTabTitleList.add(getString(R.string.title_activity));
+        mTabTitleList.add(getString(R.string.title_topic));
+        mTabTitleList.add(getString(R.string.title_discover));
+        mTabTitleList.add(getString(R.string.title_collect));
 
         mTabLayout.setupWithViewPager(mViewPager);
         mAdapter = new ViewPagerAdapter(getSupportFragmentManager(), mFragmentList, mTabTitleList);
@@ -106,6 +107,9 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
                 break;
             case R.id.iv_right_operate:
                 startActivity(new Intent(this, SettingsActivity.class));
+                break;
+            case R.id.iv_edit_profile:
+                startActivity(new Intent(this, EditBasicInfoActivity.class));
                 break;
             default:
                 break;

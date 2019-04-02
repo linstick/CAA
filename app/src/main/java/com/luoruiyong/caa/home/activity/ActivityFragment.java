@@ -49,28 +49,28 @@ public class ActivityFragment extends Fragment{
         mTitleTabList = new ArrayList<>();
 
         mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_ALL));
-        mTitleTabList.add("All");
+        mTitleTabList.add(getString(R.string.fm_activity_title_all));
 
         mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_PREACH));
-        mTitleTabList.add("Preach");
+        mTitleTabList.add(getString(R.string.fm_activity_title_preach));
 
         mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_VOLUNTEER));
-        mTitleTabList.add("Volunteer");
+        mTitleTabList.add(getString(R.string.fm_activity_title_volunteer));
 
         mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_CLUB));
-        mTitleTabList.add("Club");
+        mTitleTabList.add(getString(R.string.fm_activity_title_club));
 
         mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_LECTURE));
-        mTitleTabList.add("Lecture");
+        mTitleTabList.add(getString(R.string.fm_activity_title_lecture));
 
         mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_SPORT));
-        mTitleTabList.add("Sport");
+        mTitleTabList.add(getString(R.string.fm_activity_title_sport));
 
         mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_CAMPUS));
-        mTitleTabList.add("Campus");
+        mTitleTabList.add(getString(R.string.fm_activity_title_campus));
 
         mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_OTHER));
-        mTitleTabList.add("Other");
+        mTitleTabList.add(getString(R.string.fm_activity_title_other));
 
         mAdapter = new ViewPagerAdapter(getChildFragmentManager(), mFragmentList, mTitleTabList);
         mViewPager.setAdapter(mAdapter);

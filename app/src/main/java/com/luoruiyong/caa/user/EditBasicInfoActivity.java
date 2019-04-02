@@ -66,63 +66,48 @@ public class EditBasicInfoActivity extends BaseActivity implements View.OnClickL
         }
 
         UserBasicMap info = new UserBasicMap();
-        info.setLabel("Avatar");
+        info.setLabel(getString(R.string.common_str_avatar));
         info.setValue(mCurUser.getAvatar());
         mList.add(info);
 
         info = new UserBasicMap();
-        info.setLabel("Nickname");
+        info.setLabel(getString(R.string.common_str_nickname));
         info.setValue(mCurUser.getNickName());
         mList.add(info);
 
         info = new UserBasicMap();
-        info.setLabel("Real name");
-        info.setValue(mCurUser.getRealName());
-        mList.add(info);
-
-        info = new UserBasicMap();
-        info.setLabel("Gender");
+        info.setLabel(getString(R.string.modify_profile_str_gender));
         info.setValue(mCurUser.getGender());
         mList.add(info);
 
         info = new UserBasicMap();
-        info.setLabel("Age");
+        info.setLabel(getString(R.string.modify_profile_str_age));
         info.setValue(String.valueOf(mCurUser.getAge()));
-        mList.add(info);
-
-        info = new UserBasicMap();
-        info.setLabel("Cell number");
-        info.setValue(mCurUser.getCellNumber());
-        mList.add(info);
-
-        info = new UserBasicMap();
-        info.setLabel("Email");
-        info.setValue(mCurUser.getEmail());
         mList.add(info);
 
         User.CollegeInfo collegeInfo = mCurUser.getCollegeInfo();
         info = new UserBasicMap();
-        info.setLabel("College");
+        info.setLabel(getString(R.string.modify_profile_str_college));
         info.setValue(collegeInfo == null ? "" : collegeInfo.getName());
         mList.add(info);
 
         info = new UserBasicMap();
-        info.setLabel("Department");
+        info.setLabel(getString(R.string.modify_profile_str_department));
         info.setValue(collegeInfo == null ? "" : collegeInfo.getDepartment());
         mList.add(info);
 
         info = new UserBasicMap();
-        info.setLabel("Major");
+        info.setLabel(getString(R.string.modify_profile_str_major));
         info.setValue(collegeInfo == null ? "" : collegeInfo.getMajor());
         mList.add(info);
 
         info = new UserBasicMap();
-        info.setLabel("Class");
+        info.setLabel(getString(R.string.modify_profile_str_klass));
         info.setValue(collegeInfo == null ? "" : collegeInfo.getKlass());
         mList.add(info);
 
         info = new UserBasicMap();
-        info.setLabel("Description");
+        info.setLabel(getString(R.string.modify_profile_str_description));
         info.setValue(mCurUser.getDescription());
         mList.add(info);
     }
@@ -242,15 +227,18 @@ public class EditBasicInfoActivity extends BaseActivity implements View.OnClickL
 
         class AvatarViewHolder extends RecyclerView.ViewHolder{
 
+            private TextView mLabelTv;
             private ImageView mAvatarIv;
 
             public AvatarViewHolder(View itemView) {
                 super(itemView);
+                mLabelTv = itemView.findViewById(R.id.tv_label);
                 mAvatarIv = itemView.findViewById(R.id.iv_user_avatar);
             }
 
             public void bindData(UserBasicMap data) {
                 // set avatar url
+                mLabelTv.setText(data.getLabel());
             }
         }
 
