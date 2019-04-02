@@ -4,7 +4,9 @@ import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Author: luoruiyong
@@ -13,8 +15,14 @@ import java.util.List;
 public class Enviroment {
 
     private static User sUser;
+    //创建新帖子的弹框列表
     private static List<String> sCreateNewStringArray;
+    //子项中更多的弹框列表
     private static List<String> sItemMoreStringArray;
+    //活动类型中编号与名字的映射表
+    private static Map<Integer, String> sActivityTypeMap;
+    //消息类型中编号与名字的映射表
+    private static Map<Integer, String> sMessageTypeMap;
 
     public static void setCurUser(User user) {
         sUser = user;
@@ -24,7 +32,7 @@ public class Enviroment {
         return sUser;
     }
 
-    public static boolean isVistor() {
+    public static boolean isVisitor() {
         return sUser == null;
     }
 
@@ -73,5 +81,45 @@ public class Enviroment {
             sItemMoreStringArray = Arrays.asList(ResourcesUtils.getStringArray(R.array.str_array_item_more));
         }
         return sItemMoreStringArray;
+    }
+
+    private static void initActivityTypeMap() {
+        if (sActivityTypeMap == null) {
+            String[] items = ResourcesUtils.getStringArray(R.array.str_array_activity_type);
+            sActivityTypeMap = new HashMap<>(items.length);
+            for (int i = 0; i < items.length; i++) {
+                sActivityTypeMap.put(i, items[i]);
+            }
+        }
+    }
+
+    public static Map<Integer, String> getActivityTypeMap() {
+        initActivityTypeMap();
+        return sActivityTypeMap;
+    }
+
+    public static String getActivityTypeNameById(int id) {
+        initActivityTypeMap();
+        return sActivityTypeMap.get(id);
+    }
+
+    private static void initMessageTypeMap() {
+        if (sMessageTypeMap == null) {
+            String[] items = ResourcesUtils.getStringArray(R.array.str_array_message_type);
+            sMessageTypeMap = new HashMap<>(items.length);
+            for (int i = 0; i < items.length; i++) {
+                sMessageTypeMap.put(i, items[i]);
+            }
+        }
+    }
+
+    public static Map<Integer, String> getMessageTypeMap() {
+        initMessageTypeMap();
+        return sMessageTypeMap;
+    }
+
+    public static String getMessageTypeNameById(int id) {
+        initMessageTypeMap();
+        return sMessageTypeMap.get(id);
     }
 }

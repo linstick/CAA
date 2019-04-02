@@ -24,11 +24,8 @@ import com.luoruiyong.caa.home.message.MessageFragment;
 import com.luoruiyong.caa.login.LoginActivity;
 import com.luoruiyong.caa.search.SearchActivity;
 import com.luoruiyong.caa.user.UserProfileActivity;
-import com.luoruiyong.caa.utils.ResourcesUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener{
@@ -205,7 +202,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
                 updateFragmentByIndex(MESSAGE_TAB_INDEX, true);
                 break;
             case R.id.iv_user_avatar:
-                if (Enviroment.isVistor()) {
+                if (Enviroment.isVisitor()) {
                     LoginActivity.startAction(this, LoginActivity.LOGIN_TAB);
                 } else {
                     startActivity(new Intent(this, UserProfileActivity.class));

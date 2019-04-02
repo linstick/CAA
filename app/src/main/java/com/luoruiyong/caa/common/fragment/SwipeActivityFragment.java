@@ -31,6 +31,7 @@ import com.luoruiyong.caa.widget.ImageViewLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Author: luoruiyong
@@ -40,13 +41,6 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
 
     private static final String KEY_ACTIVITY_TYPE = "key_activity_type";
     public static final int TYPE_ALL = 0;
-    public static final int TYPE_CLUB = 1;
-    public static final int TYPE_VOLUNTEER = 2;
-    public static final int TYPE_LECTURE = 3;
-    public static final int TYPE_PREACH = 4;
-    public static final int TYPE_SPORT = 5;
-    public static final int TYPE_CAMPUS = 6;
-    public static final int TYPE_OTHER = 7;
 
     private int mActivityType;
 
@@ -239,7 +233,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
 //                mPublishTimeTv.setText(data.getPublishTime());
                 if (data.getType() != mActivityType) {
                     mActivityTypeTv.setVisibility(View.VISIBLE);
-                    mActivityTypeTv.setText(data.getType() + "");
+                    mActivityTypeTv.setText(Enviroment.getActivityTypeNameById(data.getType()));
                 }
                 mActivityTitleTv.setText(data.getTitle());
                 mActivityContentTv.setText(data.getContent());

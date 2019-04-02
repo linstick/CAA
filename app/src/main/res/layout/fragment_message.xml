@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.luoruiyong.caa.widget.UniversalFunctionContainer
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scroll_view_function_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorF6F6F6">
-</com.luoruiyong.caa.widget.UniversalFunctionContainer>

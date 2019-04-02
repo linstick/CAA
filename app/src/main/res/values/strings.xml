@@ -115,6 +115,9 @@
 
     <string name="common_str_avatar">头像</string>
     <string name="common_str_nickname">昵称</string>
+    <string name="common_str_collect">收藏</string>
+    <string name="common_str_comment">评论</string>
+    <string name="common_str_like">点赞</string>
 
     <!--工具栏标题文案-->
     <string name="title_activity">活动</string>
@@ -209,8 +212,8 @@
     <string name="settings_tip_about_us_info">本应用由广东工业大学的大四学生，罗瑞泳个人开发，您可以通过邮件与我们取得联系：linstick@163.com。感谢您的使用和支持！</string>
 
     <!--个人页相关文案-->
-    <string name="profile_str_id">ID：</string>
-    <string name="profile_str_nickname">昵称：</string>
+    <string name="profile_str_id">ID:</string>
+    <string name="profile_str_nickname">昵称:</string>
     <string name="profile_str_basic_info">基本信息</string>
     <string name="profile_str_college_info">学校信息</string>
 
@@ -226,12 +229,22 @@
     <!--活动页相关文案-->
     <string name="fm_activity_title_all">全部</string>
     <string name="fm_activity_title_preach">讲座</string>
-    <string name="fm_activity_title_volunteer">志愿服务</string>
+    <string name="fm_activity_title_volunteer">志愿</string>
     <string name="fm_activity_title_club">社团</string>
     <string name="fm_activity_title_lecture">宣讲会</string>
     <string name="fm_activity_title_sport">体育</string>
     <string name="fm_activity_title_campus">校园</string>
     <string name="fm_activity_title_other">其他</string>
+
+    <!--消息页相关文案-->
+    <string name="fm_message_str_activity_comment">评论活动</string>
+    <string name="fm_message_str_activity_collect">收藏活动</string>
+    <string name="fm_message_str_topic_join">参与话题</string>
+    <string name="fm_message_str_discover_like">点赞动态</string>
+    <string name="fm_message_str_discover_comment">评论动态</string>
+    <string name="fm_message_str_activity_push">活动推送</string>
+    <string name="fm_message_str_topic_push">话题推送</string>
+
 
     <!--话题列表页相关文案-->
     <string name="fm_topic_str_joined">参与</string>
@@ -247,6 +260,29 @@
     <!--活动Item/话题Item/动态Item中的更多列表-->
     <string-array name="str_array_item_more">
         <item>@string/common_str_impeach</item>
+    </string-array>
+
+    <!--活动分类列表-->
+    <string-array name="str_array_activity_type">
+        <item>@string/fm_activity_title_all</item>
+        <item>@string/fm_activity_title_preach</item>
+        <item>@string/fm_activity_title_volunteer</item>
+        <item>@string/fm_activity_title_club</item>
+        <item>@string/fm_activity_title_lecture</item>
+        <item>@string/fm_activity_title_sport</item>
+        <item>@string/fm_activity_title_campus</item>
+        <item>@string/fm_activity_title_other</item>
+    </string-array>
+
+    <!--消息分类列表-->
+    <string-array name="str_array_message_type">
+        <item>@string/fm_message_str_activity_comment</item>
+        <item>@string/fm_message_str_activity_collect</item>
+        <item>@string/fm_message_str_topic_join</item>
+        <item>@string/fm_message_str_discover_like</item>
+        <item>@string/fm_message_str_discover_comment</item>
+        <item>@string/fm_message_str_activity_push</item>
+        <item>@string/fm_message_str_topic_push</item>
     </string-array>
 </resources>
 

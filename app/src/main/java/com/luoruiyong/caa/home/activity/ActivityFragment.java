@@ -12,12 +12,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.fragment.SwipeActivityFragment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ActivityFragment extends Fragment{
 
@@ -48,29 +50,11 @@ public class ActivityFragment extends Fragment{
         mFragmentList = new ArrayList<>();
         mTitleTabList = new ArrayList<>();
 
-        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_ALL));
-        mTitleTabList.add(getString(R.string.fm_activity_title_all));
-
-        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_PREACH));
-        mTitleTabList.add(getString(R.string.fm_activity_title_preach));
-
-        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_VOLUNTEER));
-        mTitleTabList.add(getString(R.string.fm_activity_title_volunteer));
-
-        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_CLUB));
-        mTitleTabList.add(getString(R.string.fm_activity_title_club));
-
-        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_LECTURE));
-        mTitleTabList.add(getString(R.string.fm_activity_title_lecture));
-
-        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_SPORT));
-        mTitleTabList.add(getString(R.string.fm_activity_title_sport));
-
-        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_CAMPUS));
-        mTitleTabList.add(getString(R.string.fm_activity_title_campus));
-
-        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_OTHER));
-        mTitleTabList.add(getString(R.string.fm_activity_title_other));
+        Map<Integer, String> map = Enviroment.getActivityTypeMap();
+        for (int i = 0; i < map.size(); i++) {
+            mFragmentList.add(SwipeActivityFragment.newInstance(i));
+            mTitleTabList.add(map.get(i));
+        }
 
         mAdapter = new ViewPagerAdapter(getChildFragmentManager(), mFragmentList, mTitleTabList);
         mViewPager.setAdapter(mAdapter);
