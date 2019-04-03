@@ -1,5 +1,6 @@
 package com.luoruiyong.caa.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,7 @@ import java.util.List;
  * Author: luoruiyong
  * Date: 2019/3/17/017
  **/
-public class DiscoverData {
+public class DiscoverData implements Serializable{
     private int uid;
     private String avatarUrl;
     private String nickname;
