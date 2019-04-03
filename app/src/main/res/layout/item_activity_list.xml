@@ -101,10 +101,11 @@
         android:textColor="#666666"
         android:textSize="15sp" />
 
-    <com.luoruiyong.caa.widget.ImageViewLayout
+    <com.luoruiyong.caa.widget.ImageViewLayoutV2
         android:id="@+id/image_view_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:layout_marginRight="60dp"
         android:layout_marginEnd="60dp"/>
 

@@ -21,7 +21,7 @@ import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.user.UserProfileActivity;
 import com.luoruiyong.caa.utils.ListUtils;
-import com.luoruiyong.caa.widget.ImageViewLayout;
+import com.luoruiyong.caa.widget.ImageViewLayoutV2;
 
 import java.util.List;
 
@@ -108,7 +108,7 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         Toast.makeText(getContext(), "doLoadMore: type = " + mType + " topic id = " + mTopicId, Toast.LENGTH_SHORT).show();
     }
 
-    private class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> implements View.OnClickListener, ImageViewLayout.OnImageClickListener{
+    private class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> implements View.OnClickListener, ImageViewLayoutV2.OnImageClickListener{
 
         private List<DiscoverData> mList;
 
@@ -140,7 +140,7 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
             holder.mTopicTv.setTag(position);
             holder.mLikeTv.setTag(position);
             holder.mCommentTv.setTag(position);
-            holder.mImageViewLayout.setTag(position);
+            holder.mImageViewLayout.setTag(data);
         }
 
         @Override
@@ -195,7 +195,7 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
             private TextView mTopicTv;
             private TextView mLikeTv;
             private TextView mCommentTv;
-            private ImageViewLayout mImageViewLayout;
+            private ImageViewLayoutV2 mImageViewLayout;
 
             public ViewHolder(View itemView) {
                 super(itemView);
@@ -233,8 +233,8 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
                     mLocationTv.setText(data.getLocation());
                 }
 
-                mLikeTv.setText(data.getLikeCount() == 0 ? "Collect" : data.getLikeCount() + "");
-                mCommentTv.setText(data.getCommentCount() == 0 ? "Comment" : data.getCommentCount() + "");
+                mLikeTv.setText(data.getLikeCount() == 0 ? getString(R.string.common_str_like) : data.getLikeCount() + "");
+                mCommentTv.setText(data.getCommentCount() == 0 ? getString(R.string.common_str_comment) : data.getCommentCount() + "");
 
                 mImageViewLayout.setPictureUrls(data.getPictureList());
             }

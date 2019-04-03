@@ -31,6 +31,7 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
     private final static String KEY_CUR_POSITION = "key_cur_position";
 
     private ViewPager mViewPager;
+    private ImageView mBackIv;
     private TextView mCurIndexTv;
     private TextView mTotalIndexTv;
     private ImageView mDownloadIv;
@@ -58,10 +59,12 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
 
     private void initView() {
         mViewPager = findViewById(R.id.view_pager);
+        mBackIv = findViewById(R.id.iv_back);
         mCurIndexTv = findViewById(R.id.tv_cur_index);
         mTotalIndexTv = findViewById(R.id.tv_total_index);
         mDownloadIv = findViewById(R.id.iv_download);
 
+        mBackIv.setOnClickListener(this);
         mDownloadIv.setOnClickListener(this);
     }
 
@@ -103,6 +106,7 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
             case R.id.iv_download:
                 Toast.makeText(this, "download " + mCurPosition, Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.iv_back:
             case R.id.iv_picture:
                 finish();
                 break;

@@ -11,35 +11,33 @@ import android.widget.TextView;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.utils.DisplayUtils;
+import com.luoruiyong.caa.utils.ResourcesUtils;
 
 import java.util.List;
+import java.util.logging.SimpleFormatter;
 
 /**
  * Author: luoruiyong
  * Date: 2019/3/16/016
  **/
-public class ImageViewLayout extends ViewGroup implements View.OnClickListener{
+public class ImageViewLayoutV2 extends ViewGroup implements View.OnClickListener{
 
-    private final int CHILD_MARGIN_PX = DisplayUtils.dp2px(2);
-    private final int DEFAULT_PARENT_PADDING_TOP_PX = DisplayUtils.dp2px(8);
-    private final int DEFAULT_PARENT_PADDING_BOTTOM_PX = DisplayUtils.dp2px(4);
+    private final int CHILD_MARGIN_PX = DisplayUtils.dp2px(4);
     private final int DEFAULT_MAX_CHILD_COUNT = 5;
 
     private int mMaxCount = DEFAULT_MAX_CHILD_COUNT;
-    private int mParentPaddingTop = DEFAULT_PARENT_PADDING_TOP_PX;
-    private int mParentPaddingBottom = DEFAULT_PARENT_PADDING_BOTTOM_PX;
     private List<String> mUrls;
     private OnImageClickListener mListener;
 
-    public ImageViewLayout(Context context) {
+    public ImageViewLayoutV2(Context context) {
         super(context);
     }
 
-    public ImageViewLayout(Context context, AttributeSet attrs) {
+    public ImageViewLayoutV2(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ImageViewLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ImageViewLayoutV2(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
@@ -47,8 +45,10 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener{
         removeAllViews();
         mUrls = list;
         if (mUrls == null || mUrls.size() == 0) {
+            setVisibility(View.GONE);
             return;
         }
+        setVisibility(VISIBLE);
         int count = Math.min(list.size(), mMaxCount);
         LayoutInflater inflater = LayoutInflater.from(getContext());
         for (int i = 0; i < count; i++) {
@@ -58,7 +58,7 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener{
             imageView.setOnClickListener(this);
             if (i + 1 == count && count < list.size()) {
                 TextView totalTipTv = view.findViewById(R.id.tv_total_tip);
-                totalTipTv.setText("total " + list.size());
+                totalTipTv.setText(String.format(ResourcesUtils.getString(R.string.common_str_total), list.size()));
                 totalTipTv.setVisibility(VISIBLE);
             }
             addView(view);
@@ -72,85 +72,102 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener{
         }
     }
 
-    public void setParentPaddingTop(int dpValue) {
-        mParentPaddingTop = dpValue;
-    }
-
     public void setOnImageClickListener(OnImageClickListener listener) {
         mListener = listener;
     }
 
+    private int measureChildWith6(int widgetWidth) {
+        int size = getCommonSize(widgetWidth);
+        applyAllLayoutParams(size);
+        return size * 2 + CHILD_MARGIN_PX;
+    }
+
     private int measureChildWith5(int widgetWidth) {
-        int firstWidth = (widgetWidth - CHILD_MARGIN_PX) / 4 * 3;
-        int firstHeight = firstWidth / 2;
-
-        int secondWidth = widgetWidth - CHILD_MARGIN_PX - firstWidth;
-
-        int thirdWidth = (firstWidth - CHILD_MARGIN_PX) / 2;
-        int thirdHeight = secondWidth;
-
-        applyLayoutParams(getChildAt(0), firstWidth, firstHeight);
-        applyLayoutParams(getChildAt(1), secondWidth, firstHeight);
-        applyLayoutParams(getChildAt(2), thirdWidth, thirdHeight);
-        applyLayoutParams(getChildAt(3), thirdWidth, thirdHeight);
-        applyLayoutParams(getChildAt(4), secondWidth, thirdHeight);
-
-        return mParentPaddingTop + mParentPaddingBottom + firstHeight + thirdHeight + CHILD_MARGIN_PX;
+        int firstWidth = (widgetWidth - CHILD_MARGIN_PX) / 2;
+        int secondWidth = (widgetWidth - CHILD_MARGIN_PX * 2) / 3;
+        int height = secondWidth;
+        applyLayoutParams(getChildAt(0), firstWidth, height);
+        applyLayoutParams(getChildAt(1), firstWidth, height);
+        applyLayoutParams(getChildAt(2), secondWidth, height);
+        applyLayoutParams(getChildAt(3), secondWidth, height);
+        applyLayoutParams(getChildAt(4), secondWidth, height);
+        return height * 2 + CHILD_MARGIN_PX;
     }
 
     private int measureChildWith4(int widgetWidth) {
-        int width = widgetWidth / 6 * 5;
-        int firstWidth = (width - CHILD_MARGIN_PX) / 7 * 4;
-        int secondWidth = width - CHILD_MARGIN_PX - firstWidth;
-        int height = firstWidth / 8 * 5;
-
-        applyLayoutParams(getChildAt(0), firstWidth, height);
-        applyLayoutParams(getChildAt(1), secondWidth, height);
-        applyLayoutParams(getChildAt(2), secondWidth, height);
-        applyLayoutParams(getChildAt(3), firstWidth, height);
-
-        return mParentPaddingTop + mParentPaddingBottom + height * 2 + CHILD_MARGIN_PX;
+        int size = getCommonSize(widgetWidth);
+        applyAllLayoutParams(size);
+        return size * 2 + CHILD_MARGIN_PX;
     }
 
     private int measureChildWith3(int widgetWidth) {
-        int firstWidth = (widgetWidth - CHILD_MARGIN_PX) / 3 * 2;
-        int otherWidth = firstWidth / 2;
-        int firstHeight = firstWidth / 8 * 5;
-        int otherHeight = (firstHeight - CHILD_MARGIN_PX) / 2;
-
-        applyLayoutParams(getChildAt(0), firstWidth, firstHeight);
-        applyLayoutParams(getChildAt(1), otherWidth, otherHeight);
-        applyLayoutParams(getChildAt(2), otherWidth, otherHeight);
-        return mParentPaddingTop + mParentPaddingBottom + firstHeight;
+        int size = getCommonSize(widgetWidth);
+        applyAllLayoutParams(size);
+        return size;
     }
 
     private int measureChildWith2(int widgetWidth) {
-        int width = widgetWidth / 6 * 5;
-        int firstWidth = (width - CHILD_MARGIN_PX) / 7 * 4;
-        int secondWidth = width - CHILD_MARGIN_PX - firstWidth;
-        int height = firstWidth / 8 * 5;
-
-        applyLayoutParams(getChildAt(0), firstWidth, height);
-        applyLayoutParams(getChildAt(1), secondWidth, height);
-        return mParentPaddingTop + mParentPaddingBottom + height;
+        int size = getCommonSize(widgetWidth);
+        applyAllLayoutParams(size);
+        return size;
     }
 
     private int measureChildWith1(int widgetWidth) {
-        int width = widgetWidth / 7 * 3;
-        int height = width / 8 * 5;
-        applyLayoutParams(getChildAt(0), width, height);
-        return mParentPaddingTop + mParentPaddingBottom + height;
+        int size = widgetWidth / 7 * 3;
+        applyAllLayoutParams(size);
+        return size;
+    }
+
+    private int getCommonSize(int widgetWidth) {
+        return (widgetWidth - CHILD_MARGIN_PX * 2) / 3;
+    }
+
+    private void applyAllLayoutParams(int size) {
+        applyAllLayoutParams(size, size);
+    }
+
+    private void applyAllLayoutParams(int width, int height) {
+        for (int i = 0; i < getChildCount(); i++) {
+            applyLayoutParams(getChildAt(i), width, height);
+        }
     }
 
     private void applyLayoutParams(View view, int width, int height) {
-        ViewGroup.LayoutParams params = new ViewPager.LayoutParams();
+        LayoutParams params = new ViewPager.LayoutParams();
         params.width = width;
         params.height = height;
         view.setLayoutParams(params);
     }
 
+    private void layoutChildWith6() {
+        int left = 0, top = 0;
+        View view = getChildAt(0);
+        applyLayout(view, left, top);
+
+        left = view.getRight() + CHILD_MARGIN_PX;
+        view = getChildAt(1);
+        applyLayout(view, left, top);
+
+        left = view.getRight() + CHILD_MARGIN_PX;
+        view = getChildAt(2);
+        applyLayout(view, left, top);
+
+        left = 0;
+        top = view.getBottom() + CHILD_MARGIN_PX;
+        view = getChildAt(3);
+        applyLayout(view, left, top);
+
+        left = view.getRight() + CHILD_MARGIN_PX;
+        view = getChildAt(4);
+        applyLayout(view, left, top);
+
+        left = view.getRight() + CHILD_MARGIN_PX;
+        view = getChildAt(5);
+        applyLayout(view, left, top);
+    }
+
     private void layoutChildWith5() {
-        int left = 0, top = mParentPaddingTop;
+        int left = 0, top = 0;
         View view = getChildAt(0);
         applyLayout(view, left, top);
 
@@ -173,7 +190,7 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener{
     }
 
     private void layoutChildWith4() {
-        int left = 0, top = mParentPaddingTop, height;
+        int left = 0, top = 0, height;
         View view = getChildAt(0);
         applyLayout(view, left, top);
 
@@ -194,7 +211,7 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener{
     }
 
     private void layoutChildWith3() {
-        int left = 0, top = mParentPaddingTop;
+        int left = 0, top = 0;
         View view = getChildAt(0);
         applyLayout(view, left, top);
 
@@ -202,20 +219,20 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener{
         view = getChildAt(1);
         applyLayout(view, left, top);
 
-        top = view.getBottom() + CHILD_MARGIN_PX;
+        left = view.getRight() + CHILD_MARGIN_PX;
         view = getChildAt(2);
         applyLayout(view, left, top);
     }
 
     private void layoutChildWith2() {
         View view = getChildAt(0);
-        applyLayout(view, 0, mParentPaddingTop);
+        applyLayout(view, 0, 0);
 
-        applyLayout(getChildAt(1), view.getRight() + CHILD_MARGIN_PX, mParentPaddingTop);
+        applyLayout(getChildAt(1), view.getRight() + CHILD_MARGIN_PX, 0);
     }
 
     private void layoutChildWith1() {
-        applyLayout(getChildAt(0), 0, mParentPaddingTop);
+        applyLayout(getChildAt(0), 0, 0);
     }
 
     private void applyLayout(View view, int left, int top) {
@@ -245,8 +262,11 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener{
                 height = measureChildWith4(width);
                 break;
             case 5:
-            default:
                 height = measureChildWith5(width);
+                break;
+            case 6:
+            default:
+                height = measureChildWith6(width);
                 break;
         }
         for (int i = 0; i < getChildCount(); i++) {
@@ -273,8 +293,11 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener{
                 layoutChildWith4();
                 break;
             case 5:
-            default:
                 layoutChildWith5();
+                break;
+            case 6:
+            default:
+                layoutChildWith6();
                 break;
         }
     }

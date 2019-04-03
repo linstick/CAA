@@ -118,6 +118,7 @@
     <string name="common_str_collect">收藏</string>
     <string name="common_str_comment">评论</string>
     <string name="common_str_like">点赞</string>
+    <string name="common_str_total">共%1d张</string>
 
     <!--工具栏标题文案-->
     <string name="title_activity">活动</string>
