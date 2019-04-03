@@ -112,6 +112,7 @@
     <string name="common_str_submit">提交</string>
     <string name="common_str_impeach">举报</string>
     <string name="common_str_delete">删除</string>
+    <string name="common_str_delete_success">删除成功</string>
 
     <string name="common_str_avatar">头像</string>
     <string name="common_str_nickname">昵称</string>
@@ -258,6 +259,14 @@
     <string name="topic_detail_str_introduction">导语:</string>
     <string name="topic_detail_str_hot">热门</string>
     <string name="topic_detail_str_lasted">最新</string>
+
+    <!--活动详情页相关文案-->
+    <string name="activity_detail_str_comment">评论(%1d)</string>
+    <string name="activity_detail_str_addition">补充(%1d)</string>
+    <string name="activity_detail_str_host">主办方</string>
+    <string name="activity_detail_str_time">时间</string>
+    <string name="activity_detail_str_address">地点</string>
+    <string name="activity_detail_str_remark">备注</string>
 
     <!--创建活动/话题/动态的列表-->
     <string-array name="str_array_create_new">

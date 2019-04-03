@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.DiscoverData;
+import com.luoruiyong.caa.common.viewholder.DiscoverItemViewHolder;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.user.UserProfileActivity;
@@ -108,7 +109,7 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         Toast.makeText(getContext(), "doLoadMore: type = " + mType + " topic id = " + mTopicId, Toast.LENGTH_SHORT).show();
     }
 
-    private class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> implements View.OnClickListener, ImageViewLayoutV2.OnImageClickListener{
+    private class ListAdapter extends RecyclerView.Adapter<DiscoverItemViewHolder> implements View.OnClickListener, ImageViewLayoutV2.OnImageClickListener{
 
         private List<DiscoverData> mList;
 
@@ -118,13 +119,13 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
 
         @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public DiscoverItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_discover_list, parent, false);
-            return new ViewHolder(view);
+            return new DiscoverItemViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull DiscoverItemViewHolder holder, int position) {
             DiscoverData data = mList.get(position);
             holder.bindData(data);
             holder.mUserAvatarIv.setOnClickListener(this);
@@ -181,63 +182,6 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         public void onImageClick(View parent, int position) {
             DiscoverData data = (DiscoverData) parent.getTag();
             PictureBrowseActivity.startAction(getContext(), data.getPictureList(), position);
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-
-            private ImageView mUserAvatarIv;
-            private TextView mNicknameTv;
-            private TextView mPublishTimeTv;
-            private TextView mCollegeTv;
-            private ImageView mMoreIv;
-            private TextView mContentTv;
-            private TextView mLocationTv;
-            private TextView mTopicTv;
-            private TextView mLikeTv;
-            private TextView mCommentTv;
-            private ImageViewLayoutV2 mImageViewLayout;
-
-            public ViewHolder(View itemView) {
-                super(itemView);
-                mUserAvatarIv = itemView.findViewById(R.id.iv_user_avatar);
-                mNicknameTv = itemView.findViewById(R.id.tv_nickname);
-                mPublishTimeTv = itemView.findViewById(R.id.tv_publish_time);
-                mCollegeTv = itemView.findViewById(R.id.tv_college);
-                mMoreIv = itemView.findViewById(R.id.iv_more);
-                mContentTv = itemView.findViewById(R.id.tv_content);
-                mLocationTv = itemView.findViewById(R.id.tv_location);
-                mTopicTv = itemView.findViewById(R.id.tv_topic);
-                mLikeTv = itemView.findViewById(R.id.tv_like);
-                mCommentTv = itemView.findViewById(R.id.tv_comment);
-                mImageViewLayout = itemView.findViewById(R.id.image_view_layout);
-            }
-
-            public void bindData(DiscoverData data) {
-//                mUserAvatarIv.setImageUrl(data.getAvatarUrl());
-                mNicknameTv.setText(data.getNickname());
-//                mPublishTimeTv.setText(data.getPublishTime());
-
-                if (!TextUtils.isEmpty(data.getTopic())) {
-                    mTopicTv.setVisibility(View.VISIBLE);
-                    mTopicTv.setText(data.getTopic());
-                }
-
-                if (!TextUtils.isEmpty(data.getCollege())) {
-                    mCollegeTv.setVisibility(View.VISIBLE);
-                    mCollegeTv.setText(data.getCollege());
-                }
-                mContentTv.setText(data.getContent());
-
-                if (!TextUtils.isEmpty(data.getLocation())) {
-                    mLocationTv.setVisibility(View.VISIBLE);
-                    mLocationTv.setText(data.getLocation());
-                }
-
-                mLikeTv.setText(data.getLikeCount() == 0 ? getString(R.string.common_str_like) : data.getLikeCount() + "");
-                mCommentTv.setText(data.getCommentCount() == 0 ? getString(R.string.common_str_comment) : data.getCommentCount() + "");
-
-                mImageViewLayout.setPictureUrls(data.getPictureList());
-            }
         }
     }
 }

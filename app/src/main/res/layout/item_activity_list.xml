@@ -70,9 +70,7 @@
             android:layout_marginEnd="8dp"
             android:text="Club"
             android:textColor="#FFFFFF"
-            android:textSize="13sp"
-            android:visibility="gone"
-            tools:visibility="visible"/>
+            android:textSize="13sp"/>
     </LinearLayout>
 
     <TextView
@@ -108,6 +106,14 @@
         android:layout_marginTop="8dp"
         android:layout_marginRight="60dp"
         android:layout_marginEnd="60dp"/>
+
+    <ViewStub
+        android:id="@+id/vs_activity_extras"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="60dp"
+        android:layout_marginEnd="60dp"
+        android:layout="@layout/child_activity_item_extras"/>
 
     <TextView
         android:id="@+id/tv_location"

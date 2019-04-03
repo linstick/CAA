@@ -76,10 +76,22 @@ public class ImageViewLayoutV2 extends ViewGroup implements View.OnClickListener
         mListener = listener;
     }
 
-    private int measureChildWith6(int widgetWidth) {
+    private int measureChildWith7Or8Or9(int widgetWidth) {
+        int size = getCommonSize(widgetWidth);
+        applyAllLayoutParams(size);
+        return size * 3 + CHILD_MARGIN_PX * 2;
+    }
+
+    private int measureChildWith4Or6(int widgetWidth) {
         int size = getCommonSize(widgetWidth);
         applyAllLayoutParams(size);
         return size * 2 + CHILD_MARGIN_PX;
+    }
+
+    private int measureChildWith2Or3(int widgetWidth) {
+        int size = getCommonSize(widgetWidth);
+        applyAllLayoutParams(size);
+        return size;
     }
 
     private int measureChildWith5(int widgetWidth) {
@@ -92,24 +104,6 @@ public class ImageViewLayoutV2 extends ViewGroup implements View.OnClickListener
         applyLayoutParams(getChildAt(3), secondWidth, height);
         applyLayoutParams(getChildAt(4), secondWidth, height);
         return height * 2 + CHILD_MARGIN_PX;
-    }
-
-    private int measureChildWith4(int widgetWidth) {
-        int size = getCommonSize(widgetWidth);
-        applyAllLayoutParams(size);
-        return size * 2 + CHILD_MARGIN_PX;
-    }
-
-    private int measureChildWith3(int widgetWidth) {
-        int size = getCommonSize(widgetWidth);
-        applyAllLayoutParams(size);
-        return size;
-    }
-
-    private int measureChildWith2(int widgetWidth) {
-        int size = getCommonSize(widgetWidth);
-        applyAllLayoutParams(size);
-        return size;
     }
 
     private int measureChildWith1(int widgetWidth) {
@@ -139,33 +133,6 @@ public class ImageViewLayoutV2 extends ViewGroup implements View.OnClickListener
         view.setLayoutParams(params);
     }
 
-    private void layoutChildWith6() {
-        int left = 0, top = 0;
-        View view = getChildAt(0);
-        applyLayout(view, left, top);
-
-        left = view.getRight() + CHILD_MARGIN_PX;
-        view = getChildAt(1);
-        applyLayout(view, left, top);
-
-        left = view.getRight() + CHILD_MARGIN_PX;
-        view = getChildAt(2);
-        applyLayout(view, left, top);
-
-        left = 0;
-        top = view.getBottom() + CHILD_MARGIN_PX;
-        view = getChildAt(3);
-        applyLayout(view, left, top);
-
-        left = view.getRight() + CHILD_MARGIN_PX;
-        view = getChildAt(4);
-        applyLayout(view, left, top);
-
-        left = view.getRight() + CHILD_MARGIN_PX;
-        view = getChildAt(5);
-        applyLayout(view, left, top);
-    }
-
     private void layoutChildWith5() {
         int left = 0, top = 0;
         View view = getChildAt(0);
@@ -189,51 +156,25 @@ public class ImageViewLayoutV2 extends ViewGroup implements View.OnClickListener
         applyLayout(view, left, top);
     }
 
-    private void layoutChildWith4() {
-        int left = 0, top = 0, height;
-        View view = getChildAt(0);
-        applyLayout(view, left, top);
-
-        height = view.getBottom();
-
-        left = view.getRight() + CHILD_MARGIN_PX;
-        view = getChildAt(1);
-        applyLayout(view, left, top);
-
-        left = 0;
-        top = height + CHILD_MARGIN_PX;
-        view = getChildAt(2);
-        applyLayout(view, left, top);
-
-        left = view.getRight() + CHILD_MARGIN_PX;
-        view = getChildAt(3);
-        applyLayout(view, left, top);
-    }
-
-    private void layoutChildWith3() {
+    private void layoutChildByColumnCount(int columnCount) {
+        if (columnCount <= 0) {
+            return;
+        }
+        int count = getChildCount();
         int left = 0, top = 0;
-        View view = getChildAt(0);
-        applyLayout(view, left, top);
-
-        left = view.getRight() + CHILD_MARGIN_PX;
-        view = getChildAt(1);
-        applyLayout(view, left, top);
-
-        left = view.getRight() + CHILD_MARGIN_PX;
-        view = getChildAt(2);
-        applyLayout(view, left, top);
+        View view;
+        for (int i = 0; i < count; i++) {
+            view = getChildAt(i);
+            applyLayout(view, left, top);
+            if ((i + 1) % columnCount == 0) {
+                left = 0;
+                top = view.getBottom() + CHILD_MARGIN_PX;
+            } else {
+                left = view.getRight() + CHILD_MARGIN_PX;
+            }
+        }
     }
 
-    private void layoutChildWith2() {
-        View view = getChildAt(0);
-        applyLayout(view, 0, 0);
-
-        applyLayout(getChildAt(1), view.getRight() + CHILD_MARGIN_PX, 0);
-    }
-
-    private void layoutChildWith1() {
-        applyLayout(getChildAt(0), 0, 0);
-    }
 
     private void applyLayout(View view, int left, int top) {
         LayoutParams params = view.getLayoutParams();
@@ -245,7 +186,7 @@ public class ImageViewLayoutV2 extends ViewGroup implements View.OnClickListener
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int width = getMeasuredWidth();
         int height;
-        switch ( getChildCount()) {
+        switch (getChildCount()) {
             case 0:
                 height = 0;
                 break;
@@ -253,20 +194,21 @@ public class ImageViewLayoutV2 extends ViewGroup implements View.OnClickListener
                 height = measureChildWith1(width);
                 break;
             case 2:
-                height = measureChildWith2(width);
-                break;
             case 3:
-                height = measureChildWith3(width);
+                height = measureChildWith2Or3(width);
                 break;
             case 4:
-                height = measureChildWith4(width);
+            case 6:
+                height = measureChildWith4Or6(width);
                 break;
             case 5:
                 height = measureChildWith5(width);
                 break;
-            case 6:
+            case 7:
+            case 8:
+            case 9:
             default:
-                height = measureChildWith6(width);
+                height = measureChildWith7Or8Or9(width);
                 break;
         }
         for (int i = 0; i < getChildCount(); i++) {
@@ -281,23 +223,20 @@ public class ImageViewLayoutV2 extends ViewGroup implements View.OnClickListener
             case 0:
                 break;
             case 1:
-                layoutChildWith1();
-                break;
             case 2:
-                layoutChildWith2();
-                break;
-            case 3:
-                layoutChildWith3();
-                break;
             case 4:
-                layoutChildWith4();
+                layoutChildByColumnCount(2);
                 break;
             case 5:
                 layoutChildWith5();
                 break;
+            case 3:
             case 6:
+            case 7:
+            case 8:
+            case 9:
             default:
-                layoutChildWith6();
+                layoutChildByColumnCount(3);
                 break;
         }
     }

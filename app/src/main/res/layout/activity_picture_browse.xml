@@ -32,9 +32,10 @@
             android:id="@+id/tv_cur_index"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textColor="#DDDDDD"
-            android:text="12"/>
+            android:text="12"
+            android:textStyle="italic|bold"/>
 
         <TextView
             android:layout_width="wrap_content"

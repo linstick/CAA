@@ -18,6 +18,7 @@ import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.ActivitySimpleData;
+import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
 import com.luoruiyong.caa.detail.DetailActivity;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicActivity;
@@ -106,7 +107,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
         Toast.makeText(getContext(), "doLoadMore: type = " + mActivityType, Toast.LENGTH_SHORT).show();
     }
 
-    private class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> implements View.OnClickListener, ImageViewLayoutV2.OnImageClickListener{
+    private class ListAdapter extends RecyclerView.Adapter<ActivityItemViewHolder> implements View.OnClickListener, ImageViewLayoutV2.OnImageClickListener{
 
         private List<ActivitySimpleData> mList;
 
@@ -116,15 +117,15 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
 
         @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public ActivityItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_activity_list, parent, false);
-            return new ViewHolder(view);
+            return new ActivityItemViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull ActivityItemViewHolder holder, int position) {
             ActivitySimpleData data = mList.get(position);
-            holder.bindData(data);
+            holder.bindData(data, mActivityType);
             holder.itemView.setOnClickListener(this);
             holder.mUserAvatarIv.setOnClickListener(this);
             holder.mNicknameTv.setOnClickListener(this);
@@ -147,7 +148,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
 
         @Override
         public int getItemCount() {
-            return mList == null ? 0 : mList.size();
+            return ListUtils.getSize(mList);
         }
 
         @Override
@@ -156,8 +157,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
             ActivitySimpleData data = mList.get(position);
             switch (v.getId()) {
                 case R.id.ll_item_layout:
-//                    Toast.makeText(getContext(), "click item layout", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(getContext(), DetailActivity.class));
+                    DetailActivity.startAction(getContext(), data);
                     break;
                 case R.id.iv_user_avatar:
                 case R.id.tv_nickname:
@@ -190,66 +190,6 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
         public void onImageClick(View parent, int position) {
             ActivitySimpleData data = (ActivitySimpleData) parent.getTag();
             PictureBrowseActivity.startAction(getContext(), data.getPictureList(), position);
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-
-            private ImageView mUserAvatarIv;
-            private TextView mNicknameTv;
-            private TextView mPublishTimeTv;
-            private TextView mActivityTypeTv;
-            private TextView mActivityTitleTv;
-            private TextView mActivityContentTv;
-            private TextView mLocationTv;
-            private TextView mTopicTv;
-            private TextView mCollectTv;
-            private TextView mCommentTv;
-            private TextView mMoreIv;
-            private ImageViewLayoutV2 mImageViewLayout;
-
-            public ViewHolder(View itemView) {
-                super(itemView);
-                mUserAvatarIv = itemView.findViewById(R.id.iv_user_avatar);
-                mNicknameTv = itemView.findViewById(R.id.tv_nickname);
-                mPublishTimeTv = itemView.findViewById(R.id.tv_publish_time);
-                mActivityTypeTv = itemView.findViewById(R.id.tv_activity_type);
-                mActivityTitleTv = itemView.findViewById(R.id.tv_activity_title);
-                mActivityContentTv = itemView.findViewById(R.id.tv_activity_content);
-                mLocationTv = itemView.findViewById(R.id.tv_location);
-                mTopicTv = itemView.findViewById(R.id.tv_topic);
-                mCollectTv = itemView.findViewById(R.id.tv_collect);
-                mCommentTv = itemView.findViewById(R.id.tv_comment);
-                mMoreIv = itemView.findViewById(R.id.tv_more);
-                mImageViewLayout = itemView.findViewById(R.id.image_view_layout);
-            }
-
-            public void bindData(ActivitySimpleData data) {
-//                mUserAvatarIv.setImageUrl(data.getAvatarUrl());
-                mNicknameTv.setText(data.getNickname());
-//                mPublishTimeTv.setText(data.getPublishTime());
-
-                if (data.getType() != mActivityType) {
-                    mActivityTypeTv.setVisibility(View.VISIBLE);
-                    mActivityTypeTv.setText(Enviroment.getActivityTypeNameById(data.getType()));
-                }
-                mActivityTitleTv.setText(data.getTitle());
-                mActivityContentTv.setText(data.getContent());
-
-                if (!TextUtils.isEmpty(data.getLocation())) {
-                    mLocationTv.setVisibility(View.VISIBLE);
-                    mLocationTv.setText(data.getLocation());
-                }
-
-                if (!TextUtils.isEmpty(data.getTopic())) {
-                    mTopicTv.setVisibility(View.VISIBLE);
-                    mTopicTv.setText(data.getTopic());
-                }
-
-                mCollectTv.setText(data.getCollectCount() == 0 ? getString(R.string.common_str_collect) : data.getCollectCount() + "");
-                mCommentTv.setText(data.getCommentCount() == 0 ? getString(R.string.common_str_comment) : data.getCommentCount() + "");
-
-                mImageViewLayout.setPictureUrls(data.getPictureList());
-            }
         }
     }
 }

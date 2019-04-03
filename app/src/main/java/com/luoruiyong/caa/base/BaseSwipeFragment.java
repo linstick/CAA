@@ -179,6 +179,7 @@ public abstract class BaseSwipeFragment<Item> extends Fragment {
                 }
                 mList.remove(itemPosition);
                 mAdapter.notifyDataSetChanged();
+                Toast.makeText(getContext(), R.string.common_str_delete_success, Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;

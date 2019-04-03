@@ -1,5 +1,6 @@
 package com.luoruiyong.caa.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,7 @@ import java.util.List;
  * Author: luoruiyong
  * Date: 2019/3/15/015
  **/
-public class ActivitySimpleData {
+public class ActivitySimpleData implements Serializable{
 
     private int uid;
     private String avatarUrl;
@@ -21,6 +22,7 @@ public class ActivitySimpleData {
     private int topicId;
     private int collectCount;
     private int commentCount;
+    private int additionCount;
     private List<String> pictureList;
 
     public ActivitySimpleData() {
@@ -41,6 +43,7 @@ public class ActivitySimpleData {
         topicId = 10000 + i;
         collectCount = (int) (Math.random() * 100);
         commentCount = (int) (Math.random() * 100);
+        additionCount = (int) (Math.random() * 100);
         pictureList = new ArrayList<>();
         int pictureCount = (int) (Math.random() * 9);
         for (int j = 0; j < pictureCount; j++) {
@@ -142,6 +145,14 @@ public class ActivitySimpleData {
 
     public void setCommentCount(int commentCount) {
         this.commentCount = commentCount;
+    }
+
+    public int getAdditionCount() {
+        return additionCount;
+    }
+
+    public void setAdditionCount(int additionCount) {
+        this.additionCount = additionCount;
     }
 
     public List<String> getPictureList() {
