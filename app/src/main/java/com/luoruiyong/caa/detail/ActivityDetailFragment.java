@@ -94,13 +94,13 @@ public class ActivityDetailFragment extends Fragment implements View.OnClickList
         mSendIv = rootView.findViewById(R.id.iv_send);
 
         mAddOperateIv.setOnClickListener(this);
+        mSendIv.setOnClickListener(this);
         mViewHolder.mUserAvatarIv.setOnClickListener(this);
         mViewHolder.mNicknameTv.setOnClickListener(this);
         mViewHolder.mTopicTv.setOnClickListener(this);
         mViewHolder.mCollectTv.setOnClickListener(this);
         mViewHolder.mMoreIv.setOnClickListener(this);
         mViewHolder.mImageViewLayout.setOnImageClickListener(this);
-        mSendIv.setOnClickListener(this);
 
         mViewHolder.mCommentTv.setVisibility(View.GONE);
         mViewHolder.mImageViewLayout.setMaxChildCount(9);

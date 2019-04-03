@@ -18,6 +18,7 @@ import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.common.viewholder.DiscoverItemViewHolder;
+import com.luoruiyong.caa.detail.DetailActivity;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.user.UserProfileActivity;
@@ -128,6 +129,7 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         public void onBindViewHolder(@NonNull DiscoverItemViewHolder holder, int position) {
             DiscoverData data = mList.get(position);
             holder.bindData(data);
+            holder.itemView.setOnClickListener(this);
             holder.mUserAvatarIv.setOnClickListener(this);
             holder.mNicknameTv.setOnClickListener(this);
             holder.mMoreIv.setOnClickListener(this);
@@ -135,6 +137,7 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
             holder.mLikeTv.setOnClickListener(this);
             holder.mCommentTv.setOnClickListener(this);
             holder.mImageViewLayout.setOnImageClickListener(this);
+            holder.itemView.setTag(position);
             holder.mUserAvatarIv.setTag(position);
             holder.mNicknameTv.setTag(position);
             holder.mMoreIv.setTag(position);
@@ -154,6 +157,9 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
             int position = (int) v.getTag();
             DiscoverData data = mList.get(position);
             switch (v.getId()) {
+                case R.id.ll_item_layout:
+                    DetailActivity.startAction(getContext(), data);
+                    break;
                 case R.id.iv_user_avatar:
                 case R.id.tv_nickname:
                     startActivity(new Intent(getContext(), UserProfileActivity.class));

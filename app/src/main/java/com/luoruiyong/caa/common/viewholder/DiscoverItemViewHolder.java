@@ -21,6 +21,8 @@ public class DiscoverItemViewHolder extends RecyclerView.ViewHolder {
     public TextView mContentTv;
     public TextView mLocationTv;
     public TextView mTopicTv;
+    public View mDividerView;
+    public TextView mTopLikeTv;
     public TextView mLikeTv;
     public TextView mCommentTv;
     public ImageViewLayoutV2 mImageViewLayout;
@@ -35,6 +37,8 @@ public class DiscoverItemViewHolder extends RecyclerView.ViewHolder {
         mContentTv = itemView.findViewById(R.id.tv_content);
         mLocationTv = itemView.findViewById(R.id.tv_location);
         mTopicTv = itemView.findViewById(R.id.tv_topic);
+        mDividerView = itemView.findViewById(R.id.view_divider);
+        mTopLikeTv = itemView.findViewById(R.id.tv_top_like);
         mLikeTv = itemView.findViewById(R.id.tv_like);
         mCommentTv = itemView.findViewById(R.id.tv_comment);
         mImageViewLayout = itemView.findViewById(R.id.image_view_layout);
@@ -62,6 +66,7 @@ public class DiscoverItemViewHolder extends RecyclerView.ViewHolder {
         }
 
         mLikeTv.setText(data.getLikeCount() == 0 ? ResourcesUtils.getString(R.string.common_str_like) : data.getLikeCount() + "");
+        mTopLikeTv.setText(data.getLikeCount() == 0 ? ResourcesUtils.getString(R.string.common_str_like) : data.getLikeCount() + "");
         mCommentTv.setText(data.getCommentCount() == 0 ? ResourcesUtils.getString(R.string.common_str_comment) : data.getCommentCount() + "");
 
         mImageViewLayout.setPictureUrls(data.getPictureList());
