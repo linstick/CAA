@@ -114,58 +114,6 @@
                             android:layout_alignParentRight="true"
                             android:layout_alignParentEnd="true"/>
 
-                        <LinearLayout
-                            android:layout_below="@+id/iv_user_avatar"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginTop="10dp"
-                            android:visibility="gone">
-
-                            <TextView
-                                android:id="@+id/tv_age"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="#666666"
-                                android:textSize="15sp"
-                                android:text="23"/>
-
-                            <View
-                                android:layout_width="1dp"
-                                android:layout_height="12dp"
-                                android:background="#BBBBBB"
-                                android:layout_marginLeft="10dp"
-                                android:layout_marginStart="10dp"
-                                android:layout_marginRight="10dp"
-                                android:layout_marginEnd="10dp"/>
-
-                            <TextView
-                                android:id="@+id/tv_gender"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="#666666"
-                                android:textSize="15sp"
-                                android:text="Male"/>
-
-                            <View
-                                android:layout_width="1dp"
-                                android:layout_height="12dp"
-                                android:background="#BBBBBB"
-                                android:layout_marginLeft="10dp"
-                                android:layout_marginStart="10dp"
-                                android:layout_marginRight="10dp"
-                                android:layout_marginEnd="10dp"/>
-
-                            <TextView
-                                android:id="@+id/tv_college"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="#666666"
-                                android:textSize="15sp"
-                                android:text="Guangdong University Of Technology"/>
-
-                        </LinearLayout>
                     </RelativeLayout>
 
                     <View
@@ -243,6 +191,40 @@
 
                         <TextView
                             android:id="@+id/tv_college_info"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#999999"
+                            android:textSize="14sp"
+                            android:text="18\adsfasdsadasdfnaksndfkansdlkfnalksdnfklankdnfaklndfknakfnakdnfkandkfalnfkasdnlkanfkanklfa" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_gravity="bottom"
+                        android:background="#DDDDDD"
+                        android:layout_marginTop="10dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginEnd="10dp">
+
+                        <TextView
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:textColor="#777777"
+                            android:textSize="14sp"
+                            android:text="@string/profile_str_description"/>
+
+                        <TextView
+                            android:id="@+id/tv_description"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="#999999"

@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ import com.luoruiyong.caa.utils.DisplayUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -37,11 +39,10 @@ import java.util.List;
 public class TopicActivity extends BaseActivity implements View.OnClickListener{
     private static final String TAG = "TopicActivity";
 
-    private TextView mTitleTv;
-    private LinearLayout mActionBarLayout;
+    private ImageView mBackIv;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
-    private LinearLayout mTabLayoutContainer;
+    private View mTabLayoutContainer;
     private View mDividerView;
 
     private ImageView mUserAvatarIv;
@@ -56,9 +57,8 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
     private List<String> mTitleList;
     private ViewPagerAdapter mAdapter;
 
-
     private State mCurState = State.IDLE;
-    private boolean mHasSetActionBarMarginTop;
+    private int mTopicId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,9 +72,7 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
     }
 
     private void initView() {
-        mTitleTv = findViewById(R.id.tv_title);
-        mTitleTv.setText(R.string.title_topic_detail);
-
+        mBackIv = findViewById(R.id.iv_back);
         mUserAvatarIv = findViewById(R.id.iv_user_avatar);
         mNicknameTv = findViewById(R.id.tv_nickname);
         mTagNameTv = findViewById(R.id.tv_tag_name);
@@ -83,12 +81,11 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
         mIntroductionTv = findViewById(R.id.tv_introduction);
         mTagCoverIv = findViewById(R.id.iv_tag_cover);
 
-        findViewById(R.id.iv_back).setOnClickListener(this);
+        mBackIv.setOnClickListener(this);
         findViewById(R.id.iv_header_back).setOnClickListener(this);
         mUserAvatarIv.setOnClickListener(this);
         mNicknameTv.setOnClickListener(this);
 
-        mActionBarLayout = findViewById(R.id.action_bar);
         ((AppBarLayout)findViewById(R.id.app_bar_layout)).addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
@@ -118,13 +115,14 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
     }
 
     private void initFragment() {
-        mFragmentList = new ArrayList<>();
-        mFragmentList.add(new SwipeDiscoverFragment());
-        mFragmentList.add(new SwipeDiscoverFragment());
-
         mTitleList = new ArrayList<>();
-        mTitleList.add("Hot");
-        mTitleList.add("Lasted");
+        mFragmentList = new ArrayList<>();
+
+        mTitleList.add(getString(R.string.topic_detail_str_hot));
+        mFragmentList.add(SwipeDiscoverFragment.newInstance(SwipeDiscoverFragment.TYPE_TOPIC_HOT, mTopicId));
+
+        mTitleList.add(getString(R.string.topic_detail_str_lasted));
+        mFragmentList.add(SwipeDiscoverFragment.newInstance(SwipeDiscoverFragment.TYPE_TOPIC_LASTED, mTopicId));
 
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setupWithViewPager(mViewPager);
@@ -136,19 +134,13 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
     private void onStateChanged(AppBarLayout appBarLayout, State changedState) {
         Log.d(TAG, "onStateChanged: " + changedState);
         if (changedState == State.COLLAPSED) {
-            if (!mHasSetActionBarMarginTop) {
-                FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mActionBarLayout.getLayoutParams();
-                params.topMargin = DisplayUtils.getStatusBarHeight(this);
-                mActionBarLayout.setLayoutParams(params);
-                mHasSetActionBarMarginTop = true;
-            }
-            mActionBarLayout.setVisibility(View.VISIBLE);
+            mBackIv.setVisibility(View.VISIBLE);
             mTabLayoutContainer.setBackgroundColor(ResourcesUtils.getColor(R.color.colorPrimary));
             mTabLayout.setTabTextColors(ResourcesUtils.getColor(R.color.colorDDDDDD), ResourcesUtils.getColor(R.color.white));
             mTabLayout.setSelectedTabIndicatorColor(ResourcesUtils.getColor(R.color.white));
             mDividerView.setBackgroundColor(ResourcesUtils.getColor(R.color.colorPrimary));
         } else {
-            mActionBarLayout.setVisibility(View.GONE);
+            mBackIv.setVisibility(View.GONE);
             mTabLayoutContainer.setBackgroundColor(ResourcesUtils.getColor(android.R.color.transparent));
             mTabLayout.setTabTextColors(ResourcesUtils.getColor(R.color.color888888), ResourcesUtils.getColor(R.color.colorPrimary));
             mTabLayout.setSelectedTabIndicatorColor(ResourcesUtils.getColor(R.color.colorPrimary));

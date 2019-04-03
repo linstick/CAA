@@ -128,7 +128,7 @@
     <string name="title_login">用户登录</string>
     <string name="title_sign">注册用户</string>
     <string name="title_find_password">找回密码</string>
-    <string name="title_edit_profile">编辑个人资料</string>
+    <string name="title_edit_profile">编辑资料</string>
     <string name="title_modify_password">修改密码</string>
     <string name="title_bind_cell_number">绑定手机</string>
     <string name="title_unbind_cell_number">解绑手机</string>
@@ -137,7 +137,7 @@
     <string name="title_feedback">意见或建议</string>
     <string name="title_settings">设置</string>
     <string name="title_mine">我的</string>
-    <string name="title_user_profile">用户资料</string>
+    <string name="title_user_profile">个人中心</string>
     <string name="title_create_activity">创建活动</string>
     <string name="title_create_topic">创建话题</string>
     <string name="title_create_discover">创建动态</string>
@@ -216,6 +216,7 @@
     <string name="profile_str_nickname">昵称:</string>
     <string name="profile_str_basic_info">基本信息</string>
     <string name="profile_str_college_info">学校信息</string>
+    <string name="profile_str_description">个性签名</string>
 
     <!--编辑资料页相关文案-->
     <string name="modify_profile_str_gender">性别</string>
@@ -249,6 +250,13 @@
     <!--话题列表页相关文案-->
     <string name="fm_topic_str_joined">参与</string>
     <string name="fm_topic_str_visited">浏览</string>
+
+    <!--话题详情页面相关文案-->
+    <string name="topic_detail_str_joined">参与:</string>
+    <string name="topic_detail_str_visited">浏览:</string>
+    <string name="topic_detail_str_introduction">导语:</string>
+    <string name="topic_detail_str_hot">热门</string>
+    <string name="topic_detail_str_lasted">最新</string>
 
     <!--创建活动/话题/动态的列表-->
     <string-array name="str_array_create_new">
@@ -284,5 +292,6 @@
         <item>@string/fm_message_str_activity_push</item>
         <item>@string/fm_message_str_topic_push</item>
     </string-array>
+
 </resources>
 

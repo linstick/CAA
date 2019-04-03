@@ -41,6 +41,8 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
 
     private static final String KEY_ACTIVITY_TYPE = "key_activity_type";
     public static final int TYPE_ALL = 0;
+    public static final int TYPE_SELF = Enviroment.getActivityTypeMap().size();
+    public static final int TYPE_COLLECT = TYPE_SELF + 1;
 
     private int mActivityType;
 
@@ -64,7 +66,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
 
         // for test
         for (int i = 0; i < 30; i++) {
-            if (mActivityType == TYPE_ALL) {
+            if (mActivityType == TYPE_ALL || mActivityType == TYPE_SELF || mActivityType == TYPE_COLLECT) {
                 mList.add(new ActivitySimpleData(i, (int)(Math.random() * 6 + 1)));
             } else {
                 mList.add(new ActivitySimpleData(i, mActivityType));
@@ -231,6 +233,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
 //                mUserAvatarIv.setImageUrl(data.getAvatarUrl());
                 mNicknameTv.setText(data.getNickname());
 //                mPublishTimeTv.setText(data.getPublishTime());
+
                 if (data.getType() != mActivityType) {
                     mActivityTypeTv.setVisibility(View.VISIBLE);
                     mActivityTypeTv.setText(Enviroment.getActivityTypeNameById(data.getType()));

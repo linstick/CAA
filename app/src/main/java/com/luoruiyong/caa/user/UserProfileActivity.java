@@ -40,6 +40,7 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
     private ImageView mEditIv;
     private TextView mBaseInfoTv;
     private TextView mCollegeInfoTv;
+    private TextView mDescriptionTv;
 
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
@@ -69,6 +70,7 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
         mEditIv = findViewById(R.id.iv_edit_profile);
         mBaseInfoTv = findViewById(R.id.tv_basic_info);
         mCollegeInfoTv = findViewById(R.id.tv_college_info);
+        mDescriptionTv = findViewById(R.id.tv_description);
         mTabLayout = findViewById(R.id.tab_layout);
         mViewPager = findViewById(R.id.view_pager);
 
@@ -82,10 +84,10 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
 
     private void initFragment() {
         mFragmentList = new ArrayList<>();
-        mFragmentList.add(SwipeActivityFragment.newInstance());
+        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_SELF));
         mFragmentList.add(new SwipeTagFragment());
-        mFragmentList.add(new SwipeDiscoverFragment());
-        mFragmentList.add(SwipeActivityFragment.newInstance());
+        mFragmentList.add(SwipeDiscoverFragment.newInstance(SwipeDiscoverFragment.TYPE_SELF));
+        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_COLLECT));
 
         mTabTitleList = new ArrayList<>();
         mTabTitleList.add(getString(R.string.title_activity));

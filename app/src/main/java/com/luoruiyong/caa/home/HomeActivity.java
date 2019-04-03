@@ -90,7 +90,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
         mFragmentList = new ArrayList<>();
         mFragmentList.add(new ActivityFragment());
         mFragmentList.add(new SwipeTagFragment());
-        mFragmentList.add(new SwipeDiscoverFragment());
+        mFragmentList.add(SwipeDiscoverFragment.newInstance(SwipeDiscoverFragment.TYPE_ALL));
         mFragmentList.add(new MessageFragment());
 
         mBottomTabList = new ArrayList<>();

@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
-import com.luoruiyong.caa.bean.ActivitySimpleData;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicActivity;
@@ -32,15 +31,35 @@ import java.util.List;
  **/
 public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
 
-    private static final String KEY_ACTIVITY_TYPE = "key_discover_type";
-    public static final int TYPE_ALL = 0;
-    public static final int TYPE_SCHOOL_MATE = 1;
+    private static final String KEY_TYPE = "key_type";
+    private static final String KEY_TOPIC_ID = "key_topic_id";
 
-    private int mDiscoverType;
+    public static final int TYPE_ALL = 0;
+    public static final int TYPE_SELF = 1;
+    public static final int TYPE_TOPIC_HOT = 2;
+    public static final int TYPE_TOPIC_LASTED = 3;
+
+    private int mType = TYPE_ALL;
+    private int mTopicId = -1;
+
+    public static SwipeDiscoverFragment newInstance(int type) {
+        return newInstance(type, -1);
+    }
+
+    public static SwipeDiscoverFragment newInstance(int type, int topicId) {
+        SwipeDiscoverFragment fm = new SwipeDiscoverFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt(KEY_TYPE, type);
+        bundle.putInt(KEY_TOPIC_ID, topicId);
+        fm.setArguments(bundle);
+        return fm;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        handleArguments();
 
         // for test
         for (int i = 0; i < 30; i++) {
@@ -66,6 +85,14 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         return view;
     }
 
+    private void handleArguments() {
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            mType = bundle.getInt(KEY_TYPE);
+            mTopicId = bundle.getInt(KEY_TOPIC_ID);
+        }
+    }
+
     @Override
     protected void initListAdapter(List<DiscoverData> list) {
         mAdapter = new ListAdapter(list);
@@ -73,12 +100,12 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
 
     @Override
     protected void doRefresh() {
-        Toast.makeText(getContext(), "doRefresh: type = " + mDiscoverType, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "doRefresh: type = " + mType + " topic id = " + mTopicId, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void doLoadMore() {
-        Toast.makeText(getContext(), "doLoadMore: type = " + mDiscoverType, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "doLoadMore: type = " + mType + " topic id = " + mTopicId, Toast.LENGTH_SHORT).show();
     }
 
     private class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> implements View.OnClickListener, ImageViewLayout.OnImageClickListener{
