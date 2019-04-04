@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
+import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.GridLayoutStrategy;
@@ -33,7 +34,8 @@ import java.util.List;
  * Date: 2019/3/14/014
  **/
 public class CreateActivityFragment extends Fragment implements
-        View.OnClickListener, View.OnFocusChangeListener, ImageViewLayout.OnImageClickListener{
+        View.OnClickListener, View.OnFocusChangeListener, ImageViewLayout.OnImageClickListener,
+        ImageViewLayout.OnImageLongClickListener{
 
     private TextView mTypeLabelTv;
     private TextView mTypeTv;
@@ -109,6 +111,7 @@ public class CreateActivityFragment extends Fragment implements
         mImageViewLayout.setMaxChildViewCount(9);
         mImageViewLayout.setLayoutStrategy(new GridLayoutStrategy());
         mImageViewLayout.setOnImageClickListener(this);
+        mImageViewLayout.setOnImageLongClickListener(this);
 
         // for test
         mPictureUrls = new ArrayList<>();
@@ -233,5 +236,21 @@ public class CreateActivityFragment extends Fragment implements
             PictureBrowseActivity.startAction(getContext(), list, position);
 
         }
+    }
+
+    @Override
+    public void onImageLongClick(View parent, final int position) {
+        if (position + 1 == 9 || position + 1 == mPictureUrls.size()) {
+            return;
+        }
+        List<String> items = new ArrayList<>();
+        items.add(getString(R.string.common_str_delete));
+        DialogHelper.showListDialog(getContext(), items, new CommonDialog.Builder.OnItemClickListener() {
+            @Override
+            public void onItemClick(int which) {
+                mPictureUrls.remove(position);
+                mImageViewLayout.notifyChildViewChanged();
+            }
+        });
     }
 }

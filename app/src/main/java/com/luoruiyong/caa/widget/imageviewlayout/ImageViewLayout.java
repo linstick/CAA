@@ -18,14 +18,15 @@ import java.util.List;
  * Author: luoruiyong
  * Date: 2019/3/16/016
  **/
-public class ImageViewLayout extends ViewGroup implements View.OnClickListener{
+public class ImageViewLayout extends ViewGroup implements View.OnClickListener, View.OnLongClickListener{
 
     private final int DEFAULT_MAX_CHILD_COUNT = 5;
     private final ILayoutStrategy DEFAULT_LAYOUT_STRATEGY = new SpecialLayoutStrategy();
 
     private int mMaxChildViewCount;
     private List<String> mUrls;
-    private OnImageClickListener mListener;
+    private OnImageClickListener mClickListener;
+    private OnImageLongClickListener mLongClickListener;
     private ILayoutStrategy mLayoutStrategy;
 
     public ImageViewLayout(Context context) {
@@ -58,7 +59,11 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener{
     }
 
     public void setOnImageClickListener(OnImageClickListener listener) {
-        mListener = listener;
+        mClickListener = listener;
+    }
+
+    public void setOnImageLongClickListener(OnImageLongClickListener listener) {
+        mLongClickListener = listener;
     }
 
     public void setLayoutStrategy(ILayoutStrategy strategy) {
@@ -81,6 +86,9 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener{
             ImageView imageView = view.findViewById(R.id.iv_picture);
             imageView.setTag(i);
             imageView.setOnClickListener(this);
+            if (mLongClickListener != null) {
+                imageView.setOnLongClickListener(this);
+            }
             if (i + 1 == count && count < mUrls.size()) {
                 TextView totalTipTv = view.findViewById(R.id.tv_total_tip);
                 totalTipTv.setText(String.format(ResourcesUtils.getString(R.string.common_str_total), mUrls.size()));
@@ -108,12 +116,24 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        if (mListener != null) {
-            mListener.onImageClick(this, (Integer) v.getTag());
+        if (mClickListener != null) {
+            mClickListener.onImageClick(this, (Integer) v.getTag());
         }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        if (mLongClickListener != null) {
+            mLongClickListener.onImageLongClick(this, (Integer) v.getTag());
+        }
+        return true;
     }
 
     public interface OnImageClickListener {
         void onImageClick(View parent, int position);
+    }
+
+    public interface OnImageLongClickListener {
+        void onImageLongClick(View parent, int position);
     }
 }
