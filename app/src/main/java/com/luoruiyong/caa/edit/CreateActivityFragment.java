@@ -12,12 +12,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
+import com.luoruiyong.caa.simple.PictureBrowseActivity;
+import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
+import com.luoruiyong.caa.widget.imageviewlayout.GridLayoutStrategy;
+import com.luoruiyong.caa.widget.imageviewlayout.ILayoutStrategy;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
 import java.util.ArrayList;
@@ -28,7 +33,7 @@ import java.util.List;
  * Date: 2019/3/14/014
  **/
 public class CreateActivityFragment extends Fragment implements
-        View.OnClickListener, View.OnFocusChangeListener{
+        View.OnClickListener, View.OnFocusChangeListener, ImageViewLayout.OnImageClickListener{
 
     private TextView mTypeLabelTv;
     private TextView mTypeTv;
@@ -53,6 +58,8 @@ public class CreateActivityFragment extends Fragment implements
 
     private List<String> mActivityTypeList;
     private int mActivityType = -1;
+
+    private List<String> mPictureUrls;
 
     @Nullable
     @Override
@@ -98,6 +105,15 @@ public class CreateActivityFragment extends Fragment implements
         mTimeInputEt.setOnFocusChangeListener(this);
         mAddressInputEt.setOnFocusChangeListener(this);
         mRemarkInputEt.setOnFocusChangeListener(this);
+
+        mImageViewLayout.setMaxChildViewCount(9);
+        mImageViewLayout.setLayoutStrategy(new GridLayoutStrategy());
+        mImageViewLayout.setOnImageClickListener(this);
+
+        // for test
+        mPictureUrls = new ArrayList<>();
+        mPictureUrls.add("https://www.baidu.com");
+        mImageViewLayout.setPictureUrls(mPictureUrls);
     }
 
     private void showActivityTypeDialog() {
@@ -189,6 +205,33 @@ public class CreateActivityFragment extends Fragment implements
         } else {
             editText.setHint(hintResId);
             labelText.setVisibility(TextUtils.isEmpty(editText.getText()) ? View.GONE : View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onImageClick(View parent, int position) {
+        if (!ListUtils.isIndexBetween(mPictureUrls, position)) {
+            return;
+        }
+        if (position + 1 != 9 && position == mPictureUrls.size() - 1) {
+            // 添加图片
+            // for test
+            Toast.makeText(getContext(), "选择图片添加", Toast.LENGTH_SHORT).show();
+            mPictureUrls.add(mPictureUrls.size() - 1, "https://www.baidu.com/1.jpg");
+            mImageViewLayout.notifyChildViewChanged();
+        } else {
+            // 查看图片
+            List list = new ArrayList();
+            if (position + 1 == 9) {
+                list.addAll(mPictureUrls);
+            } else {
+                // 需要移除最后的那一张添加
+                for (int i = 0; i < mPictureUrls.size() - 1; i++) {
+                    list.add(mPictureUrls.get(i));
+                }
+            }
+            PictureBrowseActivity.startAction(getContext(), list, position);
+
         }
     }
 }

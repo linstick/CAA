@@ -310,8 +310,8 @@
             android:id="@+id/image_view_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="80dp"
-            android:layout_marginEnd="80dp"
+            android:layout_marginRight="100dp"
+            android:layout_marginEnd="100dp"
             android:layout_marginTop="10dp">
         </com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout>
     </LinearLayout>
