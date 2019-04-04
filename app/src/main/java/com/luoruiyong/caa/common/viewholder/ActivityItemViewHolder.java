@@ -35,7 +35,7 @@ public class ActivityItemViewHolder extends RecyclerView.ViewHolder {
         mNicknameTv = itemView.findViewById(R.id.tv_nickname);
         mPublishTimeTv = itemView.findViewById(R.id.tv_publish_time);
         mActivityTypeTv = itemView.findViewById(R.id.tv_activity_type);
-        mActivityTitleTv = itemView.findViewById(R.id.tv_activity_title);
+        mActivityTitleTv = itemView.findViewById(R.id.tv_activity_title_label);
         mActivityContentTv = itemView.findViewById(R.id.tv_activity_content);
         mLocationTv = itemView.findViewById(R.id.tv_location);
         mTopicTv = itemView.findViewById(R.id.tv_topic);

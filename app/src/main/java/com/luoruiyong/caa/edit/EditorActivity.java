@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
@@ -25,6 +26,7 @@ public class EditorActivity extends BaseActivity implements View.OnClickListener
 
     private ImageView mBackIv;
     private TextView mTitleTv;
+    private ImageView mFinishIv;
 
     public static void startAction(Context context, String whichTab) {
         Intent intent = new Intent(context, EditorActivity.class);
@@ -45,8 +47,12 @@ public class EditorActivity extends BaseActivity implements View.OnClickListener
     private void initView() {
         mBackIv = findViewById(R.id.iv_back);
         mTitleTv = findViewById(R.id.tv_title);
+        mFinishIv = findViewById(R.id.iv_right_operate);
 
         mBackIv.setOnClickListener(this);
+        mFinishIv.setOnClickListener(this);
+        mFinishIv.setImageResource(R.drawable.ic_finish_white);
+        mFinishIv.setVisibility(View.VISIBLE);
     }
 
     private void handleIntent() {
@@ -80,6 +86,9 @@ public class EditorActivity extends BaseActivity implements View.OnClickListener
         switch (v.getId()) {
             case R.id.iv_back:
                 finish();
+                break;
+            case R.id.iv_right_operate:
+                Toast.makeText(this, "Finish", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;

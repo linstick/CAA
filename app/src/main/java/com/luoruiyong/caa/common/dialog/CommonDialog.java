@@ -126,6 +126,8 @@ public class CommonDialog extends Dialog implements View.OnClickListener, Adapte
             mListView.setOnItemClickListener(this);
             mListView.setVisibility(View.VISIBLE);
         }
+
+        setOnDismissListener(mBuilder.mDismissListener);
     }
 
     @Override
@@ -230,6 +232,7 @@ public class CommonDialog extends Dialog implements View.OnClickListener, Adapte
         private OnClickListener mNegativeListener;
         private OnClickListener mPositiveListener;
         private OnItemClickListener mListItemListener;
+        private OnDismissListener mDismissListener;
 
         public Builder(Context context) {
             this.mContext = context;
@@ -313,6 +316,11 @@ public class CommonDialog extends Dialog implements View.OnClickListener, Adapte
 
         public Builder onPositive(OnClickListener listener) {
             mPositiveListener = listener;
+            return this;
+        }
+
+        public Builder onDismiss(OnDismissListener listener) {
+            mDismissListener = listener;
             return this;
         }
 
