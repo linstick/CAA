@@ -109,6 +109,7 @@ public class CreateActivityFragment extends Fragment implements
         mRemarkInputEt.setOnFocusChangeListener(this);
 
         mImageViewLayout.setMaxChildViewCount(9);
+        mImageViewLayout.setNeedShowTotalTip(false);
         mImageViewLayout.setLayoutStrategy(new GridLayoutStrategy());
         mImageViewLayout.setOnImageClickListener(this);
         mImageViewLayout.setOnImageLongClickListener(this);
@@ -216,7 +217,7 @@ public class CreateActivityFragment extends Fragment implements
         if (!ListUtils.isIndexBetween(mPictureUrls, position)) {
             return;
         }
-        if (position + 1 != 9 && position == mPictureUrls.size() - 1) {
+        if (position + 1 == mPictureUrls.size()) {
             // 添加图片
             // for test
             Toast.makeText(getContext(), "选择图片添加", Toast.LENGTH_SHORT).show();
@@ -225,13 +226,9 @@ public class CreateActivityFragment extends Fragment implements
         } else {
             // 查看图片
             List list = new ArrayList();
-            if (position + 1 == 9) {
-                list.addAll(mPictureUrls);
-            } else {
-                // 需要移除最后的那一张添加
-                for (int i = 0; i < mPictureUrls.size() - 1; i++) {
-                    list.add(mPictureUrls.get(i));
-                }
+            // 需要移除最后的那一张添加
+            for (int i = 0; i < mPictureUrls.size() - 1; i++) {
+                list.add(mPictureUrls.get(i));
             }
             PictureBrowseActivity.startAction(getContext(), list, position);
 
@@ -240,7 +237,7 @@ public class CreateActivityFragment extends Fragment implements
 
     @Override
     public void onImageLongClick(View parent, final int position) {
-        if (position + 1 == 9 || position + 1 == mPictureUrls.size()) {
+        if (position + 1 == mPictureUrls.size()) {
             return;
         }
         List<String> items = new ArrayList<>();

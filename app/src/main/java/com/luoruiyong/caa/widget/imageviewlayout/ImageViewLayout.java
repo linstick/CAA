@@ -20,6 +20,7 @@ import java.util.List;
  **/
 public class ImageViewLayout extends ViewGroup implements View.OnClickListener, View.OnLongClickListener{
 
+    private final boolean DEFAULT_NEED_SHOW_TOTAL_TIP = true;
     private final int DEFAULT_MAX_CHILD_COUNT = 5;
     private final ILayoutStrategy DEFAULT_LAYOUT_STRATEGY = new SpecialLayoutStrategy();
 
@@ -28,6 +29,7 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
     private OnImageClickListener mClickListener;
     private OnImageLongClickListener mLongClickListener;
     private ILayoutStrategy mLayoutStrategy;
+    private boolean mNeedShowTotalTip;
 
     public ImageViewLayout(Context context) {
         this(context, null);
@@ -45,6 +47,7 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
     private void init() {
         mMaxChildViewCount = DEFAULT_MAX_CHILD_COUNT;
         mLayoutStrategy = DEFAULT_LAYOUT_STRATEGY;
+        mNeedShowTotalTip = DEFAULT_NEED_SHOW_TOTAL_TIP;
     }
 
     public void setPictureUrls(List<String> list) {
@@ -72,6 +75,11 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
         notifyChildViewChanged();
     }
 
+    public void setNeedShowTotalTip(boolean showTotalTip) {
+        mNeedShowTotalTip = showTotalTip;
+        notifyChildViewChanged();
+    }
+
     public void notifyChildViewChanged() {
         removeAllViews();
         if (ListUtils.isEmpty(mUrls)) {
@@ -89,7 +97,7 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
             if (mLongClickListener != null) {
                 imageView.setOnLongClickListener(this);
             }
-            if (i + 1 == count && count < mUrls.size()) {
+            if (mNeedShowTotalTip && i + 1 == count && count < mUrls.size()) {
                 TextView totalTipTv = view.findViewById(R.id.tv_total_tip);
                 totalTipTv.setText(String.format(ResourcesUtils.getString(R.string.common_str_total), mUrls.size()));
                 totalTipTv.setVisibility(VISIBLE);
