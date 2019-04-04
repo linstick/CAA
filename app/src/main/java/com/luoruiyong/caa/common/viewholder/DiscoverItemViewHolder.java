@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.utils.ResourcesUtils;
-import com.luoruiyong.caa.widget.ImageViewLayoutV2;
+import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
 public class DiscoverItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -25,7 +25,7 @@ public class DiscoverItemViewHolder extends RecyclerView.ViewHolder {
     public TextView mTopLikeTv;
     public TextView mLikeTv;
     public TextView mCommentTv;
-    public ImageViewLayoutV2 mImageViewLayout;
+    public ImageViewLayout mImageViewLayout;
 
     public DiscoverItemViewHolder(View itemView) {
         super(itemView);

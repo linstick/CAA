@@ -6,12 +6,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.luoruiyong.caa.Enviroment;
@@ -24,7 +21,7 @@ import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.user.UserProfileActivity;
 import com.luoruiyong.caa.utils.ListUtils;
-import com.luoruiyong.caa.widget.ImageViewLayoutV2;
+import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
 import java.util.List;
 
@@ -107,7 +104,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
         Toast.makeText(getContext(), "doLoadMore: type = " + mActivityType, Toast.LENGTH_SHORT).show();
     }
 
-    private class ListAdapter extends RecyclerView.Adapter<ActivityItemViewHolder> implements View.OnClickListener, ImageViewLayoutV2.OnImageClickListener{
+    private class ListAdapter extends RecyclerView.Adapter<ActivityItemViewHolder> implements View.OnClickListener, ImageViewLayout.OnImageClickListener{
 
         private List<ActivitySimpleData> mList;
 

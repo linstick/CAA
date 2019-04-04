@@ -99,7 +99,7 @@
         android:textColor="#666666"
         android:textSize="15sp" />
 
-    <com.luoruiyong.caa.widget.ImageViewLayoutV2
+    <com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout
         android:id="@+id/image_view_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

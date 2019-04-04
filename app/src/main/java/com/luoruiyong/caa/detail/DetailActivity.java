@@ -4,35 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.bean.ActivitySimpleData;
 import com.luoruiyong.caa.bean.DiscoverData;
-import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
-import com.luoruiyong.caa.common.dialog.CommonDialog;
-import com.luoruiyong.caa.common.fragment.SwipeActivityFragment;
-import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
-import com.luoruiyong.caa.simple.PictureBrowseActivity;
-import com.luoruiyong.caa.topic.TopicActivity;
-import com.luoruiyong.caa.user.UserProfileActivity;
-import com.luoruiyong.caa.utils.DialogHelper;
-import com.luoruiyong.caa.utils.ResourcesUtils;
-import com.luoruiyong.caa.widget.ImageViewLayout;
-import com.luoruiyong.caa.widget.ImageViewLayoutV2;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Author: luoruiyong

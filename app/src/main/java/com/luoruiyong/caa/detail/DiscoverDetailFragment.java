@@ -4,32 +4,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.bean.DiscoverData;
-import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
-import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
 import com.luoruiyong.caa.common.viewholder.DiscoverItemViewHolder;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.user.UserProfileActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.ResourcesUtils;
-import com.luoruiyong.caa.widget.ImageViewLayoutV2;
+import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +31,7 @@ import java.util.List;
  * Author: luoruiyong
  * Date: 2019/4/4/004
  **/
-public class DiscoverDetailFragment extends Fragment implements View.OnClickListener, ImageViewLayoutV2.OnImageClickListener{
+public class DiscoverDetailFragment extends Fragment implements View.OnClickListener, ImageViewLayout.OnImageClickListener{
 
     private static final String KEY_DISCOVER_DATA = "key_discover_data";
 
@@ -101,7 +94,7 @@ public class DiscoverDetailFragment extends Fragment implements View.OnClickList
         mViewHolder.mDividerView.setVisibility(View.GONE);
         mViewHolder.mLikeTv.setVisibility(View.GONE);
         mViewHolder.mCommentTv.setVisibility(View.GONE);
-        mViewHolder.mImageViewLayout.setMaxChildCount(9);
+        mViewHolder.mImageViewLayout.setMaxChildViewCount(9);
     }
 
     private void initFragment() {

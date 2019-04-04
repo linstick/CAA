@@ -27,7 +27,7 @@ import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.user.UserProfileActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.ResourcesUtils;
-import com.luoruiyong.caa.widget.ImageViewLayoutV2;
+import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ import java.util.List;
  * Author: luoruiyong
  * Date: 2019/4/4/004
  **/
-public class ActivityDetailFragment extends Fragment implements View.OnClickListener, ImageViewLayoutV2.OnImageClickListener{
+public class ActivityDetailFragment extends Fragment implements View.OnClickListener, ImageViewLayout.OnImageClickListener{
 
     private static final String KEY_ACTIVITY_DATA = "key_activity_data";
     private static final int INPUT_TYPE_COMMENT = 1;
@@ -103,7 +103,7 @@ public class ActivityDetailFragment extends Fragment implements View.OnClickList
         mViewHolder.mImageViewLayout.setOnImageClickListener(this);
 
         mViewHolder.mCommentTv.setVisibility(View.GONE);
-        mViewHolder.mImageViewLayout.setMaxChildCount(9);
+        mViewHolder.mImageViewLayout.setMaxChildViewCount(9);
     }
 
     private void handleArguments() {

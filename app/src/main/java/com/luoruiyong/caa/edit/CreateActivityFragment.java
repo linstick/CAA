@@ -8,7 +8,6 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -18,12 +17,10 @@ import android.widget.Toast;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
-import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.ResourcesUtils;
-import com.luoruiyong.caa.widget.ImageViewLayoutV2;
+import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -52,7 +49,7 @@ public class CreateActivityFragment extends Fragment implements
     private TextView mRelatedTopicTv;
     private TextView mLocationLabelTv;
     private TextView mLocationTv;
-    private ImageViewLayoutV2 mImageViewLayout;
+    private ImageViewLayout mImageViewLayout;
 
     private List<String> mActivityTypeList;
     private int mActivityType = -1;

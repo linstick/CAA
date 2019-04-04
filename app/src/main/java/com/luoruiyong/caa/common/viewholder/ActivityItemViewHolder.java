@@ -11,7 +11,7 @@ import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.bean.ActivitySimpleData;
 import com.luoruiyong.caa.utils.ResourcesUtils;
-import com.luoruiyong.caa.widget.ImageViewLayoutV2;
+import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
 public class ActivityItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -26,7 +26,7 @@ public class ActivityItemViewHolder extends RecyclerView.ViewHolder {
     public TextView mCollectTv;
     public TextView mCommentTv;
     public TextView mMoreIv;
-    public ImageViewLayoutV2 mImageViewLayout;
+    public ImageViewLayout mImageViewLayout;
     public ViewStub mExtrasVs;
 
     public ActivityItemViewHolder(View itemView) {
