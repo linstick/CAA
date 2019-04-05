@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ImageViewLayout">
+        <attr name="maxChildCount" format="integer"/>
+        <attr name="needShowTotalTip" format="boolean"/>
+        <attr name="imageUrls" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="DynamicInputView">
+        <attr name="type">
+            <enum name="input" value="0"/>
+            <enum name="text" value="1"/>
+            <enum name="spinner" value="2"/>
+        </attr>
+        <attr name="labelText" format="string"/>
+        <attr name="errorText" format="string"/>
+        <attr name="entries" format="reference"/>
+    </declare-styleable>
+</resources>
