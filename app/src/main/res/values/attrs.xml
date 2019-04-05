@@ -19,5 +19,9 @@
         <attr name="labelText" format="string"/>
         <attr name="errorText" format="string"/>
         <attr name="entries" format="reference"/>
+        <attr name="nullable" format="boolean"/>
+        <attr name="lines" format="integer"/>
+        <attr name="maxLines" format="integer"/>
+        <attr name="minLines" format="integer"/>
     </declare-styleable>
 </resources>
