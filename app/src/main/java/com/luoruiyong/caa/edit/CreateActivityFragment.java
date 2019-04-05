@@ -108,9 +108,6 @@ public class CreateActivityFragment extends Fragment implements
         mAddressInputEt.setOnFocusChangeListener(this);
         mRemarkInputEt.setOnFocusChangeListener(this);
 
-        mImageViewLayout.setMaxChildViewCount(9);
-        mImageViewLayout.setNeedShowTotalTip(false);
-        mImageViewLayout.setLayoutStrategy(new GridLayoutStrategy());
         mImageViewLayout.setOnImageClickListener(this);
         mImageViewLayout.setOnImageLongClickListener(this);
 

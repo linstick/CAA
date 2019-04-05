@@ -1,6 +1,7 @@
 package com.luoruiyong.caa.widget.imageviewlayout;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,7 +24,7 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
 
     private final boolean DEFAULT_NEED_SHOW_TOTAL_TIP = true;
     private final int DEFAULT_MAX_CHILD_COUNT = 5;
-    private final ILayoutStrategy DEFAULT_LAYOUT_STRATEGY = new SpecialLayoutStrategy();
+    private final int DEFAULT_LAYOUT_STRATEGY = LayoutStrategy.SPECIAL;
 
     private int mMaxChildViewCount;
     private List<String> mUrls;
@@ -41,18 +43,30 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
 
     public ImageViewLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(context, attrs);
     }
     
-    private void init() {
-        mMaxChildViewCount = DEFAULT_MAX_CHILD_COUNT;
-        mLayoutStrategy = DEFAULT_LAYOUT_STRATEGY;
-        mNeedShowTotalTip = DEFAULT_NEED_SHOW_TOTAL_TIP;
+    private void init(Context context, AttributeSet atts) {
+        TypedArray typedArray = context.obtainStyledAttributes(atts, R.styleable.ImageViewLayout);
+        mMaxChildViewCount = typedArray.getInt(R.styleable.ImageViewLayout_maxChildCount, DEFAULT_MAX_CHILD_COUNT);
+        mNeedShowTotalTip = typedArray.getBoolean(R.styleable.ImageViewLayout_needShowTotalTip, DEFAULT_NEED_SHOW_TOTAL_TIP);
+        int urlsResId = typedArray.getResourceId(R.styleable.ImageViewLayout_imageUrls, -1);
+        if (urlsResId != -1) {
+            mUrls = Arrays.asList(ResourcesUtils.getStringArray(urlsResId));
+            notifyChildViewChanged();
+        }
+        int layoutStrategy = typedArray.getInt(R.styleable.ImageViewLayout_layoutStrategy, DEFAULT_LAYOUT_STRATEGY);
+        setLayoutStrategy(layoutStrategy);
+        typedArray.recycle();
     }
 
     public void setPictureUrls(List<String> list) {
         mUrls = list;
         notifyChildViewChanged();
+    }
+
+    public List<String> getPictureUrls() {
+        return mUrls;
     }
 
     public void setMaxChildViewCount(int count) {
@@ -73,6 +87,19 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
         mLayoutStrategy = strategy;
         // 配置发生改变，需要重新布局
         notifyChildViewChanged();
+    }
+
+    public void setLayoutStrategy(int layoutStrategy) {
+        switch (layoutStrategy) {
+            case LayoutStrategy.GRID:
+                mLayoutStrategy = new GridLayoutStrategy();
+                break;
+            case LayoutStrategy.SPECIAL:
+            default:
+                mLayoutStrategy = new SpecialLayoutStrategy();
+                break;
+
+        }
     }
 
     public void setNeedShowTotalTip(boolean showTotalTip) {
@@ -143,5 +170,10 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
 
     public interface OnImageLongClickListener {
         void onImageLongClick(View parent, int position);
+    }
+
+    public class LayoutStrategy {
+        public final static int GRID = 0;
+        public final static int SPECIAL = 1;
     }
 }

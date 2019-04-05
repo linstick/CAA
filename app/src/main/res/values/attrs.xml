@@ -4,6 +4,10 @@
         <attr name="maxChildCount" format="integer"/>
         <attr name="needShowTotalTip" format="boolean"/>
         <attr name="imageUrls" format="reference"/>
+        <attr name="layoutStrategy">
+            <enum name="grid" value="0"/>
+            <enum name="special" value="1"/>
+        </attr>
     </declare-styleable>
 
     <declare-styleable name="DynamicInputView">
