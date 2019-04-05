@@ -75,7 +75,7 @@
         android:layout_gravity="right">
 
         <TextView
-            android:id="@+id/tv_positive"
+            android:id="@+id/tv_negative"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="10dp"
@@ -85,13 +85,13 @@
             android:paddingTop="6dp"
             android:paddingBottom="6dp"
             android:textSize="16sp"
-            android:textColor="@color/colorPrimary"
+            android:textColor="#e71fd6cc"
             android:visibility="gone"
-            tools:text="@string/common_str_confirm"
+            tools:text="@string/common_str_cancel"
             tools:visibility="visible"/>
 
         <TextView
-            android:id="@+id/tv_negative"
+            android:id="@+id/tv_positive"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -105,7 +105,7 @@
             android:textSize="16sp"
             android:textColor="@color/colorPrimary"
             android:visibility="gone"
-            tools:text="@string/common_str_cancel"
+            tools:text="@string/common_str_confirm"
             tools:visibility="visible"/>
 
     </LinearLayout>

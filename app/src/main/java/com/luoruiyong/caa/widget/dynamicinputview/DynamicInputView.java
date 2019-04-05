@@ -99,6 +99,10 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
         return !showError;
     }
 
+    public boolean isEmpty() {
+        return TextUtils.isEmpty(getInputText());
+    }
+
     public void setInputText(String content) {
         if (content != null && !TextUtils.isEmpty(content.trim())) {
             mInputEt.setText(content.trim());
@@ -201,6 +205,7 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
                    changeToSpreadUI();
+                   setViewVisibleStatus(mErrorTv, GONE);
                    KeyboardUtils.showKeyboard(mInputEt);
                 } else {
                     // 失去焦点
@@ -238,6 +243,7 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
     }
 
     private void initCommonForTextOrSpinner() {
+        mInputEt.setOnClickListener(this);
         mInputEt.setFocusable(false);
         mInputEt.setCursorVisible(false);
     }

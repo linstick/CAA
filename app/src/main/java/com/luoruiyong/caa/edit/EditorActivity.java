@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
@@ -27,6 +26,8 @@ public class EditorActivity extends BaseActivity implements View.OnClickListener
     private ImageView mBackIv;
     private TextView mTitleTv;
     private ImageView mFinishIv;
+
+    private OnActionBarClickListener mListener;
 
     public static void startAction(Context context, String whichTab) {
         Intent intent = new Intent(context, EditorActivity.class);
@@ -77,21 +78,42 @@ public class EditorActivity extends BaseActivity implements View.OnClickListener
                 break;
 
         }
-        getSupportFragmentManager().beginTransaction().add(R.id.fl_container, fm).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.fl_container, fm, tab).commit();
         mTitleTv.setText(titleResId);
+        if (fm instanceof OnActionBarClickListener) {
+            mListener = (OnActionBarClickListener) fm;
+        }
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_back:
-                finish();
+                if (mListener != null) {
+                    mListener.onBackClick();
+                }
                 break;
             case R.id.iv_right_operate:
-                Toast.makeText(this, "Finish", Toast.LENGTH_SHORT).show();
+                if (mListener != null) {
+                    mListener.onFinishClick();
+                }
                 break;
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mListener != null) {
+            mListener.onBackClick();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    public interface OnActionBarClickListener {
+        void onBackClick();
+        void onFinishClick();
     }
 }

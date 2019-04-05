@@ -103,6 +103,7 @@
     <string name="app_name">校园宣传助手</string>
 
     <!--公共文案-->
+    <string name="common_str_tip">温馨提示</string>
     <string name="common_str_confirm">确认</string>
     <string name="common_str_cancel">取消</string>
     <string name="common_str_edit">编辑</string>
@@ -110,6 +111,7 @@
     <string name="common_str_finish">完成</string>
     <string name="common_str_ok">好的</string>
     <string name="common_str_submit">提交</string>
+    <string name="common_str_left">离开</string>
     <string name="common_str_impeach">举报</string>
     <string name="common_str_delete">删除</string>
     <string name="common_str_delete_success">删除成功</string>
@@ -126,6 +128,7 @@
     <string name="common_str_total">共%1d张</string>
 
     <string name="common_tip_no_empty">此项不能为空哦</string>
+    <string name="common_tip_no_save">当前页面的数据还未提交保存，确定要离开吗？</string>
 
     <!--工具栏标题文案-->
     <string name="title_activity">活动</string>

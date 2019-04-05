@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:scrollbars="none">
 
     <LinearLayout
@@ -11,300 +12,99 @@
         android:orientation="vertical"
         android:padding="10dp">
 
-        <LinearLayout
+        <com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView
+            android:id="@+id/input_view_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/bg_message_type"
-            android:padding="6dp">
+            app:type="spinner"
+            app:entries="@array/str_array_create_activity_type"
+            app:labelText="@string/fm_create_activity_str_type"
+            app:errorText="@string/common_tip_no_empty"
+            app:nullable="false"
+            android:focusable="true"
+            android:focusableInTouchMode="true"/>
 
-            <TextView
-                android:id="@+id/tv_activity_type_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
-                android:textColor="#888888"
-                android:textSize="12sp"
-                android:text="@string/fm_create_activity_str_type"
-                android:visibility="gone"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:id="@+id/tv_activity_type"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:textColor="#666666"
-                    android:background="@null"
-                    android:hint="@string/fm_create_activity_str_type"
-                    android:maxLines="2"
-                    android:ellipsize="end"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"/>
-
-                <ImageView
-                    android:id="@+id/iv_up_and_down"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/selector_up_and_down"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
+        <com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView
+            android:id="@+id/input_view_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/bg_message_type"
             android:layout_marginTop="10dp"
-            android:padding="6dp">
+            app:type="input"
+            app:labelText="@string/fm_create_activity_str_title"
+            app:errorText="@string/common_tip_no_empty"
+            app:nullable="false" />
 
-            <TextView
-                android:id="@+id/tv_activity_title_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
-                android:textColor="#888888"
-                android:textSize="12sp"
-                android:text="@string/fm_create_activity_str_title"
-                android:visibility="gone"/>
-
-            <EditText
-                android:id="@+id/et_activity_title_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="#666666"
-                android:background="@null"
-                android:hint="@string/fm_create_activity_str_title"
-                android:maxLines="2"
-                android:ellipsize="end"/>
-
-        </LinearLayout>
-
-        <LinearLayout
+        <com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView
+            android:id="@+id/input_view_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/bg_message_type"
             android:layout_marginTop="10dp"
-            android:padding="6dp">
+            app:type="input"
+            app:labelText="@string/fm_create_activity_str_content"
+            app:errorText="@string/common_tip_no_empty"
+            app:minLines="3"
+            app:maxLines="5"
+            app:nullable="false" />
 
-            <TextView
-                android:id="@+id/tv_activity_content_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
-                android:textColor="#888888"
-                android:textSize="12sp"
-                android:text="@string/fm_create_activity_str_content"
-                android:visibility="gone"/>
-
-            <EditText
-                android:id="@+id/et_activity_content_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="#666666"
-                android:background="@null"
-                android:gravity="start"
-                android:hint="@string/fm_create_activity_str_content"
-                android:minLines="4"
-                android:maxLines="6"
-                android:ellipsize="end"/>
-
-        </LinearLayout>
-
-        <LinearLayout
+        <com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView
+            android:id="@+id/input_view_host"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/bg_message_type"
             android:layout_marginTop="10dp"
-            android:padding="6dp">
+            app:type="input"
+            app:labelText="@string/common_str_host"
+            app:errorText="@string/common_tip_no_empty"
+            app:nullable="false" />
 
-            <TextView
-                android:id="@+id/tv_activity_host_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
-                android:textColor="#888888"
-                android:textSize="12sp"
-                android:text="@string/common_str_host"
-                android:visibility="gone"/>
-
-            <EditText
-                android:id="@+id/et_activity_host_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="#666666"
-                android:background="@null"
-                android:hint="@string/common_str_host"
-                android:maxLines="2"
-                android:ellipsize="end"/>
-
-        </LinearLayout>
-
-        <LinearLayout
+        <com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView
+            android:id="@+id/input_view_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/bg_message_type"
             android:layout_marginTop="10dp"
-            android:padding="6dp">
+            app:type="input"
+            app:labelText="@string/common_str_time"
+            app:errorText="@string/common_tip_no_empty"
+            app:nullable="false" />
 
-            <TextView
-                android:id="@+id/tv_activity_time_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
-                android:textColor="#888888"
-                android:textSize="12sp"
-                android:text="@string/common_str_time"
-                android:visibility="gone"/>
-
-            <EditText
-                android:id="@+id/et_activity_time_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="#666666"
-                android:background="@null"
-                android:hint="@string/common_str_time"
-                android:maxLines="2"
-                android:ellipsize="end"/>
-
-        </LinearLayout>
-
-        <LinearLayout
+        <com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView
+            android:id="@+id/input_view_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/bg_message_type"
             android:layout_marginTop="10dp"
-            android:padding="6dp">
+            app:type="input"
+            app:labelText="@string/common_str_address"
+            app:errorText="@string/common_tip_no_empty"
+            app:nullable="false" />
 
-            <TextView
-                android:id="@+id/tv_activity_address_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
-                android:textColor="#888888"
-                android:textSize="12sp"
-                android:text="@string/common_str_address"
-                android:visibility="gone"/>
-
-            <EditText
-                android:id="@+id/et_activity_address_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="#666666"
-                android:background="@null"
-                android:hint="@string/common_str_address"
-                android:maxLines="2"
-                android:ellipsize="end"/>
-
-        </LinearLayout>
-
-        <LinearLayout
+        <com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView
+            android:id="@+id/input_view_remark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/bg_message_type"
             android:layout_marginTop="10dp"
-            android:padding="6dp">
+            app:type="input"
+            app:labelText="@string/common_str_remark" />
 
-            <TextView
-                android:id="@+id/tv_activity_remark_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
-                android:textColor="#888888"
-                android:textSize="12sp"
-                android:text="@string/common_str_remark"
-                android:visibility="gone"/>
-
-            <EditText
-                android:id="@+id/et_activity_remark_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="#666666"
-                android:background="@null"
-                android:hint="@string/common_str_remark"
-                android:maxLines="2"
-                android:ellipsize="end"/>
-
-        </LinearLayout>
-
-        <LinearLayout
+        <com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView
+            android:id="@+id/input_view_related_topic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/bg_message_type"
             android:layout_marginTop="10dp"
-            android:padding="6dp">
+            app:type="text"
+            app:labelText="@string/fm_create_activity_str_relate_topic"
+            android:focusable="true"
+            android:focusableInTouchMode="true"/>
 
-            <TextView
-                android:id="@+id/tv_related_topic_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
-                android:textColor="#888888"
-                android:textSize="12sp"
-                android:text="@string/fm_create_activity_str_relate_topic"
-                android:visibility="gone"/>
-
-            <TextView
-                android:id="@+id/tv_related_topic"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="#666666"
-                android:hint="@string/fm_create_activity_str_relate_topic"
-                android:maxLines="2"
-                android:ellipsize="end"/>
-
-        </LinearLayout>
-
-        <LinearLayout
+        <com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView
+            android:id="@+id/input_view_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/bg_message_type"
             android:layout_marginTop="10dp"
-            android:padding="6dp">
-
-            <TextView
-                android:id="@+id/tv_location_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
-                android:textColor="#888888"
-                android:textSize="12sp"
-                android:text="@string/fm_create_activity_str_location"
-                android:visibility="gone"/>
-
-            <TextView
-                android:id="@+id/tv_location"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="#666666"
-                android:hint="@string/fm_create_activity_str_location"
-                android:maxLines="2"
-                android:ellipsize="end"/>
-
-        </LinearLayout>
+            app:type="text"
+            app:nullable="false"
+            app:errorText="@string/common_tip_no_empty"
+            app:labelText="@string/fm_create_activity_str_location"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
 
         <com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout
             android:id="@+id/image_view_layout"
@@ -317,5 +117,12 @@
             app:needShowTotalTip="false"
             app:layoutStrategy="grid">
         </com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout>
+
+        <!--滚动占位-->
+        <View
+            android:layout_width="1dp"
+            android:layout_height="120dp"/>
+
     </LinearLayout>
+
 </ScrollView>
