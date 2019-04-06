@@ -52,7 +52,7 @@ public class EditorActivity extends BaseActivity implements View.OnClickListener
 
         mBackIv.setOnClickListener(this);
         mFinishIv.setOnClickListener(this);
-        mFinishIv.setImageResource(R.drawable.ic_finish_white);
+        mFinishIv.setImageResource(R.drawable.ic_send_white);
         mFinishIv.setVisibility(View.VISIBLE);
     }
 
@@ -68,7 +68,7 @@ public class EditorActivity extends BaseActivity implements View.OnClickListener
                 titleResId = R.string.title_create_discover;
                 break;
             case TAB_CREATE_TAG:
-                fm = new CreateTagFragment();
+                fm = new CreateTopicFragment();
                 titleResId = R.string.title_create_topic;
                 break;
             case TAB_CREATE_ACTIVITY:

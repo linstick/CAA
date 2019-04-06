@@ -17,10 +17,14 @@ import android.widget.TextView;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
+import com.luoruiyong.caa.simple.PictureBrowseActivity;
+import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.KeyboardUtils;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 
+import java.net.PortUnreachableException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,6 +37,7 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
     private final static int TYPE_INPUT = 0;
     private final static int TYPE_TEXT = 1;
     private final static int TYPE_SPINNER = 2;
+    private final static int TYPE_IMAGE = 3;
 
     private final static int DEFAULT_TYPE = TYPE_INPUT;
     private final static int NOT_DEFINED = -1;
@@ -44,12 +49,17 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
     private int mMinLines;
     private boolean mNullable;
     private String mLabelText;
+    private String mHintText;
     private String mErrorText;
     private List<String> mEntries;
     private OnContentViewClickListener mContentViewClickListener;
     private OnSpinnerSelectedListener mSpinnerSelectedListener;
+    private OnFocusChangedListener mOnFocusChangedListener;
+    private OnTextChangedListener mOnTextChangedListener;
+    private OnFocusLostOrTextChangeListener mOnFocusLostOrTextChangeListener;
 
     private int mSelectedItem = -1;
+    private String mImageUrl = null;
     private boolean mIsSpread = false;
 
     private TextView mLabelTv;
@@ -58,6 +68,8 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
     private EditText mInputEt;
     private TextView mRequiredTv;
     private ImageView mUpAndDownIv;
+    private View mInputContainerLl;
+    private ImageView mImageInputIv;
     private View mRootView;
 
     public DynamicInputView(Context context) {
@@ -94,12 +106,22 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
 
     public boolean check() {
         changeToSpreadUI();
-        boolean showError = !mNullable && TextUtils.isEmpty(getInputText());
+        boolean showError = false;
+        if (!mNullable) {
+            if (mType == TYPE_IMAGE) {
+                showError = TextUtils.isEmpty(mImageUrl);
+            } else {
+                showError = TextUtils.isEmpty(getInputText());
+            }
+        }
         setViewVisibleStatus(mErrorTv, showError);
         return !showError;
     }
 
     public boolean isEmpty() {
+        if (mType == TYPE_IMAGE) {
+            return TextUtils.isEmpty(mImageUrl);
+        }
         return TextUtils.isEmpty(getInputText());
     }
 
@@ -116,8 +138,22 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
         return mInputEt.getText().toString().trim();
     }
 
-    public int getSpinnerSelectedItem() {
-        return mSelectedItem;
+    public void setInputImageUrl(String url) {
+        mImageUrl = url;
+        if (!TextUtils.isEmpty(url)) {
+            changeToSpreadUI();
+            setViewVisibleStatus(mInputContainerLl, GONE);
+            setViewVisibleStatus(mImageInputIv, VISIBLE);
+//            mImageInputIv.setImageUrl(url);
+        } else {
+            changeToCloseUI();
+            setViewVisibleStatus(mInputContainerLl, VISIBLE);
+            setViewVisibleStatus(mImageInputIv, GONE);
+        }
+    }
+
+    public String getInputImageUrl() {
+        return mImageUrl;
     }
 
     public void setSpinnerSelectedItem(int position) {
@@ -129,12 +165,28 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
         changeToSpreadUI();
     }
 
+    public int getSpinnerSelectedItem() {
+        return mSelectedItem;
+    }
+
     public void setOnContentViewClickListener (OnContentViewClickListener listener) {
         mContentViewClickListener = listener;
     }
 
     public void setOnSpinnerSelectedListener (OnSpinnerSelectedListener listener) {
         mSpinnerSelectedListener = listener;
+    }
+
+    public void setOnFocusChangedListener (OnFocusChangedListener listener) {
+        mOnFocusChangedListener = listener;
+    }
+
+    public void setOnTextChangedListener (OnTextChangedListener listener) {
+        mOnTextChangedListener = listener;
+    }
+
+    public void setOnFocusLostOrTextChangeListener (OnFocusLostOrTextChangeListener listener) {
+        mOnFocusLostOrTextChangeListener = listener;
     }
 
     private void initCustomAttrs(Context context, AttributeSet attrs) {
@@ -146,6 +198,10 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
         mMinLines = typedArray.getInt(R.styleable.DynamicInputView_minLines, NOT_DEFINED);
         mNullable = typedArray.getBoolean(R.styleable.DynamicInputView_nullable, DEFAULT_NULLABLE);
         mLabelText = typedArray.getString(R.styleable.DynamicInputView_labelText);
+        mHintText = typedArray.getString(R.styleable.DynamicInputView_hintText);
+        if (TextUtils.isEmpty(mHintText)) {
+            mHintText = mLabelText;
+        }
         mErrorText = typedArray.getString(R.styleable.DynamicInputView_errorText);
         int entriesResId = typedArray.getResourceId(R.styleable.DynamicInputView_entries, -1);
         if (entriesResId != -1) {
@@ -163,6 +219,8 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
         mRequiredTv = mRootView.findViewById(R.id.tv_required);
         mTopRequiredTv = mRootView.findViewById(R.id.tv_top_required);
         mUpAndDownIv = mRootView.findViewById(R.id.iv_up_and_down);
+        mInputContainerLl = mRootView.findViewById(R.id.ll_input_container);
+        mImageInputIv = mRootView.findViewById(R.id.iv_image_input);
         mRootView.setOnClickListener(this);
         addView(mRootView);
     }
@@ -171,7 +229,7 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
         // 根据类型调整布局以及响应逻辑
         mLabelTv.setText(mLabelText);
         mErrorTv.setText(mErrorText);
-        mInputEt.setHint(mLabelText);
+        mInputEt.setHint(mHintText);
         setViewVisibleStatus(mRequiredTv, !mNullable);
         if (mLines != NOT_DEFINED) {
             mInputEt.setMaxLines(mLines);
@@ -186,20 +244,22 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
 
         switch (mType) {
             case TYPE_INPUT:
-                initForInput();
+                initForInputType();
                 break;
             case TYPE_TEXT:
-                initForText();
+            case TYPE_IMAGE:
+                initCommonForBesidesInputType();
                 break;
             case TYPE_SPINNER:
-                initForSpinner();
+                initCommonForBesidesInputType();
+                mUpAndDownIv.setVisibility(VISIBLE);
                 break;
             default:
                 break;
         }
     }
 
-    private void initForInput() {
+    private void initForInputType() {
         mInputEt.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -213,6 +273,12 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
                         changeToCloseUI();
                     }
                 }
+                if (mOnFocusChangedListener != null) {
+                    mOnFocusChangedListener.onFocusChanged(hasFocus);
+                }
+                if (!hasFocus && mOnFocusLostOrTextChangeListener != null) {
+                    mOnFocusLostOrTextChangeListener.onFocusLostOrTextChanged(getInputText());
+                }
             }
         });
         mInputEt.addTextChangedListener(new TextWatcher() {
@@ -225,6 +291,13 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
                 if (mInputEt.hasFocus()) {
                     setViewVisibleStatus(mErrorTv, GONE);
                 }
+                String text = s.toString().trim();
+                if (mOnTextChangedListener != null) {
+                    mOnTextChangedListener.onTextChanged(text);
+                }
+                if (mOnFocusLostOrTextChangeListener != null) {
+                    mOnFocusLostOrTextChangeListener.onFocusLostOrTextChanged(text);
+                }
             }
 
             @Override
@@ -233,19 +306,35 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
         });
     }
 
-    private void initForText() {
-        initCommonForTextOrSpinner();
-    }
-
-    private void initForSpinner() {
-        initCommonForTextOrSpinner();
-        mUpAndDownIv.setVisibility(VISIBLE);
-    }
-
-    private void initCommonForTextOrSpinner() {
+    private void initCommonForBesidesInputType() {
         mInputEt.setOnClickListener(this);
         mInputEt.setFocusable(false);
         mInputEt.setCursorVisible(false);
+
+        if (mType == TYPE_IMAGE) {
+            mImageInputIv.setOnLongClickListener(new OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    List<String> items = new ArrayList<>();
+                    items.add(ResourcesUtils.getString(R.string.common_str_delete));
+                    DialogHelper.showListDialog(getContext(), items, new CommonDialog.Builder.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(int position) {
+                            setInputImageUrl(null);
+                        }
+                    });
+                    return true;
+                }
+            });
+            mImageInputIv.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    List<String> mUrls = new ArrayList<>();
+                    mUrls.add(mImageUrl);
+                    PictureBrowseActivity.startAction(getContext(), mUrls, 0);
+                }
+            });
+        }
     }
 
     @Override
@@ -256,9 +345,15 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
 
         if (mType == TYPE_INPUT) {
             KeyboardUtils.showKeyboard(mInputEt);
-        } else if (mType == TYPE_TEXT) {
+        } else if (mType == TYPE_TEXT || mType == TYPE_IMAGE) {
             if (mContentViewClickListener != null) {
                 mContentViewClickListener.onContentViewClick();
+            }
+            // for test
+            if (mType == TYPE_TEXT) {
+                setInputText("This is the input content for test");
+            } else {
+                setInputImageUrl("https://www.baidu.com/1.jpg");
             }
         } else if (mType == TYPE_SPINNER) {
             changeToSpreadUI();
@@ -325,7 +420,7 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
             LayoutParams params = (LayoutParams) mInputEt.getLayoutParams();
             params.weight = 0;
             mInputEt.setLayoutParams(params);
-            mInputEt.setHint(mLabelText);
+            mInputEt.setHint(mHintText);
             mInputEt.setText(null);
             mIsSpread = false;
         }
@@ -337,5 +432,17 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
 
     public interface OnSpinnerSelectedListener {
         void onSpinnerSelected(int position, String text);
+    }
+
+    public interface OnFocusChangedListener {
+        void onFocusChanged(boolean hasFocus);
+    }
+
+    public interface OnTextChangedListener {
+        void onTextChanged(String text);
+    }
+
+    public interface OnFocusLostOrTextChangeListener {
+        void onFocusLostOrTextChanged(String text);
     }
 }

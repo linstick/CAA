@@ -14,7 +14,7 @@ import com.luoruiyong.caa.R;
  * Author: luoruiyong
  * Date: 2019/3/14/014
  **/
-public class CreateDiscoverFragment extends Fragment {
+public class CreateDiscoverFragment extends BaseCreateFragment {
 
     @Nullable
     @Override

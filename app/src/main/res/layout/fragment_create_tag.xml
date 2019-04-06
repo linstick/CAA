@@ -1,14 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center">
+    android:padding="10dp">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <View
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"/>
+
+    <com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView
+        android:id="@+id/input_view_topic_name"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Create Tag Fragment"/>
+        app:type="input"
+        app:nullable="false"
+        app:labelText="@string/title_topic"
+        app:errorText="@string/common_tip_no_empty"/>
+
+    <com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView
+        android:id="@+id/input_view_topic_introduce"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:type="input"
+        app:labelText="@string/common_str_introduce"
+        app:minLines="3"
+        app:maxLines="5"/>
+
+    <com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView
+        android:id="@+id/input_view_topic_cover"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:type="image"
+        app:labelText="@string/fm_create_topic_str_cover"
+        app:hintText="@string/fm_create_topic_str_choose_cover" />
 
 </LinearLayout>

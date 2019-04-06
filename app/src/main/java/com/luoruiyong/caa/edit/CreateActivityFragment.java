@@ -25,7 +25,7 @@ import java.util.List;
  * Author: luoruiyong
  * Date: 2019/3/14/014
  **/
-public class CreateActivityFragment extends Fragment implements
+public class CreateActivityFragment extends BaseCreateFragment implements
         ImageViewLayout.OnImageClickListener,
         ImageViewLayout.OnImageLongClickListener,
         EditorActivity.OnActionBarClickListener {
@@ -77,7 +77,6 @@ public class CreateActivityFragment extends Fragment implements
         mCheckNonNullList.add(mHostInputView);
         mCheckNonNullList.add(mTimeInputView);
         mCheckNonNullList.add(mAddressInputView);
-        mCheckNonNullList.add(mLocationInputView);
 
         mCheckEmptyList = new ArrayList<>();
         mCheckEmptyList.addAll(mCheckNonNullList);
@@ -135,7 +134,7 @@ public class CreateActivityFragment extends Fragment implements
     public void onBackClick() {
         boolean hasData = false;
         if (ListUtils.getSize(mPictureUrls) > 1) {
-            showComfirmLeftDialog();
+            showConfirmLeftDialog();
         } else {
             for (DynamicInputView view : mCheckEmptyList) {
                 if (!view.isEmpty()) {
@@ -144,7 +143,7 @@ public class CreateActivityFragment extends Fragment implements
                 }
             }
             if (hasData) {
-                showComfirmLeftDialog();
+                showConfirmLeftDialog();
             } else {
                 finish();
             }
@@ -161,30 +160,6 @@ public class CreateActivityFragment extends Fragment implements
             Toast.makeText(getContext(), "can send", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getContext(), "can not send", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void showComfirmLeftDialog() {
-        new CommonDialog.Builder(getContext())
-                .type(CommonDialog.TYPE_NORMAL)
-                .title(getString(R.string.common_str_tip))
-                .message(getString(R.string.common_tip_no_save))
-                .positive(getString(R.string.common_str_left))
-                .negative(getString(R.string.common_str_cancel))
-                .onPositive(new CommonDialog.Builder.OnClickListener() {
-                    @Override
-                    public void onClick(String extras) {
-                       finish();
-                    }
-                })
-                .build()
-                .show();
-    }
-
-    private void finish() {
-        Activity activity = getActivity();
-        if (activity != null && !activity.isFinishing()) {
-            activity.finish();
         }
     }
 }

@@ -53,6 +53,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_input_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -91,5 +92,13 @@
             tools:visibility="visible"/>
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_image_input"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/bg_setting_header"
+        android:scaleType="fitXY"
+        android:visibility="gone"/>
 
 </LinearLayout>
