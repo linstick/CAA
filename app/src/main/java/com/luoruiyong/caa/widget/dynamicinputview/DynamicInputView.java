@@ -347,7 +347,7 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
             KeyboardUtils.showKeyboard(mInputEt);
         } else if (mType == TYPE_TEXT || mType == TYPE_IMAGE) {
             if (mContentViewClickListener != null) {
-                mContentViewClickListener.onContentViewClick();
+                mContentViewClickListener.onContentViewClick(this);
             }
             // for test
             if (mType == TYPE_TEXT) {
@@ -427,7 +427,7 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
     }
 
     public interface OnContentViewClickListener {
-        void onContentViewClick();
+        void onContentViewClick(View v);
     }
 
     public interface OnSpinnerSelectedListener {
