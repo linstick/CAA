@@ -18,8 +18,10 @@ import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.utils.ListUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Author: luoruiyong
@@ -29,21 +31,40 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
 
     private final static String KEY_URL_LIST = "key_url_list";
     private final static String KEY_CUR_POSITION = "key_cur_position";
+    private final static String KEY_SUPPORT_DOWNLOAD = "key_support_download";
+    private final static String KEY_SUPPORT_DELETE = "key_support_delete";
+    private final static String KEY_DELETE_LIST = "key_delete_list";
 
     private ViewPager mViewPager;
     private ImageView mBackIv;
     private TextView mCurIndexTv;
     private TextView mTotalIndexTv;
     private ImageView mDownloadIv;
+    private ImageView mDeleteIv;
 
     private SimpleViewPagerAdapter mAdapter;
     private List<String> mUrls;
     private int mCurPosition;
+    private boolean mSupportDownload;
+    private boolean mSupportDelete;
+
+    private Map<String, Integer> mOriginalMap;
+    private ArrayList<Integer> mDeleteList;
 
     public static void startAction(Context context, List<String> list, int position) {
+        startAction(context, list, position, false, false);
+    }
+
+    public static void startAction(Context context, List<String> list, int position, boolean supportDownload) {
+        startAction(context, list, position, supportDownload, false);
+    }
+
+    public static void startAction(Context context, List<String> list, int position, boolean supportDownload, boolean supportDelete) {
         Intent intent = new Intent(context, PictureBrowseActivity.class);
         intent.putStringArrayListExtra(KEY_URL_LIST, (ArrayList<String>) list);
         intent.putExtra(KEY_CUR_POSITION, position);
+        intent.putExtra(KEY_SUPPORT_DOWNLOAD, supportDownload);
+        intent.putExtra(KEY_SUPPORT_DELETE, supportDelete);
         context.startActivity(intent);
     }
 
@@ -63,9 +84,9 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
         mCurIndexTv = findViewById(R.id.tv_cur_index);
         mTotalIndexTv = findViewById(R.id.tv_total_index);
         mDownloadIv = findViewById(R.id.iv_download);
+        mDeleteIv = findViewById(R.id.iv_delete);
 
         mBackIv.setOnClickListener(this);
-        mDownloadIv.setOnClickListener(this);
     }
 
     private void handleIntent() {
@@ -73,6 +94,8 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
         if (intent != null) {
             mUrls = intent.getStringArrayListExtra(KEY_URL_LIST);
             mCurPosition = intent.getIntExtra(KEY_CUR_POSITION, -1);
+            mSupportDownload = intent.getBooleanExtra(KEY_SUPPORT_DOWNLOAD, false);
+            mSupportDelete = intent.getBooleanExtra(KEY_SUPPORT_DELETE, false);
         }
         if (ListUtils.isEmpty(mUrls) || !ListUtils.isIndexBetween(mUrls, mCurPosition)) {
             finish();
@@ -98,6 +121,30 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
         mViewPager.setCurrentItem(mCurPosition, false);
         mCurIndexTv.setText(String.valueOf(mCurPosition + 1));
         mTotalIndexTv.setText(String.valueOf(mUrls.size()));
+
+        if (mSupportDownload) {
+            mDownloadIv.setVisibility(View.VISIBLE);
+            mDownloadIv.setOnClickListener(this);
+        }
+        if (mSupportDelete) {
+            mDeleteIv.setVisibility(View.VISIBLE);
+            mDeleteIv.setOnClickListener(this);
+            mDeleteList = new ArrayList<>();
+            mOriginalMap = new HashMap<>(mUrls.size());
+            for (int i = 0; i < mUrls.size(); i++) {
+                mOriginalMap.put(mUrls.get(i), i);
+            }
+        }
+    }
+
+    private void setResultDataBeforeFinish() {
+        Intent intent = new Intent();
+        if (ListUtils.isEmpty(mDeleteList)) {
+            setResult(RESULT_CANCELED);
+        } else {
+            intent.putIntegerArrayListExtra(KEY_DELETE_LIST, mDeleteList);
+            setResult(RESULT_OK, intent);
+        }
     }
 
     @Override
@@ -105,6 +152,16 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
         switch (v.getId()) {
             case R.id.iv_download:
                 Toast.makeText(this, "download " + mCurPosition, Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.iv_delete:
+                mDeleteList.add(mOriginalMap.get(mUrls.get(mCurPosition)));
+                mUrls.remove(mCurPosition);
+                if (ListUtils.isEmpty(mUrls)) {
+                    setResultDataBeforeFinish();
+                    finish();
+                }
+                mAdapter.notifyDataSetChanged();
+                mTotalIndexTv.setText(String.valueOf(mUrls.size()));
                 break;
             case R.id.iv_back:
             case R.id.iv_picture:

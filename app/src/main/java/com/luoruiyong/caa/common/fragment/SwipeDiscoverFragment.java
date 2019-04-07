@@ -184,7 +184,7 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         @Override
         public void onImageClick(View parent, int position) {
             DiscoverData data = (DiscoverData) parent.getTag();
-            PictureBrowseActivity.startAction(getContext(), data.getPictureList(), position);
+            PictureBrowseActivity.startAction(getContext(), data.getPictureList(), position, true);
         }
     }
 }

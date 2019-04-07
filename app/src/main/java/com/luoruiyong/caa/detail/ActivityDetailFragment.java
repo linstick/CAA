@@ -210,7 +210,7 @@ public class ActivityDetailFragment extends Fragment implements View.OnClickList
 
     @Override
     public void onImageClick(View parent, int position) {
-        PictureBrowseActivity.startAction(getContext(), mData.getPictureList(), position);
+        PictureBrowseActivity.startAction(getContext(), mData.getPictureList(), position, true);
     }
 
     private void toggleCommentBar() {

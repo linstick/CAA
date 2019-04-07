@@ -109,7 +109,7 @@ public class CreateActivityFragment extends BaseCreateFragment implements
             for (int i = 0; i < mPictureUrls.size() - 1; i++) {
                 list.add(mPictureUrls.get(i));
             }
-            PictureBrowseActivity.startAction(getContext(), list, position);
+            PictureBrowseActivity.startAction(getContext(), list, position, false, true);
         }
     }
 

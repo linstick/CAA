@@ -186,7 +186,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
         @Override
         public void onImageClick(View parent, int position) {
             ActivitySimpleData data = (ActivitySimpleData) parent.getTag();
-            PictureBrowseActivity.startAction(getContext(), data.getPictureList(), position);
+            PictureBrowseActivity.startAction(getContext(), data.getPictureList(), position, true);
         }
     }
 }
