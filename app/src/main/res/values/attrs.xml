@@ -3,6 +3,8 @@
     <declare-styleable name="ImageViewLayout">
         <attr name="maxChildCount" format="integer"/>
         <attr name="needShowTotalTip" format="boolean"/>
+        <attr name="supportAllChildDelete" format="boolean"></attr>
+        <attr name="supportAllChildDeleteBesidesLast" format="boolean"></attr>
         <attr name="imageUrls" format="reference"/>
         <attr name="layoutStrategy">
             <enum name="grid" value="0"/>

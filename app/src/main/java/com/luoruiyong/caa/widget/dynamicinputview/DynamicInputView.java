@@ -196,6 +196,14 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
         mImageViewLayout.setMaxChildViewCount(count);
     }
 
+    public void setSupportAllChildDelete(boolean supportAllChildDelete) {
+        mImageViewLayout.setSupportAllChildDelete(supportAllChildDelete);
+    }
+
+    public void setSupportAllChildDeleteBesidesLast(boolean supportAllChildDeleteBesidesLast) {
+        mImageViewLayout.setSupportAllChildDeleteBesidesLast(supportAllChildDeleteBesidesLast);
+    }
+
     public void setOnContentViewClickListener (OnContentViewClickListener listener) {
         mContentViewClickListener = listener;
     }
@@ -222,6 +230,10 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
 
     public void setOnImageLongClickListener(ImageViewLayout.OnImageLongClickListener listener) {
         mImageViewLayout.setOnImageLongClickListener(listener);
+    }
+
+    public void setOnImageDeletedListener(ImageViewLayout.OnImageDeletedListener listener) {
+        mImageViewLayout.setOnImageDeletedListener(listener);
     }
 
     private void initCustomAttrs(Context context, AttributeSet attrs) {

@@ -10,9 +10,6 @@ import android.widget.Toast;
 
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
-import com.luoruiyong.caa.common.dialog.CommonDialog;
-import com.luoruiyong.caa.simple.PictureBrowseActivity;
-import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
@@ -28,7 +25,7 @@ public class CreateTopicFragment extends BaseCreateFragment implements
         EditorActivity.OnActionBarClickListener,
         DynamicInputView.OnContentViewClickListener,
         ImageViewLayout.OnImageClickListener,
-        ImageViewLayout.OnImageLongClickListener{
+        ImageViewLayout.OnImageDeletedListener {
 
     private DynamicInputView mNameInputView;
     private DynamicInputView mIntroduceInputView;
@@ -54,13 +51,20 @@ public class CreateTopicFragment extends BaseCreateFragment implements
 
         mNameInputView.setOnFocusLostOrTextChangeListener(this);
         mCoverInputView.setOnImageClickListener(this);
-        mCoverInputView.setOnImageLongClickListener(this);
+        mCoverInputView.setOnImageDeletedListener(this);
         mCoverInputView.setOnContentViewClickListener(this);
+
+        mCoverInputView.setSupportAllChildDelete(true);
 
         mCheckEmptyList = new ArrayList<>();
         mCheckEmptyList.add(mNameInputView);
         mCheckEmptyList.add(mIntroduceInputView);
         mCheckEmptyList.add(mCoverInputView);
+    }
+
+    private void chooseCoverImage() {
+        // 选择话题封面图片
+
     }
 
     @Override
@@ -95,18 +99,13 @@ public class CreateTopicFragment extends BaseCreateFragment implements
 
     @Override
     public void onImageClick(View parent, int position) {
-        PictureBrowseActivity.startAction(getContext(), mPictureUrls, position);
+        // 选择封面图片
+        chooseCoverImage();
     }
 
     @Override
-    public void onImageLongClick(final View parent, int position) {
-        DialogHelper.showListDialog(getContext(), getString(R.string.common_str_delete), new CommonDialog.Builder.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                mPictureUrls.remove(position);
-                mCoverInputView.notifyInputDataChanged();
-            }
-        });
+    public void onItemDeleted(View parent, int position) {
+        mCoverInputView.notifyInputDataChanged();
     }
 
     @Override
@@ -116,6 +115,8 @@ public class CreateTopicFragment extends BaseCreateFragment implements
             mPictureUrls = new ArrayList<>();
             mPictureUrls.add("htpps://www.baidu.com/1.jpg");
             mCoverInputView.setPictureUrls(mPictureUrls);
+        } else {
+            chooseCoverImage();
         }
     }
 }

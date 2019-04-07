@@ -24,8 +24,9 @@ import java.util.List;
  * Date: 2019/3/16/016
  **/
 public class ImageViewLayout extends ViewGroup implements View.OnClickListener, View.OnLongClickListener{
-
     private final boolean DEFAULT_NEED_SHOW_TOTAL_TIP = true;
+    private final boolean DEFAULT_SUPPORT_ALL_CHILD_DELETE = false;
+    private final boolean DEFAULT_SUPPORT_ALL_CHILD_DELETE_BESIDES_LAST = false;
     private final int DEFAULT_MAX_CHILD_COUNT = 5;
     private final int DEFAULT_LAYOUT_STRATEGY = LayoutStrategy.SPECIAL;
 
@@ -33,8 +34,11 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
     private List<String> mUrls;
     private OnImageClickListener mClickListener;
     private OnImageLongClickListener mLongClickListener;
+    private OnImageDeletedListener mDeleteListener;
     private ILayoutStrategy mLayoutStrategy;
     private boolean mNeedShowTotalTip;
+    private boolean mSupportAllChildDelete;
+    private boolean mSupportAllChildDeleteBesidesLast;
 
     public ImageViewLayout(Context context) {
         this(context, null);
@@ -53,6 +57,12 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
         TypedArray typedArray = context.obtainStyledAttributes(atts, R.styleable.ImageViewLayout);
         mMaxChildViewCount = typedArray.getInt(R.styleable.ImageViewLayout_maxChildCount, DEFAULT_MAX_CHILD_COUNT);
         mNeedShowTotalTip = typedArray.getBoolean(R.styleable.ImageViewLayout_needShowTotalTip, DEFAULT_NEED_SHOW_TOTAL_TIP);
+        mSupportAllChildDelete = typedArray.getBoolean(
+                R.styleable.ImageViewLayout_supportAllChildDelete,
+                DEFAULT_SUPPORT_ALL_CHILD_DELETE);
+        mSupportAllChildDeleteBesidesLast = typedArray.getBoolean(
+                R.styleable.ImageViewLayout_supportAllChildDeleteBesidesLast,
+                DEFAULT_SUPPORT_ALL_CHILD_DELETE_BESIDES_LAST);
         int urlsResId = typedArray.getResourceId(R.styleable.ImageViewLayout_imageUrls, -1);
         if (urlsResId != -1) {
             mUrls = Arrays.asList(ResourcesUtils.getStringArray(urlsResId));
@@ -72,18 +82,16 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
         return mUrls;
     }
 
-    public void deleteImage(int position) {
-        if (!ListUtils.isIndexBetween(mUrls, position)) {
-            return;
-        }
-        mUrls.remove(position);
-        notifyChildViewChanged();
-    }
-
     public void setMaxChildViewCount(int count) {
         mMaxChildViewCount = count;
-        // 配置发生改变，需要重新布局
-        notifyChildViewChanged();
+    }
+
+    public void setSupportAllChildDelete(boolean supportAllChildDelete) {
+        this.mSupportAllChildDelete = supportAllChildDelete;
+    }
+
+    public void setSupportAllChildDeleteBesidesLast(boolean supportAllChildDeleteBesidesLast) {
+        this.mSupportAllChildDeleteBesidesLast = supportAllChildDeleteBesidesLast;
     }
 
     public void setOnImageClickListener(OnImageClickListener listener) {
@@ -92,6 +100,10 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
 
     public void setOnImageLongClickListener(OnImageLongClickListener listener) {
         mLongClickListener = listener;
+    }
+
+    public void setOnImageDeletedListener(OnImageDeletedListener listener) {
+        mDeleteListener = listener;
     }
 
     public void setLayoutStrategy(ILayoutStrategy strategy) {
@@ -133,6 +145,16 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
             if (mLongClickListener != null) {
                 imageView.setOnLongClickListener(this);
             }
+
+            // 删除功能
+            if (mSupportAllChildDelete || (mSupportAllChildDeleteBesidesLast && i + 1 != mUrls.size())) {
+                ImageView deleteIv = view.findViewById(R.id.iv_delete);
+                deleteIv.setVisibility(VISIBLE);
+                deleteIv.setTag(i);
+                deleteIv.setOnClickListener(this);
+            }
+
+            // 总数展示
             if (mNeedShowTotalTip && i + 1 == count && count < mUrls.size()) {
                 TextView totalTipTv = view.findViewById(R.id.tv_total_tip);
                 totalTipTv.setText(String.format(ResourcesUtils.getString(R.string.common_str_total), mUrls.size()));
@@ -160,8 +182,24 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
-        if (mClickListener != null) {
-            mClickListener.onImageClick(this, (Integer) v.getTag());
+        int position = (int) v.getTag();
+        switch (v.getId()) {
+            case R.id.iv_picture:
+                if (mClickListener != null) {
+                    mClickListener.onImageClick(this, position);
+                }
+                break;
+            case R.id.iv_delete:
+                if (ListUtils.isIndexBetween(mUrls, position)) {
+                    mUrls.remove(position);
+                    notifyChildViewChanged();
+                    if (mDeleteListener != null) {
+                        mDeleteListener.onItemDeleted(this, position);
+                    }
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -179,6 +217,10 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
 
     public interface OnImageLongClickListener {
         void onImageLongClick(View parent, int position);
+    }
+
+    public interface OnImageDeletedListener {
+        void onItemDeleted(View parent, int position);
     }
 
     public class LayoutStrategy {

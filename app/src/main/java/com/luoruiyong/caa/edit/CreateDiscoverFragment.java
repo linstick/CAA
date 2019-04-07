@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.edit.EditorActivity.OnActionBarClickListener;
+import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 import com.luoruiyong.caa.widget.imageviewlayout.clickmanager.ChooseImageClickManager;
@@ -26,8 +27,7 @@ import java.util.List;
 public class CreateDiscoverFragment extends BaseCreateFragment implements
         OnActionBarClickListener,
         DynamicInputView.OnContentViewClickListener,
-        ImageViewLayout.OnImageClickListener,
-        ImageViewLayout.OnImageLongClickListener{
+        ImageViewLayout.OnImageClickListener {
 
     private DynamicInputView mContentInputView;
     private DynamicInputView mRelatedTopicInputView;
@@ -35,8 +35,6 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
 
     private List<DynamicInputView> mCheckEmptyList;
     private List<String> mPictureUrls;
-
-    private IClickManager mImageViewLayoutClickManager = new ChooseImageClickManager();
 
     @Nullable
     @Override
@@ -54,7 +52,6 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
         mLocationInputView = rootView.findViewById(R.id.input_view_location);
 
         mContentInputView.setOnImageClickListener(this);
-        mContentInputView.setOnImageLongClickListener(this);
         mRelatedTopicInputView.setOnContentViewClickListener(this);
         mLocationInputView.setOnContentViewClickListener(this);
 
@@ -111,19 +108,22 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
 
     @Override
     public void onImageClick(View parent, int position) {
-        if (!mImageViewLayoutClickManager.onImageClick((ImageViewLayout) parent, position)) {
-            // 选择图片添加操作
-
+        if (position + 1 == mPictureUrls.size()) {
+            // 添加图片
+            // for test
             if (Enviroment.VAR_DEBUG) {
-                // for test
-                mPictureUrls.add(position, "https://www.baidu.com/1.jpg");
+                Toast.makeText(getContext(), "选择图片添加", Toast.LENGTH_SHORT).show();
+                mPictureUrls.add(mPictureUrls.size() - 1, "https://www.baidu.com/1.jpg");
                 mContentInputView.notifyInputDataChanged();
             }
+        } else {
+            // 查看图片
+            List list = new ArrayList();
+            // 需要移除最后的那一张添加
+            for (int i = 0; i < mPictureUrls.size() - 1; i++) {
+                list.add(mPictureUrls.get(i));
+            }
+            PictureBrowseActivity.startAction(getContext(), list, position);
         }
-    }
-
-    @Override
-    public void onImageLongClick(View parent, final int position) {
-        mImageViewLayoutClickManager.onImageLongClick(mContentInputView, (ImageViewLayout) parent, position);
     }
 }

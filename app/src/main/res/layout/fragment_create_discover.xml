@@ -23,7 +23,7 @@
         app:ignoreLastImageItem="true"
         app:labelText="@string/fm_create_discover_str_discover_content"
         app:errorText="@string/common_tip_no_empty"
-        app:lines="5"/>
+        app:lines="6"/>
 
     <com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView
         android:id="@+id/input_view_related_topic"

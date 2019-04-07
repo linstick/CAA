@@ -52,6 +52,7 @@ public class EditorActivity extends BaseActivity implements View.OnClickListener
 
         mBackIv.setOnClickListener(this);
         mFinishIv.setOnClickListener(this);
+        mBackIv.setImageResource(R.drawable.ic_clear_white);
         mFinishIv.setImageResource(R.drawable.ic_send_white);
         mFinishIv.setVisibility(View.VISIBLE);
     }
