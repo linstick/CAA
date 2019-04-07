@@ -14,8 +14,6 @@ import com.luoruiyong.caa.edit.EditorActivity.OnActionBarClickListener;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
-import com.luoruiyong.caa.widget.imageviewlayout.clickmanager.ChooseImageClickManager;
-import com.luoruiyong.caa.widget.imageviewlayout.clickmanager.IClickManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,7 +121,7 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
             for (int i = 0; i < mPictureUrls.size() - 1; i++) {
                 list.add(mPictureUrls.get(i));
             }
-            PictureBrowseActivity.startAction(getContext(), list, position, false, true);
+            PictureBrowseActivity.startAction(getActivity(), list, position, false, true, EditorActivity.BROWSE_PICTURE_REQUEST_CODE);
         }
     }
 }

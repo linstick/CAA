@@ -22,6 +22,7 @@ public class EditorActivity extends BaseActivity implements View.OnClickListener
     public final static String TAB_CREATE_ACTIVITY = "create_activity";
     public final static String TAB_CREATE_TAG = "create_tag";
     public final static String TAB_CREATE_DISCOVER = "create_discover";
+    public final static int BROWSE_PICTURE_REQUEST_CODE = 1;
 
     private ImageView mBackIv;
     private TextView mTitleTv;

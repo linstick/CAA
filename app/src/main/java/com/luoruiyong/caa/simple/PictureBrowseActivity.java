@@ -1,10 +1,12 @@
 package com.luoruiyong.caa.simple;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.utils.ListUtils;
+import com.luoruiyong.caa.utils.ResourcesUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +36,7 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
     private final static String KEY_CUR_POSITION = "key_cur_position";
     private final static String KEY_SUPPORT_DOWNLOAD = "key_support_download";
     private final static String KEY_SUPPORT_DELETE = "key_support_delete";
-    private final static String KEY_DELETE_LIST = "key_delete_list";
+    public final static String KEY_DELETE_LIST = "key_delete_list";
 
     private ViewPager mViewPager;
     private ImageView mBackIv;
@@ -48,24 +51,48 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
     private boolean mSupportDownload;
     private boolean mSupportDelete;
 
-    private Map<String, Integer> mOriginalMap;
     private ArrayList<Integer> mDeleteList;
 
-    public static void startAction(Context context, List<String> list, int position) {
-        startAction(context, list, position, false, false);
+    public static void startAction(Fragment fragment, List<String> list, int position) {
+        startAction(fragment, list, position, false);
     }
 
-    public static void startAction(Context context, List<String> list, int position, boolean supportDownload) {
-        startAction(context, list, position, supportDownload, false);
+    public static void startAction(Fragment fragment, List<String> list, int position, boolean supportDownload) {
+        startAction(fragment, list, position, supportDownload, false, -1);
     }
 
-    public static void startAction(Context context, List<String> list, int position, boolean supportDownload, boolean supportDelete) {
-        Intent intent = new Intent(context, PictureBrowseActivity.class);
+    public static void startAction(Fragment fragment, List<String> list, int position, boolean supportDownload, boolean supportDelete, int requestCode) {
+        Intent intent = new Intent(fragment.getContext(), PictureBrowseActivity.class);
         intent.putStringArrayListExtra(KEY_URL_LIST, (ArrayList<String>) list);
         intent.putExtra(KEY_CUR_POSITION, position);
         intent.putExtra(KEY_SUPPORT_DOWNLOAD, supportDownload);
         intent.putExtra(KEY_SUPPORT_DELETE, supportDelete);
-        context.startActivity(intent);
+        if (requestCode != -1) {
+            fragment.startActivityForResult(intent, requestCode);
+        } else {
+            fragment.startActivity(intent);
+        }
+    }
+
+    public static void startAction(Activity fragment, List<String> list, int position) {
+        startAction(fragment, list, position, false);
+    }
+
+    public static void startAction(Activity fragment, List<String> list, int position, boolean supportDownload) {
+        startAction(fragment, list, position, supportDownload, false, -1);
+    }
+
+    public static void startAction(Activity fragment, List<String> list, int position, boolean supportDownload, boolean supportDelete, int requestCode) {
+        Intent intent = new Intent(fragment, PictureBrowseActivity.class);
+        intent.putStringArrayListExtra(KEY_URL_LIST, (ArrayList<String>) list);
+        intent.putExtra(KEY_CUR_POSITION, position);
+        intent.putExtra(KEY_SUPPORT_DOWNLOAD, supportDownload);
+        intent.putExtra(KEY_SUPPORT_DELETE, supportDelete);
+        if (requestCode != -1) {
+            fragment.startActivityForResult(intent, requestCode);
+        } else {
+            fragment.startActivity(intent);
+        }
     }
 
     @Override
@@ -130,10 +157,6 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
             mDeleteIv.setVisibility(View.VISIBLE);
             mDeleteIv.setOnClickListener(this);
             mDeleteList = new ArrayList<>();
-            mOriginalMap = new HashMap<>(mUrls.size());
-            for (int i = 0; i < mUrls.size(); i++) {
-                mOriginalMap.put(mUrls.get(i), i);
-            }
         }
     }
 
@@ -154,7 +177,7 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
                 Toast.makeText(this, "download " + mCurPosition, Toast.LENGTH_SHORT).show();
                 break;
             case R.id.iv_delete:
-                mDeleteList.add(mOriginalMap.get(mUrls.get(mCurPosition)));
+                mDeleteList.add(mCurPosition);
                 mUrls.remove(mCurPosition);
                 if (ListUtils.isEmpty(mUrls)) {
                     setResultDataBeforeFinish();
@@ -165,6 +188,7 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
                 break;
             case R.id.iv_back:
             case R.id.iv_picture:
+                setResultDataBeforeFinish();
                 finish();
                 break;
             default:
@@ -218,6 +242,11 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
         @Override
         public int getCount() {
             return ListUtils.getSize(mList);
+        }
+
+        @Override
+        public int getItemPosition(@NonNull Object object) {
+            return POSITION_NONE;
         }
 
         @Override

@@ -1,5 +1,7 @@
 package com.luoruiyong.caa.edit;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,8 +16,6 @@ import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
-import com.luoruiyong.caa.widget.imageviewlayout.clickmanager.ChooseImageClickManager;
-import com.luoruiyong.caa.widget.imageviewlayout.clickmanager.IClickManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +109,7 @@ public class CreateActivityFragment extends BaseCreateFragment implements
             for (int i = 0; i < mPictureUrls.size() - 1; i++) {
                 list.add(mPictureUrls.get(i));
             }
-            PictureBrowseActivity.startAction(getContext(), list, position, false, true);
+            PictureBrowseActivity.startAction(this, list, position, false, true, EditorActivity.BROWSE_PICTURE_REQUEST_CODE);
         }
     }
 
@@ -170,5 +170,18 @@ public class CreateActivityFragment extends BaseCreateFragment implements
            default:
                break;
        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == EditorActivity.BROWSE_PICTURE_REQUEST_CODE
+                && resultCode == Activity.RESULT_OK && data != null) {
+            List<Integer> deleteList = data.getIntegerArrayListExtra(PictureBrowseActivity.KEY_DELETE_LIST);
+            for (int i = 0; i < ListUtils.getSize(deleteList); i++) {
+                int index = deleteList.get(i);
+                mPictureUrls.remove(index);
+            }
+            mPictureInputView.notifyInputDataChanged();
+        }
     }
 }
