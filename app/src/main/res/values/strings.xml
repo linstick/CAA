@@ -132,6 +132,11 @@
     <string name="common_str_upload_picture">上传图片</string>
     <string name="common_str_selected_picture">已选图片</string>
     <string name="common_str_introduce">导语</string>
+    <string name="common_str_choose">选择</string>
+    <string name="common_str_topic">#%s#</string>
+    <string name="common_str_relate_topic_introduce">关联话题导语</string>
+    <string name="common_str_relate_topic_cover">关联话题封面</string>
+    <string name="common_str_choose_topic_cover">选择话题封面</string>
 
     <string name="common_tip_no_empty">此项不能为空哦</string>
     <string name="common_tip_no_save">当前页面的数据还未提交保存，确定要离开吗？</string>
@@ -298,6 +303,14 @@
 
     <!--创建动态页相关文案-->
     <string name="fm_create_discover_str_discover_content">动态内容</string>
+
+    <!--关联话题页相关文案-->
+    <string name="topic_relate_str_search_topic">搜索话题</string>
+    <string name="topic_relate_str_join_count">%1d&#160;参与</string>
+    <string name="topic_relate_str_visit_count">%1d&#160;浏览</string>
+    <string name="topic_relate_str_create_topic">创建话题&#160;#%s#</string>
+    <string name="topic_relate_tip_no_search_input">搜索内容不能为空</string>
+    <string name="topic_relate_str_not_relate_topic">不关联话题</string>
 
     <!--创建活动/话题/动态的列表-->
     <string-array name="str_array_create_new">

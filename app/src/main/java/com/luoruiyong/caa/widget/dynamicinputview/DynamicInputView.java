@@ -148,7 +148,7 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
     }
 
     public void setInputText(String content) {
-        mInputEt.setText(content.trim());
+        mInputEt.setText(content);
         notifyInputDataChanged();
     }
 

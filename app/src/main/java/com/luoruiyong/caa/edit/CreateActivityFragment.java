@@ -8,11 +8,13 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.Toast;
 
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
+import com.luoruiyong.caa.topic.TopicSearchActivity;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
@@ -39,8 +41,15 @@ public class CreateActivityFragment extends BaseCreateFragment implements
     private DynamicInputView mRelatedTopicInputView;
     private DynamicInputView mLocationInputView;
     private DynamicInputView mPictureInputView;
+    private DynamicInputView mIntroduceInputView;
+    private DynamicInputView mTopicCoverInputView;
+    private ViewStub mRelateTopicExtrasViewStub;
+    private View mRelateTopicExtrasContainer;
 
+    private int mRelateTopicId;
+    private int mRelateTopicType = TopicSearchActivity.RELATE_TOPIC_TYPE_NONE;
     private List<String> mPictureUrls;
+    private List<String> mTopicCoverUrls;
     private List<DynamicInputView> mCheckNonNullList;
     private List<DynamicInputView> mCheckEmptyList;
 
@@ -65,6 +74,7 @@ public class CreateActivityFragment extends BaseCreateFragment implements
         mRelatedTopicInputView = rootView.findViewById(R.id.input_view_related_topic);
         mLocationInputView = rootView.findViewById(R.id.input_view_location);
         mPictureInputView = rootView.findViewById(R.id.input_view_picture);
+        mRelateTopicExtrasViewStub = rootView.findViewById(R.id.vs_create_relate_topic_extras);
 
         mRelatedTopicInputView.setOnContentViewClickListener(this);
         mLocationInputView.setOnContentViewClickListener(this);
@@ -92,24 +102,77 @@ public class CreateActivityFragment extends BaseCreateFragment implements
         mPictureInputView.setPictureUrls(mPictureUrls);
     }
 
+    private void inflateRelateTopicExtras() {
+        if (mRelateTopicExtrasContainer != null) {
+            return;
+        }
+        mRelateTopicExtrasContainer = mRelateTopicExtrasViewStub.inflate();
+        mIntroduceInputView = mRelateTopicExtrasContainer.findViewById(R.id.input_view_topic_introduce);
+        mTopicCoverInputView = mRelateTopicExtrasContainer.findViewById(R.id.input_view_topic_cover);
+
+        mTopicCoverInputView.setOnImageClickListener(this);
+        mTopicCoverInputView.setOnContentViewClickListener(this);
+
+        mCheckEmptyList.add(mIntroduceInputView);
+        mCheckEmptyList.add(mTopicCoverInputView);
+    }
+
+    private void resetRelateTopicExtras() {
+        if (mRelateTopicExtrasContainer == null) {
+            return;
+        }
+        mIntroduceInputView.setInputText(null);
+        mTopicCoverUrls = null;
+        mTopicCoverInputView.setPictureUrls(null);
+    }
+
+    private void handleChooseRelateTopicResult(Intent data) {
+        String topicName = null;
+        mRelateTopicType = data.getIntExtra(TopicSearchActivity.KEY_RESULT_TYPE, -1);
+        if (mRelateTopicType == TopicSearchActivity.RELATE_TOPIC_TYPE_SELECT) {
+            topicName = data.getStringExtra(TopicSearchActivity.KEY_CREATE_TOPIC_NAME);
+            inflateRelateTopicExtras();
+            resetRelateTopicExtras();
+            mRelateTopicExtrasContainer.setVisibility(View.VISIBLE);
+        } else if (mRelateTopicType == TopicSearchActivity.RELATE_TOPIC_TYPE_CREATE) {
+            mRelateTopicId = data.getIntExtra(TopicSearchActivity.KEY_SELECTED_TOPIC_ID, -1);
+            topicName = data.getStringExtra(TopicSearchActivity.KEY_SELECTED_TOPIC_NAME);
+            if (mRelateTopicExtrasContainer != null) {
+                mRelateTopicExtrasContainer.setVisibility(View.GONE);
+            }
+        } else if (mRelateTopicType == TopicSearchActivity.RELATE_TOPIC_TYPE_NONE) {
+            if (mRelateTopicExtrasContainer != null) {
+                mRelateTopicExtrasContainer.setVisibility(View.GONE);
+            }
+        }
+        mRelatedTopicInputView.setInputText(topicName);
+    }
+
     @Override
     public void onImageClick(View parent, int position) {
-        if (position + 1 == mPictureUrls.size()) {
-            // 添加图片
-            // for test
-            if (Enviroment.VAR_DEBUG) {
-                Toast.makeText(getContext(), "选择图片添加", Toast.LENGTH_SHORT).show();
-                mPictureUrls.add(mPictureUrls.size() - 1, "https://www.baidu.com/1.jpg");
-                mPictureInputView.notifyInputDataChanged();
-            }
-        } else {
-            // 查看图片
-            List list = new ArrayList();
-            // 需要移除最后的那一张添加
-            for (int i = 0; i < mPictureUrls.size() - 1; i++) {
-                list.add(mPictureUrls.get(i));
-            }
-            PictureBrowseActivity.startAction(this, list, position, false, true, EditorActivity.BROWSE_PICTURE_REQUEST_CODE);
+        switch (parent.getId()) {
+            case R.id.input_view_picture:
+                if (position + 1 == mPictureUrls.size()) {
+                    // 添加图片
+                    // for test
+                    if (Enviroment.VAR_DEBUG) {
+                        Toast.makeText(getContext(), "选择图片添加", Toast.LENGTH_SHORT).show();
+                        mPictureUrls.add(mPictureUrls.size() - 1, "https://www.baidu.com/1.jpg");
+                        mPictureInputView.notifyInputDataChanged();
+                    }
+                } else {
+                    // 查看图片
+                    List list = new ArrayList();
+                    // 需要移除最后的那一张添加
+                    for (int i = 0; i < mPictureUrls.size() - 1; i++) {
+                        list.add(mPictureUrls.get(i));
+                    }
+                    PictureBrowseActivity.startAction(this, list, position, false, true, EditorActivity.BROWSE_PICTURE_REQUEST_CODE);
+                }
+                break;
+            case R.id.input_view_topic_cover:
+
+                break;
         }
     }
 
@@ -158,14 +221,18 @@ public class CreateActivityFragment extends BaseCreateFragment implements
                }
                break;
            case R.id.input_view_related_topic:
-               if (Enviroment.VAR_DEBUG) {
-                   mRelatedTopicInputView.setInputText("This is test content for related topic");
-               }
+               startActivityForResult(new Intent(getContext(), TopicSearchActivity.class), EditorActivity.RELATE_TOPIC_REQUEST_CODE);
                break;
            case R.id.input_view_location:
                if (Enviroment.VAR_DEBUG) {
                    mLocationInputView.setInputText("This is test content for location");
                }
+               break;
+           case R.id.input_view_topic_cover:
+               // for test
+               mTopicCoverUrls = new ArrayList<>();
+               mTopicCoverUrls.add("htpps://www.baidu.com/1.jpg");
+               mTopicCoverInputView.setPictureUrls(mTopicCoverUrls);
                break;
            default:
                break;
@@ -174,14 +241,25 @@ public class CreateActivityFragment extends BaseCreateFragment implements
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == EditorActivity.BROWSE_PICTURE_REQUEST_CODE
-                && resultCode == Activity.RESULT_OK && data != null) {
-            List<Integer> deleteList = data.getIntegerArrayListExtra(PictureBrowseActivity.KEY_DELETE_LIST);
-            for (int i = 0; i < ListUtils.getSize(deleteList); i++) {
-                int index = deleteList.get(i);
-                mPictureUrls.remove(index);
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            switch (requestCode) {
+                case EditorActivity.BROWSE_PICTURE_REQUEST_CODE:
+                    List<Integer> deleteList = data.getIntegerArrayListExtra(PictureBrowseActivity.KEY_DELETE_LIST);
+                    for (int i = 0; i < ListUtils.getSize(deleteList); i++) {
+                        int index = deleteList.get(i);
+                        mPictureUrls.remove(index);
+                    }
+                    mPictureInputView.notifyInputDataChanged();
+                    break;
+                case EditorActivity.RELATE_TOPIC_REQUEST_CODE:
+                    handleChooseRelateTopicResult(data);
+                    break;
+                case EditorActivity.CHOOSE_LOCATION_REQUEST_CODE:
+
+                    break;
+                default:
+                    break;
             }
-            mPictureInputView.notifyInputDataChanged();
         }
     }
 }

@@ -26,8 +26,8 @@
         android:layout_weight="1"
         android:paddingLeft="8dp"
         android:paddingStart="8dp"
-        android:paddingRight="5dp"
-        android:paddingEnd="5dp"
+        android:paddingRight="8dp"
+        android:paddingEnd="8dp"
         android:paddingTop="2dp"
         android:paddingBottom="2dp"
         android:layout_marginRight="8dp"
@@ -35,7 +35,7 @@
         android:gravity="center_vertical"
         android:background="@drawable/bg_search_layout"
         android:textSize="14sp"
-        android:textColor="#666666"
+        android:textColor="#777777"
         android:singleLine="true"
         android:hint="Search for note/tag/account">
     </EditText>
@@ -48,6 +48,6 @@
         android:paddingEnd="5dp"
         android:text="@string/common_str_search"
         android:textColor="#EEEEEE"
-        android:textSize="14sp" />
+        android:textSize="14sp"/>
 
 </LinearLayout>

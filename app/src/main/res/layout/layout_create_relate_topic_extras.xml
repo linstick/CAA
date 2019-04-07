@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView
+        android:id="@+id/input_view_topic_introduce"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:type="input"
+        app:labelText="@string/common_str_relate_topic_introduce"
+        app:minLines="3"
+        app:maxLines="5"/>
+
+    <com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView
+        android:id="@+id/input_view_topic_cover"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:type="image"
+        app:maxImageCount="1"
+        app:labelText="@string/common_str_relate_topic_cover"
+        app:hintText="@string/common_str_choose_topic_cover" />
+
+</LinearLayout>

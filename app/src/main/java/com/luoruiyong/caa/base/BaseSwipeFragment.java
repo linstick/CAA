@@ -188,8 +188,12 @@ public abstract class BaseSwipeFragment<Item> extends Fragment {
 
     protected abstract void initListAdapter(List<Item> list);
 
-    protected abstract void doRefresh();
+    protected void doRefresh() {
 
-    protected abstract void doLoadMore();
+    }
+
+    protected void doLoadMore() {
+
+    }
 
 }
