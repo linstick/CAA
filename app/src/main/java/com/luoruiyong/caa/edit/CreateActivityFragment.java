@@ -1,22 +1,20 @@
 package com.luoruiyong.caa.edit;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
-import com.luoruiyong.caa.common.dialog.CommonDialog;
-import com.luoruiyong.caa.simple.PictureBrowseActivity;
-import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
+import com.luoruiyong.caa.widget.imageviewlayout.clickmanager.ChooseImageClickManager;
+import com.luoruiyong.caa.widget.imageviewlayout.clickmanager.IClickManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +26,8 @@ import java.util.List;
 public class CreateActivityFragment extends BaseCreateFragment implements
         ImageViewLayout.OnImageClickListener,
         ImageViewLayout.OnImageLongClickListener,
-        EditorActivity.OnActionBarClickListener {
+        EditorActivity.OnActionBarClickListener,
+        DynamicInputView.OnContentViewClickListener{
 
     private DynamicInputView mTypeInputView;
     private DynamicInputView mTitleInputView;
@@ -39,11 +38,13 @@ public class CreateActivityFragment extends BaseCreateFragment implements
     private DynamicInputView mRemarkInputView;
     private DynamicInputView mRelatedTopicInputView;
     private DynamicInputView mLocationInputView;
-    private ImageViewLayout mImageViewLayout;
+    private DynamicInputView mPictureInputView;
 
     private List<String> mPictureUrls;
     private List<DynamicInputView> mCheckNonNullList;
     private List<DynamicInputView> mCheckEmptyList;
+
+    private IClickManager mImageViewLayoutClickManager = new ChooseImageClickManager();
 
     @Nullable
     @Override
@@ -65,10 +66,13 @@ public class CreateActivityFragment extends BaseCreateFragment implements
         mRemarkInputView = rootView.findViewById(R.id.input_view_remark);
         mRelatedTopicInputView = rootView.findViewById(R.id.input_view_related_topic);
         mLocationInputView = rootView.findViewById(R.id.input_view_location);
-        mImageViewLayout = rootView.findViewById(R.id.image_view_layout);
+        mPictureInputView = rootView.findViewById(R.id.input_view_picture);
 
-        mImageViewLayout.setOnImageClickListener(this);
-        mImageViewLayout.setOnImageLongClickListener(this);
+        mRelatedTopicInputView.setOnContentViewClickListener(this);
+        mLocationInputView.setOnContentViewClickListener(this);
+        mPictureInputView.setOnContentViewClickListener(this);
+        mPictureInputView.setOnImageClickListener(this);
+        mPictureInputView.setOnImageLongClickListener(this);
 
         mCheckNonNullList = new ArrayList<>();
         mCheckNonNullList.add(mTypeInputView);
@@ -83,70 +87,46 @@ public class CreateActivityFragment extends BaseCreateFragment implements
         mCheckEmptyList.add(mRemarkInputView);
         mCheckEmptyList.add(mRelatedTopicInputView);
         mCheckEmptyList.add(mLocationInputView);
+        mCheckEmptyList.add(mPictureInputView);
 
-        // for test
         mPictureUrls = new ArrayList<>();
-        mPictureUrls.add("https://www.baidu.com");
-        mImageViewLayout.setPictureUrls(mPictureUrls);
+        // 加号引导添加的图片
+        mPictureUrls.add("https://www.baidu.com/guide.jpg");
+        mPictureInputView.setPictureUrls(mPictureUrls);
     }
 
     @Override
     public void onImageClick(View parent, int position) {
-        if (!ListUtils.isIndexBetween(mPictureUrls, position)) {
-            return;
-        }
-        if (position + 1 == mPictureUrls.size()) {
-            // 添加图片
-            // for test
-            Toast.makeText(getContext(), "选择图片添加", Toast.LENGTH_SHORT).show();
-            mPictureUrls.add(mPictureUrls.size() - 1, "https://www.baidu.com/1.jpg");
-            mImageViewLayout.notifyChildViewChanged();
-        } else {
-            // 查看图片
-            List list = new ArrayList();
-            // 需要移除最后的那一张添加
-            for (int i = 0; i < mPictureUrls.size() - 1; i++) {
-                list.add(mPictureUrls.get(i));
-            }
-            PictureBrowseActivity.startAction(getContext(), list, position);
+        if (!mImageViewLayoutClickManager.onImageClick((ImageViewLayout) parent, position)) {
+            // 选择图片添加操作
 
+            if (Enviroment.VAR_DEBUG) {
+                // for test
+                mPictureUrls.add(position, "https://www.baidu.com/1.jpg");
+                mPictureInputView.notifyInputDataChanged();
+            }
         }
     }
 
     @Override
     public void onImageLongClick(View parent, final int position) {
-        if (position + 1 == mPictureUrls.size()) {
-            return;
-        }
-        List<String> items = new ArrayList<>();
-        items.add(getString(R.string.common_str_delete));
-        DialogHelper.showListDialog(getContext(), items, new CommonDialog.Builder.OnItemClickListener() {
-            @Override
-            public void onItemClick(int which) {
-                mPictureUrls.remove(position);
-                mImageViewLayout.notifyChildViewChanged();
-            }
-        });
+        mImageViewLayoutClickManager.onImageLongClick(mPictureInputView, (ImageViewLayout) parent, position);
     }
 
 
     @Override
     public void onBackClick() {
         boolean hasData = false;
-        if (ListUtils.getSize(mPictureUrls) > 1) {
+        for (DynamicInputView view : mCheckEmptyList) {
+            if (!view.isEmpty()) {
+                hasData = true;
+                break;
+            }
+        }
+        if (hasData) {
             showConfirmLeftDialog();
         } else {
-            for (DynamicInputView view : mCheckEmptyList) {
-                if (!view.isEmpty()) {
-                    hasData = true;
-                    break;
-                }
-            }
-            if (hasData) {
-                showConfirmLeftDialog();
-            } else {
-                finish();
-            }
+            finish();
         }
     }
 
@@ -154,12 +134,42 @@ public class CreateActivityFragment extends BaseCreateFragment implements
     public void onFinishClick() {
         boolean canSend = true;
         for (DynamicInputView view : mCheckNonNullList) {
-            canSend &= view.check();
+            canSend &= view.checkAndShowErrorTipIfNeed();
         }
         if (canSend) {
             Toast.makeText(getContext(), "can send", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getContext(), "can not send", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onContentViewClick(View v) {
+       switch (v.getId()) {
+           case R.id.input_view_picture:
+               if (mPictureInputView.isImageEmpty()) {
+                   // 第一次点击，响应选择图片
+
+                   if (Enviroment.VAR_DEBUG) {
+                       // for test
+                       // 成功添加的一张图片
+                       mPictureUrls.add("htpps://www.baidu.com/1.jpg");
+                       mPictureInputView.notifyInputDataChanged();
+                   }
+               }
+               break;
+           case R.id.input_view_related_topic:
+               if (Enviroment.VAR_DEBUG) {
+                   mRelatedTopicInputView.setInputText("This is test content for related topic");
+               }
+               break;
+           case R.id.input_view_location:
+               if (Enviroment.VAR_DEBUG) {
+                   mLocationInputView.setInputText("This is test content for location");
+               }
+               break;
+           default:
+               break;
+       }
     }
 }

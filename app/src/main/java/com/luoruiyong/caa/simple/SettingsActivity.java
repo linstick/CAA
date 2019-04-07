@@ -81,7 +81,7 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void doCheckForUpdate(){
-        // do check
+        // do checkAndShowErrorTipIfNeed
         Toast.makeText(this, R.string.settings_tip_no_new_version, Toast.LENGTH_SHORT).show();
     }
 

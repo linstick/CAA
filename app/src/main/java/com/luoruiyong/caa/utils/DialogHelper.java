@@ -5,7 +5,9 @@ import android.text.InputType;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
+import com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -70,6 +72,12 @@ public class DialogHelper {
                 .negative(negative)
                 .build()
                 .show();
+    }
+
+    public static void showListDialog(Context context, String singleItem, CommonDialog.Builder.OnItemClickListener listener) {
+        List<String> items = new ArrayList<>();
+        items.add(singleItem);
+        showListDialog(context, items, listener);
     }
 
     public static void showListDialog(Context context, List<String> items, CommonDialog.Builder.OnItemClickListener mItemListener) {

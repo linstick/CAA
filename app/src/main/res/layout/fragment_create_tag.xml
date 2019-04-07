@@ -38,7 +38,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         app:type="image"
-        app:labelText="@string/fm_create_topic_str_cover"
+        app:maxImageCount="1"
+        app:labelText="@string/fm_create_topic_str_selected_cover"
         app:hintText="@string/fm_create_topic_str_choose_cover" />
 
 </LinearLayout>

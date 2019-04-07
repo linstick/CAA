@@ -12,18 +12,20 @@
 
     <declare-styleable name="DynamicInputView">
         <attr name="type">
-            <enum name="input" value="0"/>
-            <enum name="text" value="1"/>
-            <enum name="spinner" value="2"/>
-            <enum name="image" value="3"/>
+            <flag name="input" value="0x1"/>
+            <flag name="text" value="0x2"/>
+            <flag name="spinner" value="0x3"/>
+            <flag name="image" value="0x4"/>
         </attr>
         <attr name="labelText" format="string"/>
         <attr name="hintText" format="string"/>
         <attr name="errorText" format="string"/>
-        <attr name="entries" format="reference"/>
+        <attr name="maxImageCount" format="integer"/>
+        <attr name="spinnerEntries" format="reference"/>
         <attr name="nullable" format="boolean"/>
         <attr name="lines" format="integer"/>
         <attr name="maxLines" format="integer"/>
         <attr name="minLines" format="integer"/>
+        <attr name="ignoreLastImageItem" format="boolean"/>
     </declare-styleable>
 </resources>

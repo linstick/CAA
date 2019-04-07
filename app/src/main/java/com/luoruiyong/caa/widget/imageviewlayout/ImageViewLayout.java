@@ -12,6 +12,9 @@ import android.widget.TextView;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
+import com.luoruiyong.caa.widget.imageviewlayout.layout.GridLayoutStrategy;
+import com.luoruiyong.caa.widget.imageviewlayout.layout.ILayoutStrategy;
+import com.luoruiyong.caa.widget.imageviewlayout.layout.SpecialLayoutStrategy;
 
 import java.util.Arrays;
 import java.util.List;
@@ -69,6 +72,14 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
         return mUrls;
     }
 
+    public void deleteImage(int position) {
+        if (!ListUtils.isIndexBetween(mUrls, position)) {
+            return;
+        }
+        mUrls.remove(position);
+        notifyChildViewChanged();
+    }
+
     public void setMaxChildViewCount(int count) {
         mMaxChildViewCount = count;
         // 配置发生改变，需要重新布局
@@ -110,10 +121,8 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
     public void notifyChildViewChanged() {
         removeAllViews();
         if (ListUtils.isEmpty(mUrls)) {
-            setVisibility(View.GONE);
             return;
         }
-        setVisibility(VISIBLE);
         int count = Math.min(mUrls.size(), mMaxChildViewCount);
         LayoutInflater inflater = LayoutInflater.from(getContext());
         for (int i = 0; i < count; i++) {

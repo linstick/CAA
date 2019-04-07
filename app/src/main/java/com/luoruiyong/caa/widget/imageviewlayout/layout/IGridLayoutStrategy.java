@@ -1,4 +1,4 @@
-package com.luoruiyong.caa.widget.imageviewlayout;
+package com.luoruiyong.caa.widget.imageviewlayout.layout;
 
 /**
  * Author: luoruiyong

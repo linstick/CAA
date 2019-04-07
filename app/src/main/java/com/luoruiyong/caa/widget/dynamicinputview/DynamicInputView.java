@@ -17,14 +17,11 @@ import android.widget.TextView;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
-import com.luoruiyong.caa.simple.PictureBrowseActivity;
-import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.KeyboardUtils;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
+import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
-import java.net.PortUnreachableException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,24 +31,28 @@ import java.util.List;
  * Description:
  **/
 public class DynamicInputView extends LinearLayout implements View.OnClickListener {
-    private final static int TYPE_INPUT = 0;
-    private final static int TYPE_TEXT = 1;
-    private final static int TYPE_SPINNER = 2;
-    private final static int TYPE_IMAGE = 3;
+    private final static int TYPE_INPUT = 1;
+    private final static int TYPE_TEXT = 2;
+    private final static int TYPE_SPINNER = 3;
+    private final static int TYPE_IMAGE = 4;
+    private final static int TYPE_INPUT_AND_IMAGE = TYPE_INPUT | TYPE_IMAGE;
 
     private final static int DEFAULT_TYPE = TYPE_INPUT;
     private final static int NOT_DEFINED = -1;
     private final static boolean DEFAULT_NULLABLE = true;
+    private final static boolean DEFAULT_IGNORE_LAST_IMAGE_ITEM = false;
 
     private int mType;
     private int mLines;
     private int mMaxLines;
     private int mMinLines;
+    private int mMaxImageCount;
     private boolean mNullable;
+    private boolean mIgnoreLastImageItem;
     private String mLabelText;
     private String mHintText;
     private String mErrorText;
-    private List<String> mEntries;
+    private List<String> mSpinnerEntries;
     private OnContentViewClickListener mContentViewClickListener;
     private OnSpinnerSelectedListener mSpinnerSelectedListener;
     private OnFocusChangedListener mOnFocusChangedListener;
@@ -59,7 +60,7 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
     private OnFocusLostOrTextChangeListener mOnFocusLostOrTextChangeListener;
 
     private int mSelectedItem = -1;
-    private String mImageUrl = null;
+    private List<String> mPictureUrls;
     private boolean mIsSpread = false;
 
     private TextView mLabelTv;
@@ -69,7 +70,7 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
     private TextView mRequiredTv;
     private ImageView mUpAndDownIv;
     private View mInputContainerLl;
-    private ImageView mImageInputIv;
+    private ImageViewLayout mImageViewLayout;
     private View mRootView;
 
     public DynamicInputView(Context context) {
@@ -100,16 +101,24 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
         mErrorTv.setText(text);
     }
 
-    public void setEntries(List<String> entries) {
-        mEntries = entries;
+    public void setNullable(boolean nullable) {
+        mNullable = nullable;
     }
 
-    public boolean check() {
+    public void setIgnoreLastImageItem(boolean ignore) {
+        mIgnoreLastImageItem = ignore;
+    }
+
+    public void setSpinnerEntries(List<String> entries) {
+        mSpinnerEntries = entries;
+    }
+
+    public boolean checkAndShowErrorTipIfNeed() {
         changeToSpreadUI();
         boolean showError = false;
         if (!mNullable) {
             if (mType == TYPE_IMAGE) {
-                showError = TextUtils.isEmpty(mImageUrl);
+                showError = ListUtils.isEmpty(mPictureUrls);
             } else {
                 showError = TextUtils.isEmpty(getInputText());
             }
@@ -119,54 +128,72 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
     }
 
     public boolean isEmpty() {
-        if (mType == TYPE_IMAGE) {
-            return TextUtils.isEmpty(mImageUrl);
+        boolean isEmpty;
+        if (mType == TYPE_IMAGE || mType == TYPE_INPUT_AND_IMAGE) {
+            isEmpty = isImageEmpty();
+            if (mType == TYPE_INPUT_AND_IMAGE) {
+                isEmpty &= isInputEmpty();
+            }
+        } else {
+            isEmpty = isInputEmpty();
         }
+        return isEmpty;
+    }
+    public boolean isImageEmpty() {
+        return mIgnoreLastImageItem ? ListUtils.getSize(mPictureUrls) == 1 : ListUtils.getSize(mPictureUrls) == 0;
+    }
+
+    public boolean isInputEmpty() {
         return TextUtils.isEmpty(getInputText());
     }
 
     public void setInputText(String content) {
-        if (content != null && !TextUtils.isEmpty(content.trim())) {
-            mInputEt.setText(content.trim());
-            changeToSpreadUI();
-        } else {
-            changeToCloseUI();
-        }
+        mInputEt.setText(content.trim());
+        notifyInputDataChanged();
     }
 
     public String getInputText() {
         return mInputEt.getText().toString().trim();
     }
 
-    public void setInputImageUrl(String url) {
-        mImageUrl = url;
-        if (!TextUtils.isEmpty(url)) {
+    public void setPictureUrls(List<String> urls) {
+        mPictureUrls = urls;
+        mImageViewLayout.setPictureUrls(urls);
+        notifyInputDataChanged();
+    }
+
+    public void notifyInputDataChanged() {
+        if (!isEmpty()) {
             changeToSpreadUI();
-            setViewVisibleStatus(mInputContainerLl, GONE);
-            setViewVisibleStatus(mImageInputIv, VISIBLE);
-//            mImageInputIv.setImageUrl(url);
         } else {
-            changeToCloseUI();
-            setViewVisibleStatus(mInputContainerLl, VISIBLE);
-            setViewVisibleStatus(mImageInputIv, GONE);
+            if (!mInputEt.hasFocus()) {
+                changeToCloseUI();
+            }
+        }
+        if (mType == TYPE_IMAGE || mType == TYPE_INPUT_AND_IMAGE) {
+            mImageViewLayout.notifyChildViewChanged();
         }
     }
 
-    public String getInputImageUrl() {
-        return mImageUrl;
+    public List<String> getPictureUrls() {
+        return mPictureUrls;
     }
 
     public void setSpinnerSelectedItem(int position) {
-        if (mType != TYPE_SPINNER || !ListUtils.isIndexBetween(mEntries, position)) {
+        if (mType != TYPE_SPINNER || !ListUtils.isIndexBetween(mSpinnerEntries, position)) {
             return;
         }
         setViewVisibleStatus(mErrorTv, GONE);
-        mInputEt.setText(mEntries.get(position));
+        mInputEt.setText(mSpinnerEntries.get(position));
         changeToSpreadUI();
     }
 
     public int getSpinnerSelectedItem() {
         return mSelectedItem;
+    }
+
+    public void setImageMaxCount(int count) {
+        mImageViewLayout.setMaxChildViewCount(count);
     }
 
     public void setOnContentViewClickListener (OnContentViewClickListener listener) {
@@ -189,6 +216,14 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
         mOnFocusLostOrTextChangeListener = listener;
     }
 
+    public void setOnImageClickListener(ImageViewLayout.OnImageClickListener listener) {
+        mImageViewLayout.setOnImageClickListener(listener);
+    }
+
+    public void setOnImageLongClickListener(ImageViewLayout.OnImageLongClickListener listener) {
+        mImageViewLayout.setOnImageLongClickListener(listener);
+    }
+
     private void initCustomAttrs(Context context, AttributeSet attrs) {
         // 读取自定义的配置属性
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.DynamicInputView);
@@ -196,16 +231,18 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
         mLines = typedArray.getInt(R.styleable.DynamicInputView_lines, NOT_DEFINED);
         mMaxLines = typedArray.getInt(R.styleable.DynamicInputView_maxLines, NOT_DEFINED);
         mMinLines = typedArray.getInt(R.styleable.DynamicInputView_minLines, NOT_DEFINED);
+        mMaxImageCount = typedArray.getInt(R.styleable.DynamicInputView_maxImageCount, NOT_DEFINED);
         mNullable = typedArray.getBoolean(R.styleable.DynamicInputView_nullable, DEFAULT_NULLABLE);
+        mIgnoreLastImageItem = typedArray.getBoolean(R.styleable.DynamicInputView_ignoreLastImageItem, DEFAULT_IGNORE_LAST_IMAGE_ITEM);
         mLabelText = typedArray.getString(R.styleable.DynamicInputView_labelText);
         mHintText = typedArray.getString(R.styleable.DynamicInputView_hintText);
         if (TextUtils.isEmpty(mHintText)) {
             mHintText = mLabelText;
         }
         mErrorText = typedArray.getString(R.styleable.DynamicInputView_errorText);
-        int entriesResId = typedArray.getResourceId(R.styleable.DynamicInputView_entries, -1);
+        int entriesResId = typedArray.getResourceId(R.styleable.DynamicInputView_spinnerEntries, -1);
         if (entriesResId != -1) {
-            mEntries = Arrays.asList(ResourcesUtils.getStringArray(entriesResId));
+            mSpinnerEntries = Arrays.asList(ResourcesUtils.getStringArray(entriesResId));
         }
         typedArray.recycle();
     }
@@ -220,7 +257,7 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
         mTopRequiredTv = mRootView.findViewById(R.id.tv_top_required);
         mUpAndDownIv = mRootView.findViewById(R.id.iv_up_and_down);
         mInputContainerLl = mRootView.findViewById(R.id.ll_input_container);
-        mImageInputIv = mRootView.findViewById(R.id.iv_image_input);
+        mImageViewLayout = mRootView.findViewById(R.id.image_view_layout);
         mRootView.setOnClickListener(this);
         addView(mRootView);
     }
@@ -241,9 +278,13 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
         if (mMinLines != NOT_DEFINED) {
             mInputEt.setMinLines(mMinLines);
         }
+        if (mMaxImageCount != NOT_DEFINED) {
+            mImageViewLayout.setMaxChildViewCount(mMaxImageCount);
+        }
 
         switch (mType) {
             case TYPE_INPUT:
+            case TYPE_INPUT_AND_IMAGE:
                 initForInputType();
                 break;
             case TYPE_TEXT:
@@ -265,11 +306,10 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
                    changeToSpreadUI();
-                   setViewVisibleStatus(mErrorTv, GONE);
                    KeyboardUtils.showKeyboard(mInputEt);
                 } else {
                     // 失去焦点
-                    if (TextUtils.isEmpty(getInputText())) {
+                    if (isEmpty()) {
                         changeToCloseUI();
                     }
                 }
@@ -310,31 +350,6 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
         mInputEt.setOnClickListener(this);
         mInputEt.setFocusable(false);
         mInputEt.setCursorVisible(false);
-
-        if (mType == TYPE_IMAGE) {
-            mImageInputIv.setOnLongClickListener(new OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    List<String> items = new ArrayList<>();
-                    items.add(ResourcesUtils.getString(R.string.common_str_delete));
-                    DialogHelper.showListDialog(getContext(), items, new CommonDialog.Builder.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(int position) {
-                            setInputImageUrl(null);
-                        }
-                    });
-                    return true;
-                }
-            });
-            mImageInputIv.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    List<String> mUrls = new ArrayList<>();
-                    mUrls.add(mImageUrl);
-                    PictureBrowseActivity.startAction(getContext(), mUrls, 0);
-                }
-            });
-        }
     }
 
     @Override
@@ -349,27 +364,21 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
             if (mContentViewClickListener != null) {
                 mContentViewClickListener.onContentViewClick(this);
             }
-            // for test
-            if (mType == TYPE_TEXT) {
-                setInputText("This is the input content for test");
-            } else {
-                setInputImageUrl("https://www.baidu.com/1.jpg");
-            }
         } else if (mType == TYPE_SPINNER) {
             changeToSpreadUI();
             mUpAndDownIv.setSelected(true);
             new CommonDialog.Builder(getContext())
                     .type(CommonDialog.TYPE_LIST)
                     .title(null)
-                    .items(mEntries)
+                    .items(mSpinnerEntries)
                     .onItem(new CommonDialog.Builder.OnItemClickListener() {
                         @Override
                         public void onItemClick(int position) {
                             mSelectedItem = position;
                             mUpAndDownIv.setSelected(false);
-                            mInputEt.setText(mEntries.get(position));
+                            mInputEt.setText(mSpinnerEntries.get(position));
                             if (mSpinnerSelectedListener != null) {
-                                mSpinnerSelectedListener.onSpinnerSelected(position, mEntries.get(position));
+                                mSpinnerSelectedListener.onSpinnerSelected(position, mSpinnerEntries.get(position));
                             }
                         }
                     })
@@ -403,10 +412,18 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
             setViewVisibleStatus(mTopRequiredTv, !mNullable);
             setViewVisibleStatus(mRequiredTv, GONE);
             setViewVisibleStatus(mErrorTv, GONE);
-            LayoutParams params = (LayoutParams) mInputEt.getLayoutParams();
-            params.weight = 1;
-            mInputEt.setLayoutParams(params);
-            mInputEt.setHint(null);
+            if (mType != TYPE_IMAGE) {
+                LayoutParams params = (LayoutParams) mInputEt.getLayoutParams();
+                params.weight = 1;
+                mInputEt.setLayoutParams(params);
+                mInputEt.setHint(null);
+            }
+            if (mType == TYPE_IMAGE || mType == TYPE_INPUT_AND_IMAGE) {
+                if (mType == TYPE_IMAGE) {
+                    setViewVisibleStatus(mInputContainerLl, GONE);
+                }
+                setViewVisibleStatus(mImageViewLayout, ListUtils.isEmpty(mPictureUrls) ? GONE : VISIBLE);
+            }
             mIsSpread = true;
         }
     }
@@ -417,11 +434,17 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
             setViewVisibleStatus(mTopRequiredTv, GONE);
             setViewVisibleStatus(mRequiredTv, !mNullable);
             setViewVisibleStatus(mErrorTv, GONE);
-            LayoutParams params = (LayoutParams) mInputEt.getLayoutParams();
-            params.weight = 0;
-            mInputEt.setLayoutParams(params);
-            mInputEt.setHint(mHintText);
-            mInputEt.setText(null);
+            setViewVisibleStatus(mInputContainerLl, VISIBLE);
+            if (mType != TYPE_IMAGE) {
+                LayoutParams params = (LayoutParams) mInputEt.getLayoutParams();
+                params.weight = 0;
+                mInputEt.setLayoutParams(params);
+                mInputEt.setHint(mHintText);
+                mInputEt.setText(null);
+            }
+            if (mType == TYPE_IMAGE || mType == TYPE_INPUT_AND_IMAGE){
+                setViewVisibleStatus(mImageViewLayout, GONE);
+            }
             mIsSpread = false;
         }
     }

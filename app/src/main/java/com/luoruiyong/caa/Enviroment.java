@@ -14,6 +14,9 @@ import java.util.Map;
  **/
 public class Enviroment {
 
+    public final static boolean VAR_RELEASE = false;
+    public final static boolean VAR_DEBUG = true;
+
     private static User sUser;
     //创建新帖子的弹框列表
     private static List<String> sCreateNewStringArray;

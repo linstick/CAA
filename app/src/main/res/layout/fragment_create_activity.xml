@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:type="spinner"
-            app:entries="@array/str_array_create_activity_type"
+            app:spinnerEntries="@array/str_array_create_activity_type"
             app:labelText="@string/fm_create_activity_str_type"
             app:errorText="@string/common_tip_no_empty"
             app:nullable="false"
@@ -100,22 +100,22 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             app:type="text"
-            app:errorText="@string/common_tip_no_empty"
             app:labelText="@string/common_str_location"
             android:focusable="true"
             android:focusableInTouchMode="true" />
 
-        <com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout
-            android:id="@+id/image_view_layout"
+        <com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView
+            android:id="@+id/input_view_picture"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="100dp"
-            android:layout_marginEnd="100dp"
             android:layout_marginTop="10dp"
-            app:maxChildCount="9"
-            app:needShowTotalTip="false"
-            app:layoutStrategy="grid">
-        </com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout>
+            app:type="image"
+            app:maxImageCount="9"
+            app:ignoreLastImageItem="true"
+            app:labelText="@string/common_str_upload_picture"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+
 
         <!--滚动占位-->
         <View

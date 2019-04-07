@@ -39,7 +39,7 @@
     <!--<string name="fm_login_tip_empty_account">Sorry,the account can\'t be empty.</string>-->
     <!--<string name="fm_login_tip_empty_password">Sorry,the password can\'t be empty.</string>-->
     <!--<string name="fm_login_tip_login_success">Login success</string>-->
-    <!--<string name="fm_login_tip_login_fail">Fail to login,please check your account and password.</string>-->
+    <!--<string name="fm_login_tip_login_fail">Fail to login,please checkAndShowErrorTipIfNeed your account and password.</string>-->
 
     <!--&lt;!&ndash;注册页面相关文案&ndash;&gt;-->
     <!--<string name="fm_sign_str_cell_phone_number">cell phone number</string>-->
@@ -129,6 +129,8 @@
 
     <string name="common_str_relate_topic">关联话题</string>
     <string name="common_str_location">定位</string>
+    <string name="common_str_upload_picture">上传图片</string>
+    <string name="common_str_selected_picture">已选图片</string>
     <string name="common_str_introduce">导语</string>
 
     <string name="common_tip_no_empty">此项不能为空哦</string>
@@ -291,7 +293,7 @@
 
     <!--创建话题页相关文案-->
     <string name="fm_create_topic_str_choose_cover">选择封面</string>
-    <string name="fm_create_topic_str_cover">封面</string>
+    <string name="fm_create_topic_str_selected_cover">已选封面</string>
 
 
     <!--创建动态页相关文案-->

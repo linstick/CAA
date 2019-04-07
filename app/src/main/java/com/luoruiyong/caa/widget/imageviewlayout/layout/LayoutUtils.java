@@ -1,4 +1,4 @@
-package com.luoruiyong.caa.widget.imageviewlayout;
+package com.luoruiyong.caa.widget.imageviewlayout.layout;
 
 import android.view.View;
 import android.view.ViewGroup;

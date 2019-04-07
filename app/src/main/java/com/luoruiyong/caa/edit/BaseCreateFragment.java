@@ -11,8 +11,7 @@ import com.luoruiyong.caa.common.dialog.CommonDialog;
  * Date: 2019/4/7/007
  * Description:
  **/
-public class BaseCreateFragment extends Fragment{
-
+public class BaseCreateFragment extends Fragment {
     protected void showConfirmLeftDialog() {
         new CommonDialog.Builder(getContext())
                 .type(CommonDialog.TYPE_NORMAL)
