@@ -17,6 +17,8 @@ public class Enviroment {
     public final static boolean VAR_RELEASE = false;
     public final static boolean VAR_DEBUG = true;
 
+    public final static String AMAP_WEB_API_KEY = "c3bab68b9ed24b289631570eb02750fa";
+
     private static User sUser;
     //创建新帖子的弹框列表
     private static List<String> sCreateNewStringArray;

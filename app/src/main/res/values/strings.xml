@@ -166,6 +166,7 @@
     <string name="title_topic_detail">话题详情</string>
     <string name="title_activity_detail">活动详情</string>
     <string name="title_discover_detail">动态详情</string>
+    <string name="title_choose_location">选择位置</string>
 
     <!--登录页面相关文案-->
     <string name="fm_login_str_account">账号</string>
@@ -311,6 +312,12 @@
     <string name="topic_relate_str_create_topic">创建话题&#160;#%s#</string>
     <string name="topic_relate_tip_no_search_input">搜索内容不能为空</string>
     <string name="topic_relate_str_not_relate_topic">不关联话题</string>
+
+    <!--定位页面相关文案-->
+    <string name="location_str_search_address">搜索</string>
+    <string name="location_tip_no_input">搜索内容不能为空</string>
+    <string name="location_str_no_location_data">暂无定位数据</string>
+    <string name="location_str_not_appear_location">不显示位置</string>
 
     <!--创建活动/话题/动态的列表-->
     <string-array name="str_array_create_new">

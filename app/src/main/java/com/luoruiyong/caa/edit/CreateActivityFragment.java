@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.location.LocationActivity;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicSearchActivity;
 import com.luoruiyong.caa.utils.ListUtils;
@@ -110,7 +111,12 @@ public class CreateActivityFragment extends BaseCreateFragment implements
         mIntroduceInputView = mRelateTopicExtrasContainer.findViewById(R.id.input_view_topic_introduce);
         mTopicCoverInputView = mRelateTopicExtrasContainer.findViewById(R.id.input_view_topic_cover);
 
-        mTopicCoverInputView.setOnImageClickListener(this);
+        mTopicCoverInputView.setOnImageClickListener(new ImageViewLayout.OnImageClickListener() {
+            @Override
+            public void onImageClick(View parent, int position) {
+
+            }
+        });
         mTopicCoverInputView.setOnContentViewClickListener(this);
 
         mCheckEmptyList.add(mIntroduceInputView);
@@ -150,29 +156,22 @@ public class CreateActivityFragment extends BaseCreateFragment implements
 
     @Override
     public void onImageClick(View parent, int position) {
-        switch (parent.getId()) {
-            case R.id.input_view_picture:
-                if (position + 1 == mPictureUrls.size()) {
-                    // 添加图片
-                    // for test
-                    if (Enviroment.VAR_DEBUG) {
-                        Toast.makeText(getContext(), "选择图片添加", Toast.LENGTH_SHORT).show();
-                        mPictureUrls.add(mPictureUrls.size() - 1, "https://www.baidu.com/1.jpg");
-                        mPictureInputView.notifyInputDataChanged();
-                    }
-                } else {
-                    // 查看图片
-                    List list = new ArrayList();
-                    // 需要移除最后的那一张添加
-                    for (int i = 0; i < mPictureUrls.size() - 1; i++) {
-                        list.add(mPictureUrls.get(i));
-                    }
-                    PictureBrowseActivity.startAction(this, list, position, false, true, EditorActivity.BROWSE_PICTURE_REQUEST_CODE);
-                }
-                break;
-            case R.id.input_view_topic_cover:
-
-                break;
+        if (position + 1 == mPictureUrls.size()) {
+            // 添加图片
+            // for test
+            if (Enviroment.VAR_DEBUG) {
+                Toast.makeText(getContext(), "选择图片添加", Toast.LENGTH_SHORT).show();
+                mPictureUrls.add(mPictureUrls.size() - 1, "https://www.baidu.com/1.jpg");
+                mPictureInputView.notifyInputDataChanged();
+            }
+        } else {
+            // 查看图片
+            List list = new ArrayList();
+            // 需要移除最后的那一张添加
+            for (int i = 0; i < mPictureUrls.size() - 1; i++) {
+                list.add(mPictureUrls.get(i));
+            }
+            PictureBrowseActivity.startAction(this, list, position, false, true, EditorActivity.BROWSE_PICTURE_REQUEST_CODE);
         }
     }
 
@@ -224,9 +223,7 @@ public class CreateActivityFragment extends BaseCreateFragment implements
                startActivityForResult(new Intent(getContext(), TopicSearchActivity.class), EditorActivity.RELATE_TOPIC_REQUEST_CODE);
                break;
            case R.id.input_view_location:
-               if (Enviroment.VAR_DEBUG) {
-                   mLocationInputView.setInputText("This is test content for location");
-               }
+               startActivityForResult(new Intent(getContext(), LocationActivity.class), EditorActivity.CHOOSE_LOCATION_REQUEST_CODE);
                break;
            case R.id.input_view_topic_cover:
                // for test
@@ -255,7 +252,8 @@ public class CreateActivityFragment extends BaseCreateFragment implements
                     handleChooseRelateTopicResult(data);
                     break;
                 case EditorActivity.CHOOSE_LOCATION_REQUEST_CODE:
-
+                    String location = data.getStringExtra(LocationActivity.KEY_LOCATION_INFO);
+                    mLocationInputView.setInputText(location);
                     break;
                 default:
                     break;
