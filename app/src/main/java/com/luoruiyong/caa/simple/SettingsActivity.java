@@ -11,8 +11,8 @@ import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.bean.Function;
+import com.luoruiyong.caa.feedback.FeedbackActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
-import com.luoruiyong.caa.user.EditBasicInfoActivity;
 import com.luoruiyong.caa.user.ModifyPasswordActivity;
 import com.luoruiyong.caa.widget.UniversalFunctionContainer;
 

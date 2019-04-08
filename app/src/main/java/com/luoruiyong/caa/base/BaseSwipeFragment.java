@@ -18,11 +18,13 @@ import android.widget.Toast;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
+import com.luoruiyong.caa.feedback.FeedbackActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.DisplayUtils;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -171,7 +173,7 @@ public abstract class BaseSwipeFragment<Item> extends Fragment {
         switch (moreItemPosition) {
             case 0:
                 // 举报
-                Toast.makeText(getContext(), getString(R.string.common_str_impeach), Toast.LENGTH_SHORT).show();
+                FeedbackActivity.startAction(getContext(), (Serializable) mList.get(itemPosition));
                 break;
             case 1:
                 if (!ListUtils.isIndexBetween(mList, itemPosition)) {

@@ -99,12 +99,21 @@ public class DynamicInputView extends LinearLayout implements
         mLabelTv.setText(text);
     }
 
+    public void setLabelAndHintText(String text) {
+        mLabelText = text;
+        mHintText = text;
+        mLabelTv.setText(text);
+        mInputEt.setHint(text);
+    }
+
     public void setErrorText(String text) {
         mErrorTv.setText(text);
     }
 
     public void setNullable(boolean nullable) {
         mNullable = nullable;
+        setViewVisibleStatus(mRequiredTv, mNullable ? GONE : VISIBLE);
+        setViewVisibleStatus(mTopRequiredTv, mNullable ? GONE : VISIBLE);
     }
 
     public void setIgnoreLastImageItem(boolean ignore) {
@@ -145,7 +154,7 @@ public class DynamicInputView extends LinearLayout implements
         return isEmpty;
     }
     public boolean isImageEmpty() {
-        return mIgnoreLastImageItem ? ListUtils.getSize(mPictureUrls) == 1 : ListUtils.getSize(mPictureUrls) == 0;
+        return mIgnoreLastImageItem ? ListUtils.getSize(mPictureUrls) <= 1 : ListUtils.getSize(mPictureUrls) == 0;
     }
 
     public boolean isInputEmpty() {

@@ -1,5 +1,6 @@
 package com.luoruiyong.caa.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,7 @@ import java.util.List;
  * Author: luoruiyong
  * Date: 2019/3/17/017
  **/
-public class TagSimpleData {
+public class TagSimpleData implements Serializable{
     private long uid;
     private int id;
     private String name;
