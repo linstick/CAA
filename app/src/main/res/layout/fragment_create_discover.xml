@@ -35,13 +35,18 @@
         android:focusable="true"
         android:focusableInTouchMode="true"/>
 
+    <ViewStub
+        android:id="@+id/vs_create_relate_topic_extras"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout="@layout/layout_create_relate_topic_extras"/>
+
     <com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView
         android:id="@+id/input_view_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         app:type="text"
-        app:errorText="@string/common_tip_no_empty"
         app:labelText="@string/common_str_location"
         android:focusable="true"
         android:focusableInTouchMode="true" />

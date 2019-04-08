@@ -24,8 +24,7 @@ public class CreateTopicFragment extends BaseCreateFragment implements
         DynamicInputView.OnFocusLostOrTextChangeListener,
         EditorActivity.OnActionBarClickListener,
         DynamicInputView.OnContentViewClickListener,
-        ImageViewLayout.OnImageClickListener,
-        ImageViewLayout.OnImageDeletedListener {
+        ImageViewLayout.OnImageClickListener {
 
     private DynamicInputView mNameInputView;
     private DynamicInputView mIntroduceInputView;
@@ -51,7 +50,6 @@ public class CreateTopicFragment extends BaseCreateFragment implements
 
         mNameInputView.setOnFocusLostOrTextChangeListener(this);
         mCoverInputView.setOnImageClickListener(this);
-        mCoverInputView.setOnImageDeletedListener(this);
         mCoverInputView.setOnContentViewClickListener(this);
 
         mCoverInputView.setSupportAllChildDelete(true);
@@ -101,11 +99,6 @@ public class CreateTopicFragment extends BaseCreateFragment implements
     public void onImageClick(View parent, int position) {
         // 选择封面图片
         chooseCoverImage();
-    }
-
-    @Override
-    public void onItemDeleted(View parent, int position) {
-        mCoverInputView.notifyInputDataChanged();
     }
 
     @Override

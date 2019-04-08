@@ -117,7 +117,9 @@ public class CreateActivityFragment extends BaseCreateFragment implements
 
             }
         });
+
         mTopicCoverInputView.setOnContentViewClickListener(this);
+        mTopicCoverInputView.setSupportAllChildDelete(true);
 
         mCheckEmptyList.add(mIntroduceInputView);
         mCheckEmptyList.add(mTopicCoverInputView);

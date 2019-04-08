@@ -30,7 +30,9 @@ import java.util.List;
  * Date: 2019/4/5/005
  * Description:
  **/
-public class DynamicInputView extends LinearLayout implements View.OnClickListener {
+public class DynamicInputView extends LinearLayout implements
+        View.OnClickListener,
+        ImageViewLayout.OnImageDeletedListener {
     private final static int TYPE_INPUT = 1;
     private final static int TYPE_TEXT = 2;
     private final static int TYPE_SPINNER = 3;
@@ -128,6 +130,9 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
     }
 
     public boolean isEmpty() {
+        if (getVisibility() != VISIBLE) {
+            return true;
+        }
         boolean isEmpty;
         if (mType == TYPE_IMAGE || mType == TYPE_INPUT_AND_IMAGE) {
             isEmpty = isImageEmpty();
@@ -230,10 +235,6 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
 
     public void setOnImageLongClickListener(ImageViewLayout.OnImageLongClickListener listener) {
         mImageViewLayout.setOnImageLongClickListener(listener);
-    }
-
-    public void setOnImageDeletedListener(ImageViewLayout.OnImageDeletedListener listener) {
-        mImageViewLayout.setOnImageDeletedListener(listener);
     }
 
     private void initCustomAttrs(Context context, AttributeSet attrs) {
@@ -356,12 +357,18 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
             public void afterTextChanged(Editable s) {
             }
         });
+        if (mType == TYPE_INPUT_AND_IMAGE) {
+            mImageViewLayout.setOnImageDeletedListener(this);
+        }
     }
 
     private void initCommonForBesidesInputType() {
         mInputEt.setOnClickListener(this);
         mInputEt.setFocusable(false);
         mInputEt.setCursorVisible(false);
+        if (mType == TYPE_IMAGE) {
+            mImageViewLayout.setOnImageDeletedListener(this);
+        }
     }
 
     @Override
@@ -459,6 +466,11 @@ public class DynamicInputView extends LinearLayout implements View.OnClickListen
             }
             mIsSpread = false;
         }
+    }
+
+    @Override
+    public void onItemDeleted(View parent, int position) {
+        notifyInputDataChanged();
     }
 
     public interface OnContentViewClickListener {
