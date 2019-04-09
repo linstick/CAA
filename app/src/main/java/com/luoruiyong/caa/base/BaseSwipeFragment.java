@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.DisplayUtils;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
+import com.luoruiyong.caa.widget.ErrorTipView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -44,6 +46,8 @@ public abstract class BaseSwipeFragment<Item> extends Fragment {
     protected TextView mTopTipTv;
     protected SwipeRefreshLayout mRefreshLayout;
     protected RecyclerView mRecyclerView;
+    protected ViewStub mErrorTipViewStub;
+    protected ErrorTipView mErrorTipView;
 
     protected List<Item> mList;
     protected RecyclerView.Adapter mAdapter;
@@ -77,6 +81,7 @@ public abstract class BaseSwipeFragment<Item> extends Fragment {
 
     private void initView(View rootView) {
         mTopTipTv = rootView.findViewById(R.id.tv_top_tip);
+        mErrorTipViewStub = rootView.findViewById(R.id.vs_error_view);
         mRefreshLayout = rootView.findViewById(R.id.refresh_layout);
         mRecyclerView = rootView.findViewById(R.id.rv_recycler_view);
 
@@ -140,15 +145,17 @@ public abstract class BaseSwipeFragment<Item> extends Fragment {
 
 
     protected void onRefreshResult() {
+//        mRefreshLayout.setRefreshing(false);
+//        mTopTipTv.setVisibility(View.VISIBLE);
+//        mTopTipTv.setText("Update ten new activities");
+//        mTopTipTv.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                mTopTipTv.setVisibility(View.GONE);
+//            }
+//        }, 2000);
         mRefreshLayout.setRefreshing(false);
-        mTopTipTv.setVisibility(View.VISIBLE);
-        mTopTipTv.setText("Update ten new activities");
-        mTopTipTv.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mTopTipTv.setVisibility(View.GONE);
-            }
-        }, 2000);
+        showErrorView();
     }
 
     protected void onLoadMoreResult() {
@@ -205,6 +212,40 @@ public abstract class BaseSwipeFragment<Item> extends Fragment {
                 }
             }
         });
+    }
+
+    protected void showErrorView() {
+        initErrorViewIfNeed();
+        mErrorTipView.show();
+    }
+
+    protected void showErrorView(String info) {
+        showErrorView(-1, info);
+    }
+
+    protected void showErrorView(int imageResId, String info) {
+        initErrorViewIfNeed();
+        mErrorTipView.show(imageResId, info);
+    }
+
+    protected void hideErrorView() {
+        if (mErrorTipView != null) {
+            mErrorTipView.hide();
+        }
+    }
+
+    private void initErrorViewIfNeed() {
+        if (mErrorTipView == null) {
+            mErrorTipView = (ErrorTipView) mErrorTipViewStub.inflate();
+            mErrorTipView.setRefreshNeedHide(true);
+            mErrorTipView.setOnRefreshCallback(new ErrorTipView.OnRefreshClickCallBack() {
+                @Override
+                public void onRefreshClick() {
+                    mRefreshLayout.setRefreshing(true);
+                    doRefresh();
+                }
+            });
+        }
     }
 
     protected abstract void initListAdapter(List<Item> list);

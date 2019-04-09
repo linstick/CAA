@@ -30,4 +30,11 @@
         <attr name="minLines" format="integer"/>
         <attr name="ignoreLastImageItem" format="boolean"/>
     </declare-styleable>
+
+    <declare-styleable name="ErrorTipView">
+        <attr name="errorImage" format="reference"/>
+        <attr name="errorInfoText" format="string"/>
+        <attr name="refreshText" format="string"/>
+        <attr name="refreshNeedHide" format="boolean"/>
+    </declare-styleable>
 </resources>

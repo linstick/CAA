@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.luoruiyong.caa.widget.ErrorTipView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:errorInfoText="@string/common_tip_no_network"
+    app:refreshText="@string/common_str_refresh">
+</com.luoruiyong.caa.widget.ErrorTipView>
