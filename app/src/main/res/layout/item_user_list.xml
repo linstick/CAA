@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="150dp"
+    android:layout_height="200dp"
+    android:background="#AFCAECEA">
+
+    <ImageView
+        android:id="@+id/iv_background"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:background="@drawable/bg_setting_header"
+        android:scaleType="fitCenter"/>
+
+    <ImageView
+        android:id="@+id/iv_user_avatar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/bg_setting_header"
+        android:scaleType="fitCenter"
+        android:layout_marginTop="60dp"
+        android:layout_gravity="center_horizontal"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="120dp"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingStart="10dp"
+        android:paddingRight="10dp"
+        android:paddingEnd="10dp">
+
+        <TextView
+            android:id="@+id/tv_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="#444444"
+            android:textSize="16sp"
+            android:text="linstick"/>
+
+        <TextView
+            android:id="@+id/tv_introduction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:gravity="center"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textColor="#888888"
+            android:textSize="13sp"
+            android:text="This is the introduce info of the user"/>
+
+
+
+
+    </LinearLayout>
+
+
+
+</FrameLayout>

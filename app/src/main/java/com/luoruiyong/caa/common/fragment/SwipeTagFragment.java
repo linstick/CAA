@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.TagSimpleData;
+import com.luoruiyong.caa.common.viewholder.TopicItemViewHolder;
 import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.utils.DisplayUtils;
 import com.luoruiyong.caa.utils.ListUtils;
@@ -40,22 +41,6 @@ public class SwipeTagFragment extends BaseSwipeFragment<TagSimpleData> {
         }
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-        mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                outRect.top = DEFAULT_ITEM_MARGIN_PX;
-                if (parent.getChildAdapterPosition(view) == ListUtils.getSize(mList) - 1) {
-                    outRect.bottom = DEFAULT_ITEM_MARGIN_PX;
-                }
-            }
-        });
-        return view;
-    }
-
     @Override
     protected void initListAdapter(List<TagSimpleData> list) {
         mAdapter = new ListAdapter(list);
@@ -71,7 +56,7 @@ public class SwipeTagFragment extends BaseSwipeFragment<TagSimpleData> {
         Toast.makeText(getContext(), "doLoadMore", Toast.LENGTH_SHORT).show();
     }
 
-    private class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> implements View.OnClickListener, TagInnerItemContainer.OnItemClickListener{
+    private class ListAdapter extends RecyclerView.Adapter<TopicItemViewHolder> implements View.OnClickListener, TagInnerItemContainer.OnItemClickListener{
 
         private List<TagSimpleData> mList;
 
@@ -81,13 +66,13 @@ public class SwipeTagFragment extends BaseSwipeFragment<TagSimpleData> {
 
         @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public TopicItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_tag_list, parent, false);
-            return new ViewHolder(view);
+            return new TopicItemViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull TopicItemViewHolder holder, int position) {
             TagSimpleData data = mList.get(position);
             holder.bindData(data);
 
@@ -125,39 +110,7 @@ public class SwipeTagFragment extends BaseSwipeFragment<TagSimpleData> {
         @Override
         public void onItemClick(View view, int position) {
             TagSimpleData data = (TagSimpleData) view.getTag();
-//            Toast.makeText(getContext(), "inner item click " + position, Toast.LENGTH_SHORT).show();
             startActivity(new Intent(getContext(), TopicActivity.class));
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-
-            private ImageView mTagCoverIv;
-            private TextView mTagNameTv;
-            private TextView mVisitedCountTv;
-            private TextView mJoinedCountTv;
-            private ImageView mMoreIv;
-            private View mHeaderDividerView;
-            private TagInnerItemContainer mInnerContainerLayout;
-
-            public ViewHolder(View itemView) {
-                super(itemView);
-                mTagCoverIv = itemView.findViewById(R.id.iv_tag_cover);
-                mTagNameTv = itemView.findViewById(R.id.tv_tag_name);
-                mVisitedCountTv = itemView.findViewById(R.id.tv_visit_count);
-                mJoinedCountTv = itemView.findViewById(R.id.tv_join_count);
-                mMoreIv = itemView.findViewById(R.id.iv_more);
-                mHeaderDividerView = itemView.findViewById(R.id.view_header_divider);
-                mInnerContainerLayout = itemView.findViewById(R.id.inner_container_layout);
-            }
-
-            public void bindData(TagSimpleData data) {
-//                mTagCoverIv.setImageUrl(data.getCoverUrl());
-                mTagNameTv.setText(data.getName());
-                mVisitedCountTv.setText(data.getVisitedCount() + "");
-                mJoinedCountTv.setText(data.getJoinCount() + "");
-                mHeaderDividerView.setVisibility(ListUtils.isEmpty(data.getDiscoverList()) ? View.GONE : View.VISIBLE);
-                mInnerContainerLayout.setItems(data.getDiscoverList());
-            }
         }
     }
 }

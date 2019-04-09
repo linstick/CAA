@@ -20,6 +20,8 @@ public class User implements Serializable{
     private CollegeInfo collegeInfo;
 
     public User() {
+        nickName = "会飞的猪" + ((int) (Math.random() * 10));
+        description = "This is the introduction of the user";
     }
 
     public int getUid() {

@@ -77,6 +77,11 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TagSimpleData> 
     }
 
     @Override
+    protected void setupRecyclerViewDivider() {
+        // do nothing
+    }
+
+    @Override
     protected void doLoadMore() {
 
     }

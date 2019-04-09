@@ -66,24 +66,6 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
         }
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view =  super.onCreateView(inflater, container, savedInstanceState);
-        mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                if (parent.getChildAdapterPosition(view) != 0) {
-                    outRect.top = DEFAULT_ITEM_MARGIN_PX;
-                }
-                if (parent.getChildAdapterPosition(view) == ListUtils.getSize(mList) - 1) {
-                    outRect.bottom = DEFAULT_ITEM_MARGIN_PX;
-                }
-            }
-        });
-        return view;
-    }
-
     private void handleArguments() {
         Bundle bundle = getArguments();
         mActivityType = bundle == null ? TYPE_ALL : bundle.getInt(KEY_ACTIVITY_TYPE, TYPE_ALL);

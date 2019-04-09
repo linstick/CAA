@@ -172,6 +172,10 @@
     <string name="title_impeach_topic">举报话题</string>
     <string name="title_impeach_discover">举报动态</string>
     <string name="title_impeach_user">举报用户</string>
+    <string name="title_related_user_for_search">相关用户 - %s</string>
+    <string name="title_related_activity_for_search">相关活动 - %s</string>
+    <string name="title_related_discover_for_search">相关动态 - %s</string>
+    <string name="title_related_topic_for_search">相关话题 - %s</string>
 
     <!--登录页面相关文案-->
     <string name="fm_login_str_account">账号</string>
@@ -228,6 +232,13 @@
 
     <!--搜索页面相关文案-->
     <string name="search_tip_empty_search_input">请输入搜索内容</string>
+    <string name="search_str_search_hint">搜索用户/活动/话题/动态</string>
+    <string name="search_str_related_user">相关用户</string>
+    <string name="search_str_see_more">查看更多</string>
+    <string name="search_str_more_user">查看更多相关用户</string>
+    <string name="search_str_more_activity">查看更多相关活动</string>
+    <string name="search_str_more_topic">查看更多相关话题</string>
+    <string name="search_str_more_discover">查看更多相关动态</string>
 
     <!--公用对话框相关文案-->
     <string name="common_dialog_str_tips_title">温馨提示</string>

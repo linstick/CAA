@@ -1,5 +1,6 @@
 package com.luoruiyong.caa.base;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
@@ -36,6 +37,8 @@ public abstract class BaseSwipeFragment<Item> extends Fragment {
 
     private final int DEFAULT_LOAD_MORE_THRESHOLD = 5;
     protected final int DEFAULT_ITEM_MARGIN_PX = DisplayUtils.dp2px(10);
+    protected final int ITEM_TYPE_NORMAL = 0;
+    protected final int ITEM_TYPE_TIP = 1;
 
     protected View mRootView;
     protected TextView mTopTipTv;
@@ -76,6 +79,8 @@ public abstract class BaseSwipeFragment<Item> extends Fragment {
         mTopTipTv = rootView.findViewById(R.id.tv_top_tip);
         mRefreshLayout = rootView.findViewById(R.id.refresh_layout);
         mRecyclerView = rootView.findViewById(R.id.rv_recycler_view);
+
+        setupRecyclerViewDivider();
 
         mRefreshLayout.setColorSchemeResources(R.color.colorAccent);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -186,6 +191,20 @@ public abstract class BaseSwipeFragment<Item> extends Fragment {
             default:
                 break;
         }
+    }
+
+    protected void setupRecyclerViewDivider() {
+        mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                if (parent.getChildAdapterPosition(view) != 0) {
+                    outRect.top = DEFAULT_ITEM_MARGIN_PX;
+                }
+                if (parent.getChildAdapterPosition(view) == ListUtils.getSize(mList) - 1) {
+                    outRect.bottom = DEFAULT_ITEM_MARGIN_PX;
+                }
+            }
+        });
     }
 
     protected abstract void initListAdapter(List<Item> list);

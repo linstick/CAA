@@ -19,4 +19,12 @@ public class ListUtils {
     public static boolean isIndexBetween(List list, int index) {
         return list != null && index >= 0 && index < list.size();
     }
+
+    public static void clear(List... lists) {
+        for (List list : lists) {
+            if (list != null) {
+                list.clear();
+            }
+        }
+    }
 }
