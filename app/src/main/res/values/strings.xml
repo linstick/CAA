@@ -258,8 +258,8 @@
     <string name="settings_tip_about_us_info">本应用由广东工业大学的大四学生，罗瑞泳个人开发，您可以通过邮件与我们取得联系：linstick@163.com。感谢您的使用和支持！</string>
 
     <!--个人页相关文案-->
-    <string name="profile_str_id">ID:</string>
-    <string name="profile_str_nickname">昵称:</string>
+    <string name="profile_str_id">ID:%s</string>
+    <string name="profile_str_nickname">昵称:%s</string>
     <string name="profile_str_basic_info">基本信息</string>
     <string name="profile_str_college_info">学校信息</string>
     <string name="profile_str_description">个性签名</string>

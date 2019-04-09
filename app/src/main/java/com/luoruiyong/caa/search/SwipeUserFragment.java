@@ -1,6 +1,5 @@
 package com.luoruiyong.caa.search;
 
-import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,10 +14,9 @@ import android.widget.TextView;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.User;
-import com.luoruiyong.caa.search.adapter.UserListAdapter;
-import com.luoruiyong.caa.user.UserProfileActivity;
 import com.luoruiyong.caa.utils.DisplayUtils;
 import com.luoruiyong.caa.utils.ListUtils;
+import com.luoruiyong.caa.utils.PageUtils;
 
 import java.util.List;
 
@@ -55,10 +53,6 @@ public class SwipeUserFragment extends BaseSwipeFragment<User> {
         });
     }
 
-    private void browseUserInfo(User user) {
-        startActivity(new Intent(getContext(), UserProfileActivity.class));
-    }
-
     private class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> implements View.OnClickListener{
 
         private List<User> mList;
@@ -79,7 +73,7 @@ public class SwipeUserFragment extends BaseSwipeFragment<User> {
             User data = mList.get(position);
             holder.bindData(data);
             holder.itemView.setOnClickListener(this);
-            holder.itemView.setTag(data);
+            holder.itemView.setTag(data.getUid());
 
         }
 
@@ -90,7 +84,7 @@ public class SwipeUserFragment extends BaseSwipeFragment<User> {
 
         @Override
         public void onClick(View v) {
-            browseUserInfo((User) v.getTag());
+            PageUtils.gotoUserProfilePage(getContext(), (Integer) v.getTag());
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {

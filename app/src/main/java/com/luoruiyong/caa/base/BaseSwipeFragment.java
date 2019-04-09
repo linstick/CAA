@@ -2,8 +2,6 @@ package com.luoruiyong.caa.base;
 
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.annotation.ColorRes;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -25,7 +23,7 @@ import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.DisplayUtils;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
-import com.luoruiyong.caa.widget.ErrorTipView;
+import com.luoruiyong.caa.widget.TipView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -47,7 +45,7 @@ public abstract class BaseSwipeFragment<Item> extends Fragment {
     protected SwipeRefreshLayout mRefreshLayout;
     protected RecyclerView mRecyclerView;
     protected ViewStub mErrorTipViewStub;
-    protected ErrorTipView mErrorTipView;
+    protected TipView mTipView;
 
     protected List<Item> mList;
     protected RecyclerView.Adapter mAdapter;
@@ -216,7 +214,7 @@ public abstract class BaseSwipeFragment<Item> extends Fragment {
 
     protected void showErrorView() {
         initErrorViewIfNeed();
-        mErrorTipView.show();
+        mTipView.showError();
     }
 
     protected void showErrorView(String info) {
@@ -225,20 +223,20 @@ public abstract class BaseSwipeFragment<Item> extends Fragment {
 
     protected void showErrorView(int imageResId, String info) {
         initErrorViewIfNeed();
-        mErrorTipView.show(imageResId, info);
+        mTipView.showError(imageResId, info);
     }
 
     protected void hideErrorView() {
-        if (mErrorTipView != null) {
-            mErrorTipView.hide();
+        if (mTipView != null) {
+            mTipView.hide();
         }
     }
 
     private void initErrorViewIfNeed() {
-        if (mErrorTipView == null) {
-            mErrorTipView = (ErrorTipView) mErrorTipViewStub.inflate();
-            mErrorTipView.setRefreshNeedHide(true);
-            mErrorTipView.setOnRefreshCallback(new ErrorTipView.OnRefreshClickCallBack() {
+        if (mTipView == null) {
+            mTipView = (TipView) mErrorTipViewStub.inflate();
+            mTipView.setRefreshNeedHide(true);
+            mTipView.setOnRefreshCallback(new TipView.OnRefreshClickCallBack() {
                 @Override
                 public void onRefreshClick() {
                     mRefreshLayout.setRefreshing(true);

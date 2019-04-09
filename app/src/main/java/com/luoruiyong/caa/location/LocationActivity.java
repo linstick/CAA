@@ -278,7 +278,7 @@ public class LocationActivity extends BaseActivity implements View.OnClickListen
         });
     }
 
-    private void showProgressBar() {
+    protected void showProgressBar() {
         mProgressBar.setVisibility(View.VISIBLE);
         mNoLocationDataTv.setVisibility(View.GONE);
     }

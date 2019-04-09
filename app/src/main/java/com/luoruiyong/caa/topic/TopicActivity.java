@@ -1,35 +1,26 @@
 package com.luoruiyong.caa.topic;
 
-import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
+import com.luoruiyong.caa.bean.TagSimpleData;
 import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.fragment.SwipeDiscoverFragment;
-import com.luoruiyong.caa.user.UserProfileActivity;
-import com.luoruiyong.caa.utils.DisplayUtils;
+import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -58,7 +49,7 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
     private ViewPagerAdapter mAdapter;
 
     private State mCurState = State.IDLE;
-    private int mTopicId;
+    private TagSimpleData mData;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -119,10 +110,10 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
         mFragmentList = new ArrayList<>();
 
         mTitleList.add(getString(R.string.topic_detail_str_hot));
-        mFragmentList.add(SwipeDiscoverFragment.newInstance(SwipeDiscoverFragment.TYPE_TOPIC_HOT, mTopicId));
+        mFragmentList.add(SwipeDiscoverFragment.newInstance(SwipeDiscoverFragment.TYPE_TOPIC_HOT, mData.getId()));
 
         mTitleList.add(getString(R.string.topic_detail_str_lasted));
-        mFragmentList.add(SwipeDiscoverFragment.newInstance(SwipeDiscoverFragment.TYPE_TOPIC_LASTED, mTopicId));
+        mFragmentList.add(SwipeDiscoverFragment.newInstance(SwipeDiscoverFragment.TYPE_TOPIC_LASTED, mData.getId()));
 
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setupWithViewPager(mViewPager);
@@ -157,7 +148,7 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
                 break;
             case R.id.iv_user_avatar:
             case R.id.tv_nickname:
-                startActivity(new Intent(this, UserProfileActivity.class));
+                PageUtils.gotoUserProfilePage(this, mData.getUid());
                 break;
             default:
                 break;

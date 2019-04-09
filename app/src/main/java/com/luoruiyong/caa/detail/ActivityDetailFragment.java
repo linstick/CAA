@@ -24,8 +24,8 @@ import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicActivity;
-import com.luoruiyong.caa.user.UserProfileActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
+import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
@@ -173,7 +173,7 @@ public class ActivityDetailFragment extends Fragment implements View.OnClickList
         switch (v.getId()) {
             case R.id.iv_user_avatar:
             case R.id.tv_nickname:
-                startActivity(new Intent(getContext(), UserProfileActivity.class));
+                PageUtils.gotoUserProfilePage(getContext(), mData.getUid());
                 break;
             case R.id.tv_topic:
                 startActivity(new Intent(getContext(), TopicActivity.class));

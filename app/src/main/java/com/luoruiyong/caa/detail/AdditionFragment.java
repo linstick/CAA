@@ -1,6 +1,5 @@
 package com.luoruiyong.caa.detail;
 
-import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,7 +14,6 @@ import android.widget.Toast;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.AdditionData;
-import com.luoruiyong.caa.user.UserProfileActivity;
 import com.luoruiyong.caa.utils.DisplayUtils;
 import com.luoruiyong.caa.utils.ListUtils;
 
@@ -88,7 +86,7 @@ public class AdditionFragment extends BaseSwipeFragment<AdditionData> {
         Toast.makeText(getContext(), "doLoadMore", Toast.LENGTH_SHORT).show();
     }
 
-    class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> implements View.OnClickListener {
+    class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
 
         private List<AdditionData> mList;
 
@@ -122,20 +120,6 @@ public class AdditionFragment extends BaseSwipeFragment<AdditionData> {
         @Override
         public int getItemCount() {
             return ListUtils.getSize(mList);
-        }
-
-        @Override
-        public void onClick(View v) {
-            int position = (int) v.getTag();
-            AdditionData data = mList.get(position);
-            switch (v.getId()) {
-                case R.id.iv_user_avatar:
-                case R.id.tv_nickname:
-                    startActivity(new Intent(getContext(), UserProfileActivity.class));
-                    break;
-                default:
-                    break;
-            }
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {

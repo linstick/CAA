@@ -1,7 +1,6 @@
 package com.luoruiyong.caa.home.message;
 
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,8 +20,7 @@ import com.luoruiyong.caa.bean.MessageData;
 
 import com.luoruiyong.caa.detail.DetailActivity;
 import com.luoruiyong.caa.topic.TopicActivity;
-import com.luoruiyong.caa.user.UserProfileActivity;
-import com.luoruiyong.caa.utils.ListUtils;
+import com.luoruiyong.caa.utils.PageUtils;
 
 import java.util.List;
 
@@ -123,8 +121,8 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
                     break;
                 case R.id.iv_user_avatar:
                 case R.id.tv_nickname:
-                    long uid = data.getUid();
-                    startActivity(new Intent(getContext(), UserProfileActivity.class));
+                    int uid = data.getUid();
+                    PageUtils.gotoUserProfilePage(getContext(), uid);
                     break;
                 default:
                     break;

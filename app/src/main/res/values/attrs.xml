@@ -31,7 +31,7 @@
         <attr name="ignoreLastImageItem" format="boolean"/>
     </declare-styleable>
 
-    <declare-styleable name="ErrorTipView">
+    <declare-styleable name="TipView">
         <attr name="errorImage" format="reference"/>
         <attr name="errorInfoText" format="string"/>
         <attr name="refreshText" format="string"/>

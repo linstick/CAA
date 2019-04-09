@@ -37,6 +37,10 @@ public class Enviroment {
         return sUser;
     }
 
+    public static int getCurUid() {
+        return sUser == null ? -1 : sUser.getUid();
+    }
+
     public static boolean isVisitor() {
         return sUser == null;
     }
@@ -56,6 +60,7 @@ public class Enviroment {
     public static void createVirtualUser() {
         sUser = new User();
         sUser.setUid(1000);
+        sUser.setId("PSC52193");
         sUser.setAvatar("https://www.baidu.com/1.jpg");
         sUser.setNickName("会飞的猪");
         sUser.setRealName("罗瑞泳");

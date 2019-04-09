@@ -1,6 +1,5 @@
 package com.luoruiyong.caa.detail;
 
-import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,9 +15,9 @@ import android.widget.Toast;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.CommentData;
-import com.luoruiyong.caa.user.UserProfileActivity;
 import com.luoruiyong.caa.utils.DisplayUtils;
 import com.luoruiyong.caa.utils.ListUtils;
+import com.luoruiyong.caa.utils.PageUtils;
 
 import java.util.List;
 
@@ -139,7 +138,7 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
             switch (v.getId()) {
                 case R.id.iv_user_avatar:
                 case R.id.tv_nickname:
-                    startActivity(new Intent(getContext(), UserProfileActivity.class));
+                    PageUtils.gotoUserProfilePage(getContext(), data.getUid());
                     break;
                 default:
                     break;

@@ -1,7 +1,6 @@
 package com.luoruiyong.caa.common.fragment;
 
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,8 +17,8 @@ import com.luoruiyong.caa.common.viewholder.DiscoverItemViewHolder;
 import com.luoruiyong.caa.detail.DetailActivity;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicActivity;
-import com.luoruiyong.caa.user.UserProfileActivity;
 import com.luoruiyong.caa.utils.ListUtils;
+import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
 import java.util.List;
@@ -141,16 +140,15 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
                     break;
                 case R.id.iv_user_avatar:
                 case R.id.tv_nickname:
-                    startActivity(new Intent(getContext(), UserProfileActivity.class));
-//                    Toast.makeText(getContext(), "click user info", Toast.LENGTH_SHORT).show();
+                    PageUtils.gotoUserProfilePage(getContext(), data.getUid());
                     break;
                 case R.id.iv_more:
                     showMoreOperateDialog(position, data.getUid());
-//                    Toast.makeText(getContext(), "click more", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "click more", Toast.LENGTH_SHORT).showError();
                     break;
                 case R.id.tv_topic:
                     startActivity(new Intent(getContext(), TopicActivity.class));
-//                    Toast.makeText(getContext(), "click topic", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "click topic", Toast.LENGTH_SHORT).showError();
                     break;
                 case R.id.tv_like:
                     Toast.makeText(getContext(), "click collect", Toast.LENGTH_SHORT).show();

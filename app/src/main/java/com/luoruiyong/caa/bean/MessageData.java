@@ -6,7 +6,7 @@ package com.luoruiyong.caa.bean;
  **/
 public class MessageData {
 
-    private long uid;
+    private int uid;
     private String avatarUrl;
     private String nickname;
     private long publishTime;
@@ -34,11 +34,11 @@ public class MessageData {
         srcContent = "This is the content of src note, long long long long sentence " + i;
     }
 
-    public long getUid() {
+    public int getUid() {
         return uid;
     }
 
-    public void setUid(long uid) {
+    public void setUid(int uid) {
         this.uid = uid;
     }
 

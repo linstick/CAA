@@ -23,7 +23,7 @@ import com.luoruiyong.caa.home.activity.ActivityFragment;
 import com.luoruiyong.caa.home.message.MessageFragment;
 import com.luoruiyong.caa.login.LoginActivity;
 import com.luoruiyong.caa.search.SearchActivity;
-import com.luoruiyong.caa.user.UserProfileActivity;
+import com.luoruiyong.caa.utils.PageUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -205,7 +205,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
                 if (Enviroment.isVisitor()) {
                     LoginActivity.startAction(this, LoginActivity.LOGIN_TAB);
                 } else {
-                    startActivity(new Intent(this, UserProfileActivity.class));
+                    PageUtils.gotoUserProfilePage(this, Enviroment.getCurUid());
                 }
                 break;
             case R.id.iv_search:

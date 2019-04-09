@@ -9,7 +9,7 @@ import java.util.List;
  * Date: 2019/3/17/017
  **/
 public class TagSimpleData implements Serializable{
-    private long uid;
+    private int uid;
     private int id;
     private String name;
     private String coverUrl;
@@ -36,11 +36,11 @@ public class TagSimpleData implements Serializable{
     public TagSimpleData() {
     }
 
-    public long getUid() {
+    public int getUid() {
         return uid;
     }
 
-    public void setUid(long uid) {
+    public void setUid(int uid) {
         this.uid = uid;
     }
 

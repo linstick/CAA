@@ -27,11 +27,10 @@ import com.luoruiyong.caa.feedback.FeedbackActivity;
 import com.luoruiyong.caa.search.adapter.CompositeListAdapter;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicActivity;
-import com.luoruiyong.caa.user.UserProfileActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.DisplayUtils;
 import com.luoruiyong.caa.utils.ListUtils;
-import com.luoruiyong.caa.utils.ResourcesUtils;
+import com.luoruiyong.caa.utils.PageUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -159,7 +158,7 @@ public class CompositeFragment extends Fragment {
     public class OnUserViewClickListenerImpl implements CompositeListAdapter.OnUserViewClickListener {
         @Override
         public void onUserItemClick(User user) {
-            startActivity(new Intent(getContext(), UserProfileActivity.class));
+            PageUtils.gotoUserProfilePage(getContext(), user.getUid());
         }
     }
 
@@ -174,15 +173,14 @@ public class CompositeFragment extends Fragment {
                     break;
                 case R.id.iv_user_avatar:
                 case R.id.tv_nickname:
-//                    Toast.makeText(getContext(), "click user info", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(getContext(), UserProfileActivity.class));
+                    PageUtils.gotoUserProfilePage(getContext(), data.getUid());
                     break;
                 case R.id.tv_activity_type:
                     Toast.makeText(getContext(), "click activity_type", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.tv_topic:
                     startActivity(new Intent(getContext(), TopicActivity.class));
-//                    Toast.makeText(getContext(), "click topic", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "click topic", Toast.LENGTH_SHORT).showError();
                     break;
                 case R.id.tv_collect:
                     Toast.makeText(getContext(), "click collect", Toast.LENGTH_SHORT).show();
@@ -242,7 +240,7 @@ public class CompositeFragment extends Fragment {
                     break;
                 case R.id.iv_user_avatar:
                 case R.id.tv_nickname:
-                    startActivity(new Intent(getContext(), UserProfileActivity.class));
+                    PageUtils.gotoUserProfilePage(getContext(), data.getUid());
                     break;
                 case R.id.iv_more:
                     showMoreOperateDialog(data);

@@ -1,7 +1,6 @@
 package com.luoruiyong.caa.common.fragment;
 
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,8 +18,8 @@ import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
 import com.luoruiyong.caa.detail.DetailActivity;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicActivity;
-import com.luoruiyong.caa.user.UserProfileActivity;
 import com.luoruiyong.caa.utils.ListUtils;
+import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
 import java.util.List;
@@ -140,15 +139,14 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
                     break;
                 case R.id.iv_user_avatar:
                 case R.id.tv_nickname:
-//                    Toast.makeText(getContext(), "click user info", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(getContext(), UserProfileActivity.class));
+                    PageUtils.gotoUserProfilePage(getContext(), data.getUid());
                     break;
                 case R.id.tv_activity_type:
                     Toast.makeText(getContext(), "click activity_type", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.tv_topic:
                     startActivity(new Intent(getContext(), TopicActivity.class));
-//                    Toast.makeText(getContext(), "click topic", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "click topic", Toast.LENGTH_SHORT).showError();
                     break;
                 case R.id.tv_collect:
                     Toast.makeText(getContext(), "click collect", Toast.LENGTH_SHORT).show();
@@ -158,7 +156,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
                     break;
                 case R.id.tv_more:
                     showMoreOperateDialog(position, data.getUid());
-//                    Toast.makeText(getContext(), "click more", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "click more", Toast.LENGTH_SHORT).showError();
                     break;
                 default:
                     break;

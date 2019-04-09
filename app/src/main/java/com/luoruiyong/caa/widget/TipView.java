@@ -20,7 +20,7 @@ import com.luoruiyong.caa.R;
  * Date: 2019/4/9/009
  * Description:
  **/
-public class ErrorTipView extends FrameLayout implements View.OnClickListener{
+public class TipView extends FrameLayout implements View.OnClickListener{
 
     private View mRootView;
     private ImageView mErrorImageIv;
@@ -32,15 +32,15 @@ public class ErrorTipView extends FrameLayout implements View.OnClickListener{
     private boolean mRefreshNeedHide;
     private OnRefreshClickCallBack mCallback;
 
-    public ErrorTipView(@NonNull Context context){
+    public TipView(@NonNull Context context){
         this(context, null);
     }
 
-    public ErrorTipView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public TipView(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public ErrorTipView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public TipView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
@@ -53,14 +53,14 @@ public class ErrorTipView extends FrameLayout implements View.OnClickListener{
         mProgressBar = mRootView.findViewById(R.id.progress_bar);
         mErrorLayout = mRootView.findViewById(R.id.ll_error_layout);
 
-        TypedArray typedArray = context.obtainStyledAttributes(attr, R.styleable.ErrorTipView);
-        int errorImageResId = typedArray.getResourceId(R.styleable.ErrorTipView_errorImage, -1);
+        TypedArray typedArray = context.obtainStyledAttributes(attr, R.styleable.TipView);
+        int errorImageResId = typedArray.getResourceId(R.styleable.TipView_errorImage, -1);
         if (errorImageResId != -1) {
             mErrorImageIv.setImageResource(errorImageResId);
         }
-        mErrorInfoTv.setText(typedArray.getString(R.styleable.ErrorTipView_errorInfoText));
-        mRefreshTv.setText(typedArray.getString(R.styleable.ErrorTipView_refreshText));
-        mRefreshNeedHide = typedArray.getBoolean(R.styleable.ErrorTipView_refreshNeedHide, false);
+        mErrorInfoTv.setText(typedArray.getString(R.styleable.TipView_errorInfoText));
+        mRefreshTv.setText(typedArray.getString(R.styleable.TipView_refreshText));
+        mRefreshNeedHide = typedArray.getBoolean(R.styleable.TipView_refreshNeedHide, false);
 
         mRefreshTv.setOnClickListener(this);
         addView(mRootView);
@@ -90,25 +90,41 @@ public class ErrorTipView extends FrameLayout implements View.OnClickListener{
         mCallback = callback;
     }
 
-    public void show() {
-        setVisibility(VISIBLE);
+    public void showError() {
+        setViewStatus(mProgressBar, GONE);
+        setViewStatus(mErrorLayout, VISIBLE);
+        setViewStatus(this, VISIBLE);
     }
 
-    public void show(String info) {
+    public void showError(String info) {
         setErrorInfo(info);
-        show();
+        showError();
     }
 
-    public void show(int resId, String info) {
+    public void showError(int resId, String info) {
         setErrorImage(resId);
         setErrorInfo(info);
-        show();
+        showError();
+    }
+
+    public void showProgressBar() {
+        setViewStatus(mProgressBar, VISIBLE);
+        setViewStatus(mErrorLayout, GONE);
+        setViewStatus(this, VISIBLE);
     }
 
     public void hide() {
-        mErrorLayout.setVisibility(VISIBLE);
-        mProgressBar.setVisibility(GONE);
-        setVisibility(GONE);
+        setViewStatus(this, GONE);
+    }
+
+    private void setViewStatus(View view, int status) {
+        if (view.getVisibility() != status) {
+            view.setVisibility(status);
+        }
+    }
+
+    private void setViewStatus(View view, boolean visible) {
+        setViewStatus(view, visible ? VISIBLE : GONE);
     }
 
     @Override

@@ -9,6 +9,7 @@ import java.io.Serializable;
 public class User implements Serializable{
 
     private int uid;
+    private String id;
     private String avatar;
     private String nickName;
     private String realName;
@@ -20,8 +21,16 @@ public class User implements Serializable{
     private CollegeInfo collegeInfo;
 
     public User() {
+        uid = 1000;
+        id = "PSC52193";
+        avatar = "https://www.baidu.com/1.jpg";
         nickName = "会飞的猪" + ((int) (Math.random() * 10));
-        description = "This is the introduction of the user";
+        gender = "男";
+        age = 23;
+        cellNumber = "15102032936";
+        email = "linstick@163.com";
+        description = "这是用户的个性签名，我是一个Android开发入门Coder";
+        collegeInfo = new CollegeInfo();
     }
 
     public int getUid() {
@@ -30,6 +39,14 @@ public class User implements Serializable{
 
     public void setUid(int uid) {
         this.uid = uid;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getAvatar() {
@@ -128,6 +145,11 @@ public class User implements Serializable{
         private String klass;
 
         public CollegeInfo() {
+            id = 10001;
+            name = "广东工业大学";
+            department  = "计算机学院";
+            major = "软件工程";
+            klass = "15级";
         }
 
         public int getId() {
