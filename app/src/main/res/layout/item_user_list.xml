@@ -53,7 +53,7 @@
             android:ellipsize="end"
             android:textColor="#888888"
             android:textSize="13sp"
-            android:text="This is the introduce info of the user"/>
+            android:text="This is the introduction info of the user"/>
 
 
 

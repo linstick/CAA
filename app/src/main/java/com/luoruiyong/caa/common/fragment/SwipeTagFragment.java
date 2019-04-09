@@ -1,7 +1,5 @@
 package com.luoruiyong.caa.common.fragment;
 
-import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,18 +7,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.TagSimpleData;
 import com.luoruiyong.caa.common.viewholder.TopicItemViewHolder;
-import com.luoruiyong.caa.topic.TopicActivity;
-import com.luoruiyong.caa.utils.DisplayUtils;
-import com.luoruiyong.caa.utils.ListUtils;
-import com.luoruiyong.caa.utils.ResourcesUtils;
+import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.widget.TagInnerItemContainer;
 
 import java.util.List;
@@ -95,12 +88,10 @@ public class SwipeTagFragment extends BaseSwipeFragment<TagSimpleData> {
             TagSimpleData data = mList.get(position);
             switch (v.getId()) {
                 case R.id.ll_item_layout:
-//                    Toast.makeText(getContext(), "item layout click", Toast.LENGTH_SHORT).showError();
-                    getContext().startActivity(new Intent(getContext(), TopicActivity.class));
+                    PageUtils.gotoTopicPage(getContext(), data.getId());
                     break;
                 case R.id.iv_more:
                     showMoreOperateDialog(position, data.getUid());
-//                    Toast.makeText(getContext(), "more click", Toast.LENGTH_SHORT).showError();
                     break;
                 default:
                     break;
@@ -109,8 +100,8 @@ public class SwipeTagFragment extends BaseSwipeFragment<TagSimpleData> {
 
         @Override
         public void onItemClick(View view, int position) {
-            TagSimpleData data = (TagSimpleData) view.getTag();
-            startActivity(new Intent(getContext(), TopicActivity.class));
+            TagSimpleData data = mList.get(position);
+            PageUtils.gotoTopicPage(getContext(), data.getId(), position);
         }
     }
 }

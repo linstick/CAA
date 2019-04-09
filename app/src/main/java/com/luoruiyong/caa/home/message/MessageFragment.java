@@ -1,6 +1,5 @@
 package com.luoruiyong.caa.home.message;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,8 +17,8 @@ import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.MessageData;
 
-import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.utils.PageUtils;
+import com.luoruiyong.caa.widget.TopSmoothScroller;
 
 import java.util.List;
 
@@ -51,7 +50,7 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
                 break;
             case 2:
             case 6:
-                startActivity(new Intent(getContext(), TopicActivity.class));
+                PageUtils.gotoTopicPage(getContext(), (int) id);
                 break;
             case 3:
             case 4:

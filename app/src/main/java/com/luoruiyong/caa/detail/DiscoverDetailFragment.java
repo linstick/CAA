@@ -1,10 +1,8 @@
 package com.luoruiyong.caa.detail;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +13,10 @@ import android.widget.Toast;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseFragment;
-import com.luoruiyong.caa.bean.ActivitySimpleData;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.common.viewholder.DiscoverItemViewHolder;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
-import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
@@ -31,9 +27,9 @@ import java.util.List;
 
 import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_DISCOVER_DATA;
 import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_DISCOVER_ID;
-import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_DATA;
-import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_ID;
-import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_TYPE;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_DATA;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_ID;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_TYPE;
 
 /**
  * Author: luoruiyong
@@ -54,8 +50,8 @@ public class DiscoverDetailFragment extends BaseFragment implements
     public static DiscoverDetailFragment newInstance(long id) {
         DiscoverDetailFragment fm = new DiscoverDetailFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt(KEY_DETAIL_TYPE, DETAIL_TYPE_DISCOVER_ID);
-        bundle.putLong(KEY_DETAIL_ID, id);
+        bundle.putInt(KEY_DETAIL_PAGE_TYPE, DETAIL_TYPE_DISCOVER_ID);
+        bundle.putLong(KEY_DETAIL_PAGE_ID, id);
         fm.setArguments(bundle);
         return fm;
     }
@@ -63,8 +59,8 @@ public class DiscoverDetailFragment extends BaseFragment implements
     public static DiscoverDetailFragment newInstance(DiscoverData data) {
         DiscoverDetailFragment fm = new DiscoverDetailFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt(KEY_DETAIL_TYPE, DETAIL_TYPE_DISCOVER_DATA);
-        bundle.putSerializable(KEY_DETAIL_DATA, data);
+        bundle.putInt(KEY_DETAIL_PAGE_TYPE, DETAIL_TYPE_DISCOVER_DATA);
+        bundle.putSerializable(KEY_DETAIL_PAGE_DATA, data);
         fm.setArguments(bundle);
         return fm;
     }
@@ -86,7 +82,7 @@ public class DiscoverDetailFragment extends BaseFragment implements
     private void handleArguments() {
         Bundle bundle = getArguments();
         int type;
-        if (bundle == null || (type = bundle.getInt(KEY_DETAIL_TYPE, -1)) == -1) {
+        if (bundle == null || (type = bundle.getInt(KEY_DETAIL_PAGE_TYPE, -1)) == -1) {
             getActivity().finish();
             return;
         }
@@ -105,7 +101,7 @@ public class DiscoverDetailFragment extends BaseFragment implements
             }, 2000);
 
         } else {
-            mData = (DiscoverData) bundle.getSerializable(KEY_DETAIL_DATA);
+            mData = (DiscoverData) bundle.getSerializable(KEY_DETAIL_PAGE_DATA);
             mViewHolder.bindData(mData);
             // 联网拉取其他数据，但不需要展示加载UI
         }
@@ -168,7 +164,7 @@ public class DiscoverDetailFragment extends BaseFragment implements
                 });
                 break;
             case R.id.tv_topic:
-                startActivity(new Intent(getContext(), TopicActivity.class));
+                PageUtils.gotoTopicPage(getContext(), mData.getTopicId());
                 break;
             case R.id.iv_add_comment:
                 toggleCommentBar();

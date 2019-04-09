@@ -130,7 +130,6 @@ public class CompositeListAdapter extends RecyclerView.Adapter<RecyclerView.View
             holder.itemView.setOnClickListener(mActivityViewListener);
             holder.mUserAvatarIv.setOnClickListener(mActivityViewListener);
             holder.mNicknameTv.setOnClickListener(mActivityViewListener);
-            holder.mActivityTypeTv.setOnClickListener(mActivityViewListener);
             holder.mTopicTv.setOnClickListener(mActivityViewListener);
             holder.mCollectTv.setOnClickListener(mActivityViewListener);
             holder.mCommentTv.setOnClickListener(mActivityViewListener);
@@ -139,7 +138,6 @@ public class CompositeListAdapter extends RecyclerView.Adapter<RecyclerView.View
             holder.itemView.setTag(realPosition);
             holder.mUserAvatarIv.setTag(realPosition);
             holder.mNicknameTv.setTag(realPosition);
-            holder.mActivityTypeTv.setTag(realPosition);
             holder.mTopicTv.setTag(realPosition);
             holder.mCollectTv.setTag(realPosition);
             holder.mCommentTv.setTag(realPosition);

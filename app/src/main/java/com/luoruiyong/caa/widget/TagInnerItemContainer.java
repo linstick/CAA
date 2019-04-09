@@ -19,7 +19,7 @@ import java.util.List;
  **/
 public class TagInnerItemContainer extends LinearLayout implements View.OnClickListener{
 
-    private final int DEFAULT_MAX_CHILDREN_COUNT = 3;
+    private final int DEFAULT_MAX_CHILDREN_COUNT = 5;
 
     private List<String> mItems;
     private int mMaxChildrenCount = DEFAULT_MAX_CHILDREN_COUNT;

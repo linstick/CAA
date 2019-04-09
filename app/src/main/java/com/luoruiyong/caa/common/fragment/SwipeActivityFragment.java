@@ -1,6 +1,5 @@
 package com.luoruiyong.caa.common.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,7 +15,6 @@ import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.ActivitySimpleData;
 import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
-import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
@@ -106,7 +104,6 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
             holder.itemView.setOnClickListener(this);
             holder.mUserAvatarIv.setOnClickListener(this);
             holder.mNicknameTv.setOnClickListener(this);
-            holder.mActivityTypeTv.setOnClickListener(this);
             holder.mTopicTv.setOnClickListener(this);
             holder.mCollectTv.setOnClickListener(this);
             holder.mCommentTv.setOnClickListener(this);
@@ -115,7 +112,6 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
             holder.itemView.setTag(position);
             holder.mUserAvatarIv.setTag(position);
             holder.mNicknameTv.setTag(position);
-            holder.mActivityTypeTv.setTag(position);
             holder.mTopicTv.setTag(position);
             holder.mCollectTv.setTag(position);
             holder.mCommentTv.setTag(position);
@@ -140,12 +136,8 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
                 case R.id.tv_nickname:
                     PageUtils.gotoUserProfilePage(getContext(), data.getUid());
                     break;
-                case R.id.tv_activity_type:
-                    Toast.makeText(getContext(), "click activity_type", Toast.LENGTH_SHORT).show();
-                    break;
                 case R.id.tv_topic:
-                    startActivity(new Intent(getContext(), TopicActivity.class));
-//                    Toast.makeText(getContext(), "click topic", Toast.LENGTH_SHORT).showError();
+                   PageUtils.gotoTopicPage(getContext(), data.getTopicId());
                     break;
                 case R.id.tv_collect:
                     Toast.makeText(getContext(), "click collect", Toast.LENGTH_SHORT).show();

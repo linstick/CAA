@@ -12,16 +12,14 @@ import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.bean.ActivitySimpleData;
 import com.luoruiyong.caa.bean.DiscoverData;
-import com.luoruiyong.caa.home.activity.ActivityFragment;
-import com.luoruiyong.caa.utils.PageUtils;
 
 import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_ACTIVITY_DATA;
 import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_ACTIVITY_ID;
 import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_DISCOVER_DATA;
 import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_DISCOVER_ID;
-import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_DATA;
-import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_ID;
-import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_TYPE;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_DATA;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_ID;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_TYPE;
 
 /**
  * Author: luoruiyong
@@ -55,26 +53,26 @@ public class DetailActivity extends BaseActivity implements View.OnClickListener
         int type;
         String title = null;
         Fragment fm = null;
-        if (intent == null || (type = intent.getIntExtra(KEY_DETAIL_TYPE, -1)) == -1) {
+        if (intent == null || (type = intent.getIntExtra(KEY_DETAIL_PAGE_TYPE, -1)) == -1) {
             finish();
             return;
         }
         switch (type) {
             case DETAIL_TYPE_ACTIVITY_ID:
                 title = getString(R.string.title_activity_detail);
-                fm = ActivityDetailFragment.newInstance(intent.getLongExtra(KEY_DETAIL_ID, -1));
+                fm = ActivityDetailFragment.newInstance(intent.getLongExtra(KEY_DETAIL_PAGE_ID, -1));
                 break;
             case DETAIL_TYPE_ACTIVITY_DATA:
                 title = getString(R.string.title_activity_detail);
-                fm = ActivityDetailFragment.newInstance((ActivitySimpleData)intent.getSerializableExtra(KEY_DETAIL_DATA));
+                fm = ActivityDetailFragment.newInstance((ActivitySimpleData)intent.getSerializableExtra(KEY_DETAIL_PAGE_DATA));
                 break;
             case DETAIL_TYPE_DISCOVER_ID:
                 title = getString(R.string.title_discover_detail);
-                fm = DiscoverDetailFragment.newInstance(intent.getLongExtra(KEY_DETAIL_ID, -1));
+                fm = DiscoverDetailFragment.newInstance(intent.getLongExtra(KEY_DETAIL_PAGE_ID, -1));
                 break;
             case DETAIL_TYPE_DISCOVER_DATA:
                 title = getString(R.string.title_discover_detail);
-                fm = DiscoverDetailFragment.newInstance((DiscoverData) intent.getSerializableExtra(KEY_DETAIL_DATA));
+                fm = DiscoverDetailFragment.newInstance((DiscoverData) intent.getSerializableExtra(KEY_DETAIL_PAGE_DATA));
                 break;
             default:
                 break;

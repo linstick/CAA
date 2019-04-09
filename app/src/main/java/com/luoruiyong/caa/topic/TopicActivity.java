@@ -1,11 +1,13 @@
 package com.luoruiyong.caa.topic;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -14,7 +16,7 @@ import android.widget.TextView;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
-import com.luoruiyong.caa.bean.TagSimpleData;
+import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.fragment.SwipeDiscoverFragment;
 import com.luoruiyong.caa.utils.PageUtils;
@@ -22,6 +24,9 @@ import com.luoruiyong.caa.utils.ResourcesUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.luoruiyong.caa.utils.PageUtils.KEY_TOPIC_PAGE_ID;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_TOPIC_PAGE_POSITION;
 
 /**
  * Author: luoruiyong
@@ -43,13 +48,18 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
     private TextView mVisitedCountTv;
     private TextView mIntroductionTv;
     private ImageView mTagCoverIv;
+    private View mCenterDivider;
+    private View mIntroductionLayout;
+    AppBarLayout mAppBarLayout;
 
     private List<Fragment> mFragmentList;
     private List<String> mTitleList;
     private ViewPagerAdapter mAdapter;
 
     private State mCurState = State.IDLE;
-    private TagSimpleData mData;
+    private int mTargetId;
+    private int mPosition;
+    private TopicData mData;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,8 +68,7 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
 
         initView();
 
-        initFragment();
-
+        handleIntent();
     }
 
     private void initView() {
@@ -71,13 +80,16 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
         mVisitedCountTv = findViewById(R.id.tv_visit_count);
         mIntroductionTv = findViewById(R.id.tv_introduction);
         mTagCoverIv = findViewById(R.id.iv_tag_cover);
+        mCenterDivider = findViewById(R.id.view_center_divider);
+        mIntroductionLayout = findViewById(R.id.ll_introduce_layout);
 
         mBackIv.setOnClickListener(this);
         findViewById(R.id.iv_header_back).setOnClickListener(this);
         mUserAvatarIv.setOnClickListener(this);
         mNicknameTv.setOnClickListener(this);
 
-        ((AppBarLayout)findViewById(R.id.app_bar_layout)).addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+        mAppBarLayout = findViewById(R.id.app_bar_layout);
+        mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                 if (verticalOffset == 0) {
@@ -105,12 +117,55 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
         mDividerView = findViewById(R.id.view_divider);
     }
 
+    private void handleIntent() {
+        Intent intent = getIntent();
+        if (intent == null || (mTargetId = intent.getIntExtra(KEY_TOPIC_PAGE_ID, -1)) == -1) {
+            finish();
+            return;
+        }
+        mPosition = intent.getIntExtra(KEY_TOPIC_PAGE_POSITION, 0);
+
+        // 联网拉取数据
+
+        // 模拟
+        mBackIv.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                hideTipView();
+                mData = new TopicData();
+                bindBasicData();
+                initFragment();
+            }
+        }, 1200);
+
+    }
+
+    private void bindBasicData() {
+        if (mData == null) {
+            return;
+        }
+//        mUserAvatarIv.setImageUrl(mData.getAvatarUrl());
+        mNicknameTv.setText(mData.getNickname());
+        mTagNameTv.setText(String.format(getString(R.string.common_str_topic), mData.getName()));
+        mVisitedCountTv.setText(String.format(getString(R.string.common_str_visit_count), mData.getVisitedCount()));
+        mJoinedCountTv.setText(String.format(getString(R.string.common_str_join_count), mData.getJoinedCount()));
+        mCenterDivider.setVisibility(View.VISIBLE);
+        if (!TextUtils.isEmpty(mData.getIntroduction())) {
+            mIntroductionLayout.setVisibility(View.VISIBLE);
+            mIntroductionTv.setText(mData.getIntroduction());
+        }
+        if (mPosition != 0) {
+            // 折叠
+            mAppBarLayout.setExpanded(false);
+        }
+    }
+
     private void initFragment() {
         mTitleList = new ArrayList<>();
         mFragmentList = new ArrayList<>();
 
         mTitleList.add(getString(R.string.topic_detail_str_hot));
-        mFragmentList.add(SwipeDiscoverFragment.newInstance(SwipeDiscoverFragment.TYPE_TOPIC_HOT, mData.getId()));
+        mFragmentList.add(SwipeDiscoverFragment.newInstance(SwipeDiscoverFragment.TYPE_TOPIC_HOT, mData.getId(), mPosition));
 
         mTitleList.add(getString(R.string.topic_detail_str_lasted));
         mFragmentList.add(SwipeDiscoverFragment.newInstance(SwipeDiscoverFragment.TYPE_TOPIC_LASTED, mData.getId()));

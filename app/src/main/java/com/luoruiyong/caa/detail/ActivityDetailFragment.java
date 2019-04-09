@@ -24,7 +24,6 @@ import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
-import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
@@ -35,9 +34,9 @@ import java.util.List;
 
 import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_ACTIVITY_DATA;
 import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_ACTIVITY_ID;
-import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_DATA;
-import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_ID;
-import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_TYPE;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_DATA;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_ID;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_TYPE;
 
 /**
  * Author: luoruiyong
@@ -70,8 +69,8 @@ public class ActivityDetailFragment extends BaseFragment implements
     public static ActivityDetailFragment newInstance(long id) {
         ActivityDetailFragment fm = new ActivityDetailFragment();
         Bundle bundle = new Bundle();
-        bundle.putLong(KEY_DETAIL_ID, id);
-        bundle.putInt(KEY_DETAIL_TYPE, DETAIL_TYPE_ACTIVITY_ID);
+        bundle.putLong(KEY_DETAIL_PAGE_ID, id);
+        bundle.putInt(KEY_DETAIL_PAGE_TYPE, DETAIL_TYPE_ACTIVITY_ID);
         fm.setArguments(bundle);
         return fm;
     }
@@ -79,8 +78,8 @@ public class ActivityDetailFragment extends BaseFragment implements
     public static ActivityDetailFragment newInstance(ActivitySimpleData data) {
         ActivityDetailFragment fm = new ActivityDetailFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(KEY_DETAIL_DATA, data);
-        bundle.putInt(KEY_DETAIL_TYPE, DETAIL_TYPE_ACTIVITY_DATA);
+        bundle.putSerializable(KEY_DETAIL_PAGE_DATA, data);
+        bundle.putInt(KEY_DETAIL_PAGE_TYPE, DETAIL_TYPE_ACTIVITY_DATA);
         fm.setArguments(bundle);
         return fm;
     }
@@ -125,7 +124,7 @@ public class ActivityDetailFragment extends BaseFragment implements
     private void handleArguments() {
         Bundle bundle = getArguments();
         int type;
-        if (bundle == null || (type = bundle.getInt(KEY_DETAIL_TYPE, -1)) == -1) {
+        if (bundle == null || (type = bundle.getInt(KEY_DETAIL_PAGE_TYPE, -1)) == -1) {
             getActivity().finish();
             return;
         }
@@ -145,7 +144,7 @@ public class ActivityDetailFragment extends BaseFragment implements
             }, 2000);
 
         } else {
-            mData = (ActivitySimpleData) bundle.getSerializable(KEY_DETAIL_DATA);
+            mData = (ActivitySimpleData) bundle.getSerializable(KEY_DETAIL_PAGE_DATA);
             mViewHolder.bindData(mData, -1);
             initFragment();
             // 联网拉取其他数据，但不需要展示加载UI
@@ -221,7 +220,7 @@ public class ActivityDetailFragment extends BaseFragment implements
                 PageUtils.gotoUserProfilePage(getContext(), mData.getUid());
                 break;
             case R.id.tv_topic:
-                startActivity(new Intent(getContext(), TopicActivity.class));
+                PageUtils.gotoTopicPage(getContext(), mData.getTopicId());
                 break;
             case R.id.tv_collect:
                 Toast.makeText(getContext(), "click collect", Toast.LENGTH_SHORT).show();

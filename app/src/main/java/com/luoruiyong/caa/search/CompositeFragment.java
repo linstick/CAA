@@ -1,7 +1,6 @@
 package com.luoruiyong.caa.search;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,7 +24,6 @@ import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.feedback.FeedbackActivity;
 import com.luoruiyong.caa.search.adapter.CompositeListAdapter;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
-import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.DisplayUtils;
 import com.luoruiyong.caa.utils.ListUtils;
@@ -174,12 +172,8 @@ public class CompositeFragment extends Fragment {
                 case R.id.tv_nickname:
                     PageUtils.gotoUserProfilePage(getContext(), data.getUid());
                     break;
-                case R.id.tv_activity_type:
-                    Toast.makeText(getContext(), "click activity_type", Toast.LENGTH_SHORT).show();
-                    break;
                 case R.id.tv_topic:
-                    startActivity(new Intent(getContext(), TopicActivity.class));
-//                    Toast.makeText(getContext(), "click topic", Toast.LENGTH_SHORT).showError();
+                    PageUtils.gotoTopicPage(getContext(), data.getTopicId());
                     break;
                 case R.id.tv_collect:
                     Toast.makeText(getContext(), "click collect", Toast.LENGTH_SHORT).show();
@@ -210,7 +204,7 @@ public class CompositeFragment extends Fragment {
             TagSimpleData data = mTopicList.get(position);
             switch (v.getId()) {
                 case R.id.ll_item_layout:
-                    getContext().startActivity(new Intent(getContext(), TopicActivity.class));
+                    PageUtils.gotoTopicPage(getContext(), data.getId());
                     break;
                 case R.id.iv_more:
                     showMoreOperateDialog(data);
@@ -222,8 +216,8 @@ public class CompositeFragment extends Fragment {
 
         @Override
         public void onItemClick(View view, int position) {
-            TagSimpleData data = (TagSimpleData) view.getTag();
-            startActivity(new Intent(getContext(), TopicActivity.class));
+            TagSimpleData data = mTopicList.get(position);
+            PageUtils.gotoTopicPage(getContext(), data.getId(), position);
         }
     }
 
@@ -245,7 +239,7 @@ public class CompositeFragment extends Fragment {
                     showMoreOperateDialog(data);
                     break;
                 case R.id.tv_topic:
-                    startActivity(new Intent(getContext(), TopicActivity.class));
+                    PageUtils.gotoTopicPage(getContext(), data.getTopicId());
                     break;
                 case R.id.tv_like:
                     Toast.makeText(getContext(), "click collect", Toast.LENGTH_SHORT).show();

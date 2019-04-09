@@ -1,7 +1,6 @@
 package com.luoruiyong.caa.topic;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,6 +15,7 @@ import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.TagSimpleData;
 import com.luoruiyong.caa.utils.ListUtils;
+import com.luoruiyong.caa.utils.PageUtils;
 
 import java.util.List;
 
@@ -170,7 +170,7 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TagSimpleData> 
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.ll_search_topic_item_layout:
-                    startActivity(new Intent(getContext(), TopicActivity.class));
+                    PageUtils.gotoTopicPage(getContext(), mList.get((Integer) v.getTag()).getId());
                     break;
                 case R.id.ll_create_topic_item_layout:
                     if (mActivity != null) {
@@ -208,7 +208,7 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TagSimpleData> 
 
             public void bindData(TagSimpleData data) {
                 mTopicTv.setText(String.format(getString(R.string.common_str_topic), data.getName()));
-                mLabelTv.setText(String.format(getString(R.string.topic_relate_str_join_count), data.getJoinCount()));
+                mLabelTv.setText(String.format(getString(R.string.common_str_join_count), data.getJoinCount()));
             }
         }
 

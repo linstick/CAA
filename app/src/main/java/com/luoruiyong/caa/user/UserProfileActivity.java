@@ -89,7 +89,7 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
     private void handleIntent() {
         Intent intent = getIntent();
         int uid;
-        if (intent == null || (uid = intent.getIntExtra(PageUtils.KEY_USER_PROFILE_UID, -1)) == -1) {
+        if (intent == null || (uid = intent.getIntExtra(PageUtils.KEY_USER_PROFILE_PAGE_UID, -1)) == -1) {
             finish();
             return;
         }

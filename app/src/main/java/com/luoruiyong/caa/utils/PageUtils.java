@@ -6,6 +6,7 @@ import android.content.Intent;
 import com.luoruiyong.caa.bean.ActivitySimpleData;
 import com.luoruiyong.caa.detail.DetailActivity;
 import com.luoruiyong.caa.bean.DiscoverData;
+import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.user.UserProfileActivity;
 
 /**
@@ -15,10 +16,13 @@ import com.luoruiyong.caa.user.UserProfileActivity;
  **/
 public class PageUtils {
 
-    public static final String KEY_USER_PROFILE_UID = "KEY_USER_PROFILE_UID";
-    public static final String KEY_DETAIL_TYPE = "KEY_USER_PROFILE_UID";
-    public static final String KEY_DETAIL_DATA = "KEY_DETAIL_DATA";
-    public static final String KEY_DETAIL_ID = "KEY_DETAIL_ID";
+    public static final String KEY_USER_PROFILE_PAGE_UID = "KEY_USER_PROFILE_PAGE_UID";
+    public static final String KEY_DETAIL_PAGE_TYPE = "KEY_USER_PROFILE_PAGE_UID";
+    public static final String KEY_DETAIL_PAGE_DATA = "KEY_DETAIL_PAGE_DATA";
+    public static final String KEY_DETAIL_PAGE_ID = "KEY_DETAIL_PAGE_ID";
+    public static final String KEY_TOPIC_PAGE_ID = "KEY_TOPIC_PAGE_ID";
+    public static final String KEY_TOPIC_PAGE_POSITION = "KEY_TOPIC_PAGE_POSITION";
+
 
     // 详情页中的类型数据
     public static final int DETAIL_TYPE_ACTIVITY_DATA = 0;
@@ -32,7 +36,7 @@ public class PageUtils {
      */
     public static void gotoUserProfilePage(Context context, int uid) {
         Intent intent = new Intent(context, UserProfileActivity.class);
-        intent.putExtra(KEY_USER_PROFILE_UID, uid);
+        intent.putExtra(KEY_USER_PROFILE_PAGE_UID, uid);
         context.startActivity(intent);
     }
 
@@ -45,23 +49,37 @@ public class PageUtils {
      */
     public static void gotoActivityDetailPage(Context context, ActivitySimpleData data) {
         Intent intent = new Intent(context, DetailActivity.class);
-        intent.putExtra(KEY_DETAIL_TYPE, DETAIL_TYPE_ACTIVITY_DATA);
-        intent.putExtra(KEY_DETAIL_DATA, data);
+        intent.putExtra(KEY_DETAIL_PAGE_TYPE, DETAIL_TYPE_ACTIVITY_DATA);
+        intent.putExtra(KEY_DETAIL_PAGE_DATA, data);
         context.startActivity(intent);
     }
 
     public static void gotoActivityDetailPage(Context context, DiscoverData data) {
         Intent intent = new Intent(context, DetailActivity.class);
-        intent.putExtra(KEY_DETAIL_TYPE, DETAIL_TYPE_DISCOVER_DATA);
-        intent.putExtra(KEY_DETAIL_DATA, data);
+        intent.putExtra(KEY_DETAIL_PAGE_TYPE, DETAIL_TYPE_DISCOVER_DATA);
+        intent.putExtra(KEY_DETAIL_PAGE_DATA, data);
         context.startActivity(intent);
     }
 
     public static void gotoActivityDetailPage(Context context, int type, long id) {
         Intent intent = new Intent(context, DetailActivity.class);
-        intent.putExtra(KEY_DETAIL_TYPE, type);
-        intent.putExtra(KEY_DETAIL_ID, id);
+        intent.putExtra(KEY_DETAIL_PAGE_TYPE, type);
+        intent.putExtra(KEY_DETAIL_PAGE_ID, id);
         context.startActivity(intent);
     }
 
+    /**
+     * 话题页跳转条件
+     * 1. 话题id和点击item的位置，位置默认为0
+     */
+    public static void gotoTopicPage(Context context, int id) {
+        gotoTopicPage(context, id, 0);
+    }
+
+    public static void gotoTopicPage(Context context, int id, int position) {
+        Intent intent = new Intent(context, TopicActivity.class);
+        intent.putExtra(KEY_TOPIC_PAGE_ID, id);
+        intent.putExtra(KEY_TOPIC_PAGE_POSITION, position);
+        context.startActivity(intent);
+    }
 }

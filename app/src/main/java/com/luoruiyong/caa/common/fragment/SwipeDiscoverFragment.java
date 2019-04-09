@@ -1,9 +1,9 @@
 package com.luoruiyong.caa.common.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +15,9 @@ import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.common.viewholder.DiscoverItemViewHolder;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
-import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.PageUtils;
+import com.luoruiyong.caa.widget.TopSmoothScroller;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
 import java.util.List;
@@ -30,6 +30,7 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
 
     private static final String KEY_TYPE = "key_type";
     private static final String KEY_TOPIC_ID = "key_topic_id";
+    private static final String KEY_ITEM_POSITION = "key_item_position";
 
     public static final int TYPE_ALL = 0;
     public static final int TYPE_SELF = 1;
@@ -38,16 +39,22 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
 
     private int mType = TYPE_ALL;
     private int mTopicId = -1;
+    private int mPosition = 0;
 
     public static SwipeDiscoverFragment newInstance(int type) {
         return newInstance(type, -1);
     }
 
     public static SwipeDiscoverFragment newInstance(int type, int topicId) {
+        return newInstance(type, topicId, 0);
+    }
+
+    public static SwipeDiscoverFragment newInstance(int type, int topicId, int position) {
         SwipeDiscoverFragment fm = new SwipeDiscoverFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(KEY_TYPE, type);
         bundle.putInt(KEY_TOPIC_ID, topicId);
+        bundle.putInt(KEY_ITEM_POSITION, position);
         fm.setArguments(bundle);
         return fm;
     }
@@ -69,6 +76,7 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         if (bundle != null) {
             mType = bundle.getInt(KEY_TYPE);
             mTopicId = bundle.getInt(KEY_TOPIC_ID);
+            mPosition = bundle.getInt(KEY_ITEM_POSITION);
         }
     }
 
@@ -143,11 +151,9 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
                     break;
                 case R.id.iv_more:
                     showMoreOperateDialog(position, data.getUid());
-//                    Toast.makeText(getContext(), "click more", Toast.LENGTH_SHORT).showError();
                     break;
                 case R.id.tv_topic:
-                    startActivity(new Intent(getContext(), TopicActivity.class));
-//                    Toast.makeText(getContext(), "click topic", Toast.LENGTH_SHORT).showError();
+                    PageUtils.gotoTopicPage(getContext(), data.getTopicId());
                     break;
                 case R.id.tv_like:
                     Toast.makeText(getContext(), "click collect", Toast.LENGTH_SHORT).show();

@@ -178,6 +178,8 @@
     <string name="title_related_activity_for_search">相关活动 - %s</string>
     <string name="title_related_discover_for_search">相关动态 - %s</string>
     <string name="title_related_topic_for_search">相关话题 - %s</string>
+    <string name="common_str_join_count">参与&#160;%1d</string>
+    <string name="common_str_visit_count">浏览&#160;%1d</string>
 
     <!--登录页面相关文案-->
     <string name="fm_login_str_account">账号</string>
@@ -328,8 +330,6 @@
 
     <!--关联话题页相关文案-->
     <string name="topic_relate_str_search_topic">搜索话题</string>
-    <string name="topic_relate_str_join_count">%1d&#160;参与</string>
-    <string name="topic_relate_str_visit_count">%1d&#160;浏览</string>
     <string name="topic_relate_str_create_topic">创建话题&#160;#%s#</string>
     <string name="topic_relate_tip_no_search_input">搜索内容不能为空</string>
     <string name="topic_relate_str_not_relate_topic">不关联话题</string>
