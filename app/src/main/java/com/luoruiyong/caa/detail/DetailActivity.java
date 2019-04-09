@@ -19,6 +19,7 @@ import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_DISCOVER_DATA;
 import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_DISCOVER_ID;
 import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_DATA;
 import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_ID;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_BROWSE_COMMENT;
 import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_TYPE;
 
 /**
@@ -64,7 +65,9 @@ public class DetailActivity extends BaseActivity implements View.OnClickListener
                 break;
             case DETAIL_TYPE_ACTIVITY_DATA:
                 title = getString(R.string.title_activity_detail);
-                fm = ActivityDetailFragment.newInstance((ActivitySimpleData)intent.getSerializableExtra(KEY_DETAIL_PAGE_DATA));
+                fm = ActivityDetailFragment.newInstance(
+                        (ActivitySimpleData)intent.getSerializableExtra(KEY_DETAIL_PAGE_DATA),
+                        intent.getBooleanExtra(KEY_DETAIL_PAGE_BROWSE_COMMENT, false));
                 break;
             case DETAIL_TYPE_DISCOVER_ID:
                 title = getString(R.string.title_discover_detail);
@@ -72,7 +75,9 @@ public class DetailActivity extends BaseActivity implements View.OnClickListener
                 break;
             case DETAIL_TYPE_DISCOVER_DATA:
                 title = getString(R.string.title_discover_detail);
-                fm = DiscoverDetailFragment.newInstance((DiscoverData) intent.getSerializableExtra(KEY_DETAIL_PAGE_DATA));
+                fm = DiscoverDetailFragment.newInstance(
+                        (DiscoverData) intent.getSerializableExtra(KEY_DETAIL_PAGE_DATA),
+                        intent.getBooleanExtra(KEY_DETAIL_PAGE_BROWSE_COMMENT, false));
                 break;
             default:
                 break;

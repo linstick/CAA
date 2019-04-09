@@ -1,9 +1,9 @@
 package com.luoruiyong.caa.detail;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -25,6 +25,7 @@ import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
+import com.luoruiyong.caa.utils.KeyboardUtils;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
@@ -37,6 +38,7 @@ import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_ACTIVITY_ID;
 import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_DATA;
 import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_ID;
 import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_TYPE;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_BROWSE_COMMENT;
 
 /**
  * Author: luoruiyong
@@ -57,6 +59,7 @@ public class ActivityDetailFragment extends BaseFragment implements
     private View mCommentBarLayout;
     private EditText mCommentInputEt;
     private ImageView mSendIv;
+    private AppBarLayout mAppBarLayout;
 
     private ActivityItemViewHolder mViewHolder;
     private ActivitySimpleData mData;
@@ -75,11 +78,12 @@ public class ActivityDetailFragment extends BaseFragment implements
         return fm;
     }
 
-    public static ActivityDetailFragment newInstance(ActivitySimpleData data) {
+    public static ActivityDetailFragment newInstance(ActivitySimpleData data, boolean isComment) {
         ActivityDetailFragment fm = new ActivityDetailFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(KEY_DETAIL_PAGE_DATA, data);
         bundle.putInt(KEY_DETAIL_PAGE_TYPE, DETAIL_TYPE_ACTIVITY_DATA);
+        bundle.putBoolean(KEY_DETAIL_PAGE_BROWSE_COMMENT, isComment);
         fm.setArguments(bundle);
         return fm;
     }
@@ -105,6 +109,7 @@ public class ActivityDetailFragment extends BaseFragment implements
         mCommentBarLayout = rootView.findViewById(R.id.ll_comment_bar_layout);
         mCommentInputEt = rootView.findViewById(R.id.et_input);
         mSendIv = rootView.findViewById(R.id.iv_send);
+        mAppBarLayout = rootView.findViewById(R.id.app_bar_layout);
 
         mAddOperateIv.setOnClickListener(this);
         mSendIv.setOnClickListener(this);
@@ -147,6 +152,9 @@ public class ActivityDetailFragment extends BaseFragment implements
             mData = (ActivitySimpleData) bundle.getSerializable(KEY_DETAIL_PAGE_DATA);
             mViewHolder.bindData(mData, -1);
             initFragment();
+            if ( bundle.getBoolean(KEY_DETAIL_PAGE_BROWSE_COMMENT, false)) {
+                toggleCommentBar();
+            }
             // 联网拉取其他数据，但不需要展示加载UI
         }
     }
@@ -264,6 +272,7 @@ public class ActivityDetailFragment extends BaseFragment implements
         } else {
             mCommentBarLayout.setVisibility(View.VISIBLE);
             mCommentInputEt.requestFocus();
+            KeyboardUtils.showKeyboard(mCommentInputEt);
         }
     }
 }

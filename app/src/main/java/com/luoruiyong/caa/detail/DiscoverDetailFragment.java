@@ -3,6 +3,7 @@ package com.luoruiyong.caa.detail;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.common.viewholder.DiscoverItemViewHolder;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
+import com.luoruiyong.caa.utils.KeyboardUtils;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
@@ -29,6 +31,7 @@ import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_DISCOVER_DATA;
 import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_DISCOVER_ID;
 import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_DATA;
 import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_ID;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_BROWSE_COMMENT;
 import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_TYPE;
 
 /**
@@ -43,6 +46,7 @@ public class DiscoverDetailFragment extends BaseFragment implements
     private View mCommentBarLayout;
     private EditText mCommentInputEt;
     private ImageView mSendIv;
+    private AppBarLayout mAppBarLayout;
 
     private DiscoverItemViewHolder mViewHolder;
     private DiscoverData mData;
@@ -56,10 +60,11 @@ public class DiscoverDetailFragment extends BaseFragment implements
         return fm;
     }
 
-    public static DiscoverDetailFragment newInstance(DiscoverData data) {
+    public static DiscoverDetailFragment newInstance(DiscoverData data, boolean isComment) {
         DiscoverDetailFragment fm = new DiscoverDetailFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(KEY_DETAIL_PAGE_TYPE, DETAIL_TYPE_DISCOVER_DATA);
+        bundle.putBoolean(KEY_DETAIL_PAGE_BROWSE_COMMENT, isComment);
         bundle.putSerializable(KEY_DETAIL_PAGE_DATA, data);
         fm.setArguments(bundle);
         return fm;
@@ -103,6 +108,9 @@ public class DiscoverDetailFragment extends BaseFragment implements
         } else {
             mData = (DiscoverData) bundle.getSerializable(KEY_DETAIL_PAGE_DATA);
             mViewHolder.bindData(mData);
+            if (bundle.getBoolean(KEY_DETAIL_PAGE_BROWSE_COMMENT, false)) {
+                toggleCommentBar();
+            }
             // 联网拉取其他数据，但不需要展示加载UI
         }
     }
@@ -113,6 +121,7 @@ public class DiscoverDetailFragment extends BaseFragment implements
         mCommentBarLayout = rootView.findViewById(R.id.ll_comment_bar_layout);
         mCommentInputEt = rootView.findViewById(R.id.et_input);
         mSendIv = rootView.findViewById(R.id.iv_send);
+        mAppBarLayout = rootView.findViewById(R.id.app_bar_layout);
 
         mAddCommentIv.setOnClickListener(this);
         mSendIv.setOnClickListener(this);
@@ -189,6 +198,7 @@ public class DiscoverDetailFragment extends BaseFragment implements
         } else {
             mCommentBarLayout.setVisibility(View.VISIBLE);
             mCommentInputEt.requestFocus();
+            KeyboardUtils.showKeyboard(mCommentInputEt);
         }
     }
 }

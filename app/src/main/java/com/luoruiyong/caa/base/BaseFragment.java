@@ -14,9 +14,18 @@ public class BaseFragment extends Fragment {
 
     protected ViewStub mErrorTipViewStub;
     protected TipView mTipView;
+    private boolean mRefreshNeedHide;
 
     protected void setUpErrorViewStub(ViewStub viewStub) {
         mErrorTipViewStub = viewStub;
+    }
+
+    protected void setRefreshNeedHide(boolean needHide) {
+       if (mTipView != null) {
+           mTipView.setRefreshNeedHide(needHide);
+       } else {
+           mRefreshNeedHide = needHide;
+       }
     }
 
     protected void showErrorView() {
@@ -48,6 +57,7 @@ public class BaseFragment extends Fragment {
     private void initErrorViewIfNeed() {
         if (mTipView == null) {
             mTipView = (TipView) mErrorTipViewStub.inflate();
+            mTipView.setRefreshNeedHide(mRefreshNeedHide);
             mTipView.setOnRefreshCallback(new TipView.OnRefreshClickCallBack() {
                 @Override
                 public void onRefreshClick() {

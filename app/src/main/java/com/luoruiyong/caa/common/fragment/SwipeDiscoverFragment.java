@@ -159,7 +159,7 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
                     Toast.makeText(getContext(), "click collect", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.tv_comment:
-                    Toast.makeText(getContext(), "click comment", Toast.LENGTH_SHORT).show();
+                    PageUtils.gotoActivityDetailPage(getContext(), data, true);
                     break;
                 default:
                     break;

@@ -20,6 +20,7 @@ public class PageUtils {
     public static final String KEY_DETAIL_PAGE_TYPE = "KEY_USER_PROFILE_PAGE_UID";
     public static final String KEY_DETAIL_PAGE_DATA = "KEY_DETAIL_PAGE_DATA";
     public static final String KEY_DETAIL_PAGE_ID = "KEY_DETAIL_PAGE_ID";
+    public static final String KEY_DETAIL_PAGE_BROWSE_COMMENT = "KEY_DETAIL_PAGE_BROWSE_COMMENT";
     public static final String KEY_TOPIC_PAGE_ID = "KEY_TOPIC_PAGE_ID";
     public static final String KEY_TOPIC_PAGE_POSITION = "KEY_TOPIC_PAGE_POSITION";
 
@@ -41,23 +42,32 @@ public class PageUtils {
     }
 
     /**
-     * 详情页跳转条件，满足其一即可
-     * 1. 活动基本信息{@link ActivitySimpleData}
-     * 2. 详情类型type和活动id
-     * 3. 动态基本信息{@link DiscoverData}
-     * 4. 详情类型type和动态id
+     * 详情页跳转条件，123为并列条件
+     * 1. 是否点击评论进入
+     * 2. 详情类型type
+     * 3. 活动基本信息{@link ActivitySimpleData} | 活动ID | 动态基本信息{@link DiscoverData} | 动态ID
      */
     public static void gotoActivityDetailPage(Context context, ActivitySimpleData data) {
+        gotoActivityDetailPage(context, data, false);
+    }
+
+    public static void gotoActivityDetailPage(Context context, ActivitySimpleData data, boolean isComment) {
         Intent intent = new Intent(context, DetailActivity.class);
         intent.putExtra(KEY_DETAIL_PAGE_TYPE, DETAIL_TYPE_ACTIVITY_DATA);
         intent.putExtra(KEY_DETAIL_PAGE_DATA, data);
+        intent.putExtra(KEY_DETAIL_PAGE_BROWSE_COMMENT, isComment);
         context.startActivity(intent);
     }
 
     public static void gotoActivityDetailPage(Context context, DiscoverData data) {
+        gotoActivityDetailPage(context, data, false);
+    }
+
+    public static void gotoActivityDetailPage(Context context, DiscoverData data, boolean isComment) {
         Intent intent = new Intent(context, DetailActivity.class);
         intent.putExtra(KEY_DETAIL_PAGE_TYPE, DETAIL_TYPE_DISCOVER_DATA);
         intent.putExtra(KEY_DETAIL_PAGE_DATA, data);
+        intent.putExtra(KEY_DETAIL_PAGE_BROWSE_COMMENT, isComment);
         context.startActivity(intent);
     }
 
@@ -65,6 +75,7 @@ public class PageUtils {
         Intent intent = new Intent(context, DetailActivity.class);
         intent.putExtra(KEY_DETAIL_PAGE_TYPE, type);
         intent.putExtra(KEY_DETAIL_PAGE_ID, id);
+        intent.putExtra(KEY_DETAIL_PAGE_BROWSE_COMMENT, false);
         context.startActivity(intent);
     }
 

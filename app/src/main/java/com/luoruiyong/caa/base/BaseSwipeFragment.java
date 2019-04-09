@@ -33,7 +33,7 @@ import java.util.List;
  * Author: luoruiyong
  * Date: 2019/3/15/015
  **/
-public abstract class BaseSwipeFragment<Item> extends Fragment {
+public abstract class BaseSwipeFragment<Item> extends BaseFragment {
 
     private final int DEFAULT_LOAD_MORE_THRESHOLD = 5;
     protected final int DEFAULT_ITEM_MARGIN_PX = DisplayUtils.dp2px(10);
@@ -44,8 +44,6 @@ public abstract class BaseSwipeFragment<Item> extends Fragment {
     protected TextView mTopTipTv;
     protected SwipeRefreshLayout mRefreshLayout;
     protected RecyclerView mRecyclerView;
-    protected ViewStub mErrorTipViewStub;
-    protected TipView mTipView;
 
     protected List<Item> mList;
     protected RecyclerView.Adapter mAdapter;
@@ -79,12 +77,12 @@ public abstract class BaseSwipeFragment<Item> extends Fragment {
 
     private void initView(View rootView) {
         mTopTipTv = rootView.findViewById(R.id.tv_top_tip);
-        mErrorTipViewStub = rootView.findViewById(R.id.vs_error_view);
         mRefreshLayout = rootView.findViewById(R.id.refresh_layout);
         mRecyclerView = rootView.findViewById(R.id.rv_recycler_view);
 
         setupRecyclerViewDivider();
-
+        setUpErrorViewStub(rootView.findViewById(R.id.vs_error_view));
+        setRefreshNeedHide(true);
         mRefreshLayout.setColorSchemeResources(R.color.colorAccent);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -210,40 +208,6 @@ public abstract class BaseSwipeFragment<Item> extends Fragment {
                 }
             }
         });
-    }
-
-    protected void showErrorView() {
-        initErrorViewIfNeed();
-        mTipView.showError();
-    }
-
-    protected void showErrorView(String info) {
-        showErrorView(-1, info);
-    }
-
-    protected void showErrorView(int imageResId, String info) {
-        initErrorViewIfNeed();
-        mTipView.showError(imageResId, info);
-    }
-
-    protected void hideErrorView() {
-        if (mTipView != null) {
-            mTipView.hide();
-        }
-    }
-
-    private void initErrorViewIfNeed() {
-        if (mTipView == null) {
-            mTipView = (TipView) mErrorTipViewStub.inflate();
-            mTipView.setRefreshNeedHide(true);
-            mTipView.setOnRefreshCallback(new TipView.OnRefreshClickCallBack() {
-                @Override
-                public void onRefreshClick() {
-                    mRefreshLayout.setRefreshing(true);
-                    doRefresh();
-                }
-            });
-        }
     }
 
     protected abstract void initListAdapter(List<Item> list);

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.base.BaseFragment;
 import com.luoruiyong.caa.bean.ActivitySimpleData;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.bean.TagSimpleData;
@@ -38,7 +39,7 @@ import java.util.List;
  * Date: 2019/4/9/009
  * Description:
  **/
-public class CompositeFragment extends Fragment {
+public class CompositeFragment extends BaseFragment {
 
     private final int DEFAULT_ITEM_MARGIN_PX = DisplayUtils.dp2px(10);
     public final static int MAX_ITEM_COUNT_OF_ONE_TYPE = 10;
@@ -105,6 +106,9 @@ public class CompositeFragment extends Fragment {
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mAdapter);
+
+        setUpErrorViewStub(view.findViewById(R.id.vs_error_view));
+        setRefreshNeedHide(true);
     }
 
     public void doSearch(String keyword) {
@@ -179,7 +183,7 @@ public class CompositeFragment extends Fragment {
                     Toast.makeText(getContext(), "click collect", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.tv_comment:
-                    Toast.makeText(getContext(), "click comment", Toast.LENGTH_SHORT).show();
+                    PageUtils.gotoActivityDetailPage(getContext(), data, true);
                     break;
                 case R.id.tv_more:
                     showMoreOperateDialog(mActivityList.get(position));
@@ -245,7 +249,7 @@ public class CompositeFragment extends Fragment {
                     Toast.makeText(getContext(), "click collect", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.tv_comment:
-                    Toast.makeText(getContext(), "click comment", Toast.LENGTH_SHORT).show();
+                    PageUtils.gotoActivityDetailPage(getContext(), data, true);
                     break;
                 default:
                     break;
