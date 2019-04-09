@@ -81,6 +81,10 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
     }
 
     @Override
+    protected void setupRecyclerViewDivider() {
+    }
+
+    @Override
     protected void doRefresh() {
         Toast.makeText(getContext(), "doRefresh: type = " + mType, Toast.LENGTH_SHORT).show();
     }

@@ -22,7 +22,6 @@ import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.bean.TagSimpleData;
 import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
-import com.luoruiyong.caa.detail.DetailActivity;
 import com.luoruiyong.caa.feedback.FeedbackActivity;
 import com.luoruiyong.caa.search.adapter.CompositeListAdapter;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
@@ -169,7 +168,7 @@ public class CompositeFragment extends Fragment {
             ActivitySimpleData data = mActivityList.get(position);
             switch (v.getId()) {
                 case R.id.ll_item_layout:
-                    DetailActivity.startAction(getContext(), data);
+                    PageUtils.gotoActivityDetailPage(getContext(), data);
                     break;
                 case R.id.iv_user_avatar:
                 case R.id.tv_nickname:
@@ -236,7 +235,7 @@ public class CompositeFragment extends Fragment {
             DiscoverData data = mDiscoverList.get(position);
             switch (v.getId()) {
                 case R.id.ll_item_layout:
-                    DetailActivity.startAction(getContext(), data);
+                    PageUtils.gotoActivityDetailPage(getContext(), data);
                     break;
                 case R.id.iv_user_avatar:
                 case R.id.tv_nickname:

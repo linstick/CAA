@@ -14,7 +14,7 @@ public class MessageData {
     private int type;
     private String content;
 
-    private int srcId;
+    private long srcId;
     private String srcCoverUrl;
     private String srcTitle;
     private String srcContent;
@@ -82,11 +82,11 @@ public class MessageData {
         this.content = content;
     }
 
-    public int getSrcId() {
+    public long getSrcId() {
         return srcId;
     }
 
-    public void setSrcId(int srcId) {
+    public void setSrcId(long srcId) {
         this.srcId = srcId;
     }
 

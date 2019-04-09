@@ -1,12 +1,16 @@
 package com.luoruiyong.caa.base;
 
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
+import android.support.v4.app.Fragment;
 import android.view.ViewStub;
 
 import com.luoruiyong.caa.widget.TipView;
 
-public class BaseActivity extends AppCompatActivity {
+/**
+ * Author: luoruiyong
+ * Date: 2019/4/10/010
+ * Description:
+ **/
+public class BaseFragment extends Fragment {
 
     protected ViewStub mErrorTipViewStub;
     protected TipView mTipView;

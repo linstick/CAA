@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -99,7 +98,7 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
             bindData();
         } else {
             // 网络获取用户数据
-            showProgressBar();
+            showLoadingView();
 
             // 模拟
             mUserAvatarIv.postDelayed(new Runnable() {

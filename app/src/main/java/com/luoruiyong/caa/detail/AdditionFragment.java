@@ -77,6 +77,10 @@ public class AdditionFragment extends BaseSwipeFragment<AdditionData> {
     }
 
     @Override
+    protected void setupRecyclerViewDivider() {
+    }
+
+    @Override
     protected void doRefresh() {
         Toast.makeText(getContext(), "doRefresh", Toast.LENGTH_SHORT).show();
     }

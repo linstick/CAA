@@ -10,6 +10,7 @@ import java.util.List;
  **/
 public class DiscoverData implements Serializable{
     private int uid;
+    private long id;
     private String avatarUrl;
     private String nickname;
     private long publishTime;
@@ -26,6 +27,7 @@ public class DiscoverData implements Serializable{
     public DiscoverData(int i) {
         // for test
         uid = 1000 + i;
+        id = 10000 + i;
         avatarUrl = "https://www.baidu.com/1.jpg";
         nickname = "nickname " + i;
         publishTime = System.currentTimeMillis();
@@ -41,6 +43,14 @@ public class DiscoverData implements Serializable{
         for (int j = 0; j < pictureCount; j++) {
             pictureList.add("https://www.baidu.com/" + (j + 1) + ".jpg");
         }
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public int getUid() {

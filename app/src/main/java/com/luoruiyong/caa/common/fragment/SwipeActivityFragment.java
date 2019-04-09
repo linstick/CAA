@@ -15,7 +15,6 @@ import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.ActivitySimpleData;
 import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
-import com.luoruiyong.caa.detail.DetailActivity;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.utils.ListUtils;
@@ -135,7 +134,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
             ActivitySimpleData data = mList.get(position);
             switch (v.getId()) {
                 case R.id.ll_item_layout:
-                    DetailActivity.startAction(getContext(), data);
+                    PageUtils.gotoActivityDetailPage(getContext(), data);
                     break;
                 case R.id.iv_user_avatar:
                 case R.id.tv_nickname:

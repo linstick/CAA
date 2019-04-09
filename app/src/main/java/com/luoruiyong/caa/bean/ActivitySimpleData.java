@@ -14,6 +14,7 @@ public class ActivitySimpleData implements Serializable{
     private String avatarUrl;
     private String nickname;
     private long publishTime;
+    private long id;
     private int type;
     private String title;
     private String content;
@@ -35,6 +36,7 @@ public class ActivitySimpleData implements Serializable{
         avatarUrl = "https://www.baidu.com/1.jpg";
         nickname = "昵称" + i;
         publishTime = System.currentTimeMillis();
+        id = 10000 + i;
         this.type = type;
         title = "This is the title of activity " + i;
         content = "This is the content of activity, long long long long long long long long long sentence!!! " + i;
@@ -81,6 +83,14 @@ public class ActivitySimpleData implements Serializable{
 
     public void setPublishTime(long publishTime) {
         this.publishTime = publishTime;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public int getType() {

@@ -203,7 +203,7 @@ public class LocationActivity extends BaseActivity implements View.OnClickListen
         }
         mList.clear();
         mAdapter.notifyDataSetChanged();
-        showProgressBar();
+        showLoadingView();
         StringBuilder locationBuilder = new StringBuilder();
         locationBuilder.append(String.format("%.6f", longitude));
         locationBuilder.append(",");
@@ -278,7 +278,7 @@ public class LocationActivity extends BaseActivity implements View.OnClickListen
         });
     }
 
-    protected void showProgressBar() {
+    protected void showLoadingView() {
         mProgressBar.setVisibility(View.VISIBLE);
         mNoLocationDataTv.setVisibility(View.GONE);
     }

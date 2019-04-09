@@ -14,7 +14,6 @@ import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.common.viewholder.DiscoverItemViewHolder;
-import com.luoruiyong.caa.detail.DetailActivity;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.utils.ListUtils;
@@ -136,7 +135,7 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
             DiscoverData data = mList.get(position);
             switch (v.getId()) {
                 case R.id.ll_item_layout:
-                    DetailActivity.startAction(getContext(), data);
+                    PageUtils.gotoActivityDetailPage(getContext(), data);
                     break;
                 case R.id.iv_user_avatar:
                 case R.id.tv_nickname:

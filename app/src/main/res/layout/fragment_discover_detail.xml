@@ -93,4 +93,10 @@
         layout="@layout/layout_comment_bar"
         android:visibility="gone"/>
 
+    <ViewStub
+        android:id="@+id/vs_error_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout="@layout/layout_error_view"/>
+
 </FrameLayout>

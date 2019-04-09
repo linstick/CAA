@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.base.BaseFragment;
 import com.luoruiyong.caa.bean.ActivitySimpleData;
 import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
@@ -32,13 +33,20 @@ import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_ACTIVITY_DATA;
+import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_ACTIVITY_ID;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_DATA;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_ID;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_TYPE;
+
 /**
  * Author: luoruiyong
  * Date: 2019/4/4/004
  **/
-public class ActivityDetailFragment extends Fragment implements View.OnClickListener, ImageViewLayout.OnImageClickListener{
+public class ActivityDetailFragment extends BaseFragment implements
+        View.OnClickListener,
+        ImageViewLayout.OnImageClickListener{
 
-    private static final String KEY_ACTIVITY_DATA = "key_activity_data";
     private static final int INPUT_TYPE_COMMENT = 1;
     private static final int INPUT_TYPE_ADDITION = 2;
 
@@ -59,10 +67,20 @@ public class ActivityDetailFragment extends Fragment implements View.OnClickList
 
     private int mInputType = INPUT_TYPE_COMMENT;
 
+    public static ActivityDetailFragment newInstance(long id) {
+        ActivityDetailFragment fm = new ActivityDetailFragment();
+        Bundle bundle = new Bundle();
+        bundle.putLong(KEY_DETAIL_ID, id);
+        bundle.putInt(KEY_DETAIL_TYPE, DETAIL_TYPE_ACTIVITY_ID);
+        fm.setArguments(bundle);
+        return fm;
+    }
+
     public static ActivityDetailFragment newInstance(ActivitySimpleData data) {
         ActivityDetailFragment fm = new ActivityDetailFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(KEY_ACTIVITY_DATA, data);
+        bundle.putSerializable(KEY_DETAIL_DATA, data);
+        bundle.putInt(KEY_DETAIL_TYPE, DETAIL_TYPE_ACTIVITY_DATA);
         fm.setArguments(bundle);
         return fm;
     }
@@ -74,10 +92,6 @@ public class ActivityDetailFragment extends Fragment implements View.OnClickList
         initView(view);
 
         handleArguments();
-
-        initFragment();
-
-        bindExtrasInfo();
 
         return view;
     }
@@ -104,15 +118,38 @@ public class ActivityDetailFragment extends Fragment implements View.OnClickList
 
         mViewHolder.mCommentTv.setVisibility(View.GONE);
         mViewHolder.mImageViewLayout.setMaxChildViewCount(9);
+
+        setUpErrorViewStub(rootView.findViewById(R.id.vs_error_view));
     }
 
     private void handleArguments() {
         Bundle bundle = getArguments();
-        if (bundle == null) {
+        int type;
+        if (bundle == null || (type = bundle.getInt(KEY_DETAIL_TYPE, -1)) == -1) {
+            getActivity().finish();
             return;
         }
-        mData = (ActivitySimpleData) bundle.getSerializable(KEY_ACTIVITY_DATA);
-        mViewHolder.bindData(mData, -1);
+        if (type == DETAIL_TYPE_ACTIVITY_ID) {
+            // 联网拉数据，并展示加载UI
+
+            // 模拟
+            showLoadingView();
+            mCommentInputEt.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    hideTipView();
+                    mData = new ActivitySimpleData(0, 1);
+                    mViewHolder.bindData(mData, -1);
+                    initFragment();
+                }
+            }, 2000);
+
+        } else {
+            mData = (ActivitySimpleData) bundle.getSerializable(KEY_DETAIL_DATA);
+            mViewHolder.bindData(mData, -1);
+            initFragment();
+            // 联网拉取其他数据，但不需要展示加载UI
+        }
     }
 
     private void initFragment() {
@@ -155,6 +192,14 @@ public class ActivityDetailFragment extends Fragment implements View.OnClickList
             }
         });
         mTabLayout.setupWithViewPager(mViewPager);
+
+        // 模拟拉取额外的数据
+        mCommentInputEt.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                bindExtrasInfo();
+            }
+        }, 1200);
     }
 
     private void bindExtrasInfo() {

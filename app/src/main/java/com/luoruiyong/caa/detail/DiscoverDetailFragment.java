@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.base.BaseFragment;
+import com.luoruiyong.caa.bean.ActivitySimpleData;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.common.viewholder.DiscoverItemViewHolder;
@@ -27,13 +29,19 @@ import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_DISCOVER_DATA;
+import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_DISCOVER_ID;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_DATA;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_ID;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_TYPE;
+
 /**
  * Author: luoruiyong
  * Date: 2019/4/4/004
  **/
-public class DiscoverDetailFragment extends Fragment implements View.OnClickListener, ImageViewLayout.OnImageClickListener{
-
-    private static final String KEY_DISCOVER_DATA = "key_discover_data";
+public class DiscoverDetailFragment extends BaseFragment implements
+        View.OnClickListener,
+        ImageViewLayout.OnImageClickListener{
 
     private ImageView mAddCommentIv;
     private View mCommentBarLayout;
@@ -43,10 +51,20 @@ public class DiscoverDetailFragment extends Fragment implements View.OnClickList
     private DiscoverItemViewHolder mViewHolder;
     private DiscoverData mData;
 
+    public static DiscoverDetailFragment newInstance(long id) {
+        DiscoverDetailFragment fm = new DiscoverDetailFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt(KEY_DETAIL_TYPE, DETAIL_TYPE_DISCOVER_ID);
+        bundle.putLong(KEY_DETAIL_ID, id);
+        fm.setArguments(bundle);
+        return fm;
+    }
+
     public static DiscoverDetailFragment newInstance(DiscoverData data) {
         DiscoverDetailFragment fm = new DiscoverDetailFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(KEY_DISCOVER_DATA, data);
+        bundle.putInt(KEY_DETAIL_TYPE, DETAIL_TYPE_DISCOVER_DATA);
+        bundle.putSerializable(KEY_DETAIL_DATA, data);
         fm.setArguments(bundle);
         return fm;
     }
@@ -67,11 +85,30 @@ public class DiscoverDetailFragment extends Fragment implements View.OnClickList
 
     private void handleArguments() {
         Bundle bundle = getArguments();
-        if (bundle == null) {
+        int type;
+        if (bundle == null || (type = bundle.getInt(KEY_DETAIL_TYPE, -1)) == -1) {
+            getActivity().finish();
             return;
         }
-        mData = (DiscoverData) bundle.getSerializable(KEY_DISCOVER_DATA);
-        mViewHolder.bindData(mData);
+        if (type == DETAIL_TYPE_DISCOVER_ID) {
+            // 联网拉数据，并展示加载UI
+
+            // 模拟
+            showLoadingView();
+            mCommentInputEt.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    hideTipView();
+                    mData = new DiscoverData(0);
+                    mViewHolder.bindData(mData);
+                }
+            }, 2000);
+
+        } else {
+            mData = (DiscoverData) bundle.getSerializable(KEY_DETAIL_DATA);
+            mViewHolder.bindData(mData);
+            // 联网拉取其他数据，但不需要展示加载UI
+        }
     }
 
     private void initView(View rootView) {
@@ -95,6 +132,8 @@ public class DiscoverDetailFragment extends Fragment implements View.OnClickList
         mViewHolder.mLikeTv.setVisibility(View.GONE);
         mViewHolder.mCommentTv.setVisibility(View.GONE);
         mViewHolder.mImageViewLayout.setMaxChildViewCount(9);
+
+        setUpErrorViewStub(rootView.findViewById(R.id.vs_error_view));
     }
 
     private void initFragment() {

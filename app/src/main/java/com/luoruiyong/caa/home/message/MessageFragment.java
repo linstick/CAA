@@ -18,11 +18,13 @@ import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.MessageData;
 
-import com.luoruiyong.caa.detail.DetailActivity;
 import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.utils.PageUtils;
 
 import java.util.List;
+
+import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_ACTIVITY_ID;
+import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_DISCOVER_ID;
 
 /**
  * Author: luoruiyong
@@ -40,12 +42,12 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
         }
     }
 
-    private void gotoSrcDetailPage(int messageType) {
+    private void gotoSrcDetailPage(int messageType, long id) {
         switch (messageType) {
             case 0:
             case 1:
             case 5:
-                startActivity(new Intent(getContext(), DetailActivity.class));
+                PageUtils.gotoActivityDetailPage(getContext(), DETAIL_TYPE_ACTIVITY_ID, id);
                 break;
             case 2:
             case 6:
@@ -53,7 +55,7 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
                 break;
             case 3:
             case 4:
-                startActivity(new Intent(getContext(), DetailActivity.class));
+                PageUtils.gotoActivityDetailPage(getContext(), DETAIL_TYPE_DISCOVER_ID, id);
                 break;
             default:
                 break;
@@ -117,7 +119,7 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
             switch (v.getId()) {
                 case R.id.ll_item_layout:
                 case R.id.ll_src_layout:
-                    gotoSrcDetailPage(data.getType());
+                    gotoSrcDetailPage(data.getType(), data.getSrcId());
                     break;
                 case R.id.iv_user_avatar:
                 case R.id.tv_nickname:
