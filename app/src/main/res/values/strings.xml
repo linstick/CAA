@@ -142,7 +142,7 @@
 
     <string name="common_tip_no_empty">此项不能为空哦</string>
     <string name="common_tip_no_save">当前页面的数据还未提交保存，确定要离开吗？</string>
-    <string name="common_tip_no_network">网络未连接，请检查后刷新</string>
+    <string name="common_tip_no_network">网络未连接，请检查</string>
 
     <!--工具栏标题文案-->
     <string name="title_activity">活动</string>
