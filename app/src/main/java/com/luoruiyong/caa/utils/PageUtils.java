@@ -4,10 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.luoruiyong.caa.bean.ActivitySimpleData;
+import com.luoruiyong.caa.bean.CommentData;
+import com.luoruiyong.caa.bean.TagSimpleData;
+import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.detail.DetailActivity;
 import com.luoruiyong.caa.bean.DiscoverData;
+import com.luoruiyong.caa.feedback.FeedbackActivity;
 import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.user.UserProfileActivity;
+
+import java.io.Serializable;
 
 /**
  * Author: luoruiyong
@@ -23,6 +29,8 @@ public class PageUtils {
     public static final String KEY_DETAIL_PAGE_BROWSE_COMMENT = "KEY_DETAIL_PAGE_BROWSE_COMMENT";
     public static final String KEY_TOPIC_PAGE_ID = "KEY_TOPIC_PAGE_ID";
     public static final String KEY_TOPIC_PAGE_POSITION = "KEY_TOPIC_PAGE_POSITION";
+    public static final String KEY_FEEDBACK_PAGE_DATA = "KEY_FEEDBACK_PAGE_DATA";
+    public static final String KEY_FEEDBACK_PAGE_TYPE = "KEY_FEEDBACK_PAGE_TYPE";
 
 
     // 详情页中的类型数据
@@ -30,6 +38,13 @@ public class PageUtils {
     public static final int DETAIL_TYPE_ACTIVITY_ID = 1;
     public static final int DETAIL_TYPE_DISCOVER_DATA = 2;
     public static final int DETAIL_TYPE_DISCOVER_ID = 3;
+
+    public static final int FEEDBACK_TYPE_SUGGESTION_OR_PROBLEM = 0;
+    public static final int FEEDBACK_TYPE_IMPEACH_ACTIVITY = 1;
+    public static final int FEEDBACK_TYPE_IMPEACH_TOPIC = 2;
+    public static final int FEEDBACK_TYPE_IMPEACH_DISCOVER = 3;
+    public static final int FEEDBACK_TYPE_IMPEACH_USER = 4;
+    public static final int FEEDBACK_TYPE_IMPEACH_COMMENT = 5;
 
     /**
      * 个人页跳转条件
@@ -93,4 +108,17 @@ public class PageUtils {
         intent.putExtra(KEY_TOPIC_PAGE_POSITION, position);
         context.startActivity(intent);
     }
+
+    public static void gotoFeedbackPage(Context context) {
+        Intent intent = new Intent(context, FeedbackActivity.class);
+        intent.putExtra(KEY_FEEDBACK_PAGE_TYPE, FEEDBACK_TYPE_SUGGESTION_OR_PROBLEM);
+        context.startActivity(intent);
+    }
+
+    public static void gotoFeedbackPage(Context context, Serializable data) {
+        Intent intent = new Intent(context, FeedbackActivity.class);
+        intent.putExtra(KEY_FEEDBACK_PAGE_DATA, data);
+        context.startActivity(intent);
+    }
+
 }

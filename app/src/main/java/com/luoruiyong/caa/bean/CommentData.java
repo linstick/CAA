@@ -1,10 +1,12 @@
 package com.luoruiyong.caa.bean;
 
+import java.io.Serializable;
+
 /**
  * Author: luoruiyong
  * Date: 2019/4/3/003
  **/
-public class CommentData {
+public class CommentData implements Serializable{
     private int id;
     private int uid;
     private String avatarUrl;

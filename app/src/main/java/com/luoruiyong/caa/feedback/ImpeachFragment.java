@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.bean.ActivitySimpleData;
+import com.luoruiyong.caa.bean.CommentData;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.bean.TagSimpleData;
 import com.luoruiyong.caa.bean.User;
@@ -27,6 +28,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.luoruiyong.caa.utils.PageUtils.FEEDBACK_TYPE_IMPEACH_ACTIVITY;
+import static com.luoruiyong.caa.utils.PageUtils.FEEDBACK_TYPE_IMPEACH_COMMENT;
+import static com.luoruiyong.caa.utils.PageUtils.FEEDBACK_TYPE_IMPEACH_DISCOVER;
+import static com.luoruiyong.caa.utils.PageUtils.FEEDBACK_TYPE_IMPEACH_TOPIC;
+import static com.luoruiyong.caa.utils.PageUtils.FEEDBACK_TYPE_IMPEACH_USER;
+import static com.luoruiyong.caa.utils.PageUtils.FEEDBACK_TYPE_SUGGESTION_OR_PROBLEM;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_FEEDBACK_PAGE_DATA;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_FEEDBACK_PAGE_TYPE;
+
 /**
  * Author: luoruiyong
  * Date: 2019/4/9/009
@@ -37,13 +47,6 @@ public class ImpeachFragment extends BaseCreateFragment implements
         DynamicInputView.OnContentViewClickListener,
         ImageViewLayout.OnImageClickListener {
 
-    public final static String KEY_IMPEACH_DATA = "key_impeach_data";
-
-    public final static int TYPE_FEEDBACK = 0;
-    public final static int TYPE_IMPEACH_ACTIVITY = 1;
-    public final static int TYPE_IMPEACH_TOPIC = 2;
-    public final static int TYPE_IMPEACH_DISCOVER = 3;
-    public final static int TYPE_IMPEACH_USER = 4;
 
     private DynamicInputView mTypeInputView;
     private DynamicInputView mContentInputView;
@@ -57,14 +60,24 @@ public class ImpeachFragment extends BaseCreateFragment implements
     private TagSimpleData mTargetTopic;
     private DiscoverData mTargetDiscover;
     private User mTargetUser;
+    private CommentData mTargetComment;
     private List<String> mPictureUrls;
 
     private FeedbackActivity mActivity;
 
+    public static ImpeachFragment newInstance(int type) {
+        return newInstance(type, null);
+    }
+
     public static ImpeachFragment newInstance(Serializable data) {
+        return newInstance(-1, data);
+    }
+
+    public static ImpeachFragment newInstance(int type, Serializable data) {
         ImpeachFragment fm = new ImpeachFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(KEY_IMPEACH_DATA, data);
+        bundle.putInt(KEY_FEEDBACK_PAGE_TYPE, type);
+        bundle.putSerializable(KEY_FEEDBACK_PAGE_DATA, data);
         fm.setArguments(bundle);
         return fm;
     }
@@ -112,37 +125,46 @@ public class ImpeachFragment extends BaseCreateFragment implements
 
     private void handleArguments() {
         Bundle bundle = getArguments();
-        Serializable data;
-        if (bundle == null || (data = bundle.getSerializable(KEY_IMPEACH_DATA)) == null) {
-            mType = TYPE_FEEDBACK;
+        Serializable data = null;
+        if (bundle == null || ((mType = bundle.getInt(KEY_FEEDBACK_PAGE_TYPE, -1)) == -1 && (data = bundle.getSerializable(KEY_FEEDBACK_PAGE_DATA)) == null)){
+            // 启动参数不合理
+            finish();
+            return;
+        }
+        if (mType == FEEDBACK_TYPE_SUGGESTION_OR_PROBLEM) {
             mCheckNonNullList.add(mContentInputView);
             if (mActivity != null) {
                 mActivity.setTitle(R.string.title_feedback);
             }
             return;
         }
-        int resId = -1;
+        int titleResId = -1;
         if (data instanceof ActivitySimpleData) {
-            mType = TYPE_IMPEACH_ACTIVITY;
+            mType = FEEDBACK_TYPE_IMPEACH_ACTIVITY;
             mTargetActivity = (ActivitySimpleData) data;
-            resId = R.string.title_impeach_activity;
+            titleResId = R.string.title_impeach_activity;
         } else if (data instanceof TagSimpleData) {
-            mType = TYPE_IMPEACH_TOPIC;
+            mType = FEEDBACK_TYPE_IMPEACH_TOPIC;
             mTargetTopic = (TagSimpleData) data;
-            resId = R.string.title_impeach_topic;
+            titleResId = R.string.title_impeach_topic;
         } else if (data instanceof DiscoverData) {
-            mType = TYPE_IMPEACH_DISCOVER;
+            mType = FEEDBACK_TYPE_IMPEACH_DISCOVER;
             mTargetDiscover = (DiscoverData) data;
-            resId = R.string.title_impeach_discover;
+            titleResId = R.string.title_impeach_discover;
         }else if (data instanceof User) {
-            mType = TYPE_IMPEACH_USER;
+            mType = FEEDBACK_TYPE_IMPEACH_USER;
             mTargetUser = (User) data;
-            resId = R.string.title_impeach_user;
+            titleResId = R.string.title_impeach_user;
+        } else if (data instanceof CommentData) {
+            mType = FEEDBACK_TYPE_IMPEACH_COMMENT;
+            mTargetComment = (CommentData) data;
+            titleResId = R.string.title_impeach_comment;
         } else {
             finish();
+            return;
         }
-        if (mActivity != null) {
-            mActivity.setTitle(resId);
+        if (mActivity != null && titleResId != -1) {
+            mActivity.setTitle(titleResId);
         }
         mTypeInputView.setLabelAndHintText(getString(R.string.fm_impeach_str_impeach_type));
         mTypeInputView.setSpinnerEntries(Arrays.asList(ResourcesUtils.getStringArray(R.array.str_array_impeach_type)));

@@ -11,9 +11,9 @@ import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.bean.Function;
-import com.luoruiyong.caa.feedback.FeedbackActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.user.ModifyPasswordActivity;
+import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.widget.UniversalFunctionContainer;
 
 import java.util.ArrayList;
@@ -117,7 +117,7 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
                 Toast.makeText(this, "该功能正在开发，敬请期待", Toast.LENGTH_SHORT).show();
                 break;
             case 3:
-                startActivity(new Intent(this, FeedbackActivity.class));
+                PageUtils.gotoFeedbackPage(this);
                 break;
             case 4:
                 doClearCache(position);

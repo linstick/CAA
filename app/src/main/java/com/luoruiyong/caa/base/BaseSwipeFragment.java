@@ -11,19 +11,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
-import com.luoruiyong.caa.feedback.FeedbackActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.DisplayUtils;
 import com.luoruiyong.caa.utils.ListUtils;
+import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
-import com.luoruiyong.caa.widget.TipView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -181,7 +179,7 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
         switch (moreItemPosition) {
             case 0:
                 // 举报
-                FeedbackActivity.startAction(getContext(), (Serializable) mList.get(itemPosition));
+                PageUtils.gotoFeedbackPage(getContext(), (Serializable) mList.get(itemPosition));
                 break;
             case 1:
                 if (!ListUtils.isIndexBetween(mList, itemPosition)) {

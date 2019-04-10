@@ -22,7 +22,6 @@ import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.bean.TagSimpleData;
 import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
-import com.luoruiyong.caa.feedback.FeedbackActivity;
 import com.luoruiyong.caa.search.adapter.CompositeListAdapter;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
@@ -149,7 +148,7 @@ public class CompositeFragment extends BaseFragment {
         switch (position) {
             case 0:
                 // 举报
-                FeedbackActivity.startAction(getContext(), data);
+                PageUtils.gotoFeedbackPage(getContext(), data);
                 break;
             default:
                 break;
