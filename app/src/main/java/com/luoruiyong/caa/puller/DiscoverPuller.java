@@ -41,6 +41,14 @@ public class DiscoverPuller implements IPuller,
         return mDiscover.get(type);
     }
 
+    public synchronized void clearData(int type) {
+        if (mDiscover == null) {
+            return;
+        }
+        List<DiscoverData> list = mDiscover.get(type);
+        ListUtils.clear(list);
+    }
+
     private synchronized void insertData(int type, List<DiscoverData> list) {
         if (ListUtils.isEmpty(list)) {
             return;

@@ -16,7 +16,6 @@ import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
 import com.luoruiyong.caa.bean.TopicSimpleData;
 import com.luoruiyong.caa.common.viewholder.TopicItemViewHolder;
 import com.luoruiyong.caa.eventbus.PullFinishEvent;
-import com.luoruiyong.caa.puller.ActivityPuller;
 import com.luoruiyong.caa.puller.PullerHelper;
 import com.luoruiyong.caa.puller.TopicPuller;
 import com.luoruiyong.caa.utils.ListUtils;
@@ -25,6 +24,7 @@ import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.TagInnerItemContainer;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -302,6 +302,9 @@ public class SwipeTopicFragment extends BaseSwipeFragment<TopicSimpleData> {
     protected void onVisibleMaybeChange() {
         super.onVisibleMaybeChange();
         if (isVisibleToUser()) {
+            if (!EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().register(this);
+            }
             if (mPuller == null) {
                 mPuller = (TopicPuller) PullerHelper.get(PullerHelper.TYPE_TOPIC);
             }
@@ -311,6 +314,10 @@ public class SwipeTopicFragment extends BaseSwipeFragment<TopicSimpleData> {
                 mRecyclerView.setAdapter(mAdapter);
             } else if (!mRefreshLayout.isRefreshing()) {
                 doRefresh();
+            }
+        } else {
+            if (EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().unregister(this);
             }
         }
     }

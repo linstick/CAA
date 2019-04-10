@@ -131,14 +131,7 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
     }
 
     protected void onVisibleMaybeChange() {
-        if (isVisibleToUser()) {
-            if (!EventBus.getDefault().isRegistered(this)) {
-                EventBus.getDefault().register(this);
-            }
-        } else {
-            if (EventBus.getDefault().isRegistered(this)) {
-                EventBus.getDefault().unregister(this);
-            }
+        if (!isVisibleToUser()) {
             if (mRefreshLayout != null && mRefreshLayout.isRefreshing()) {
                 mRefreshLayout.setRefreshing(false);
             }

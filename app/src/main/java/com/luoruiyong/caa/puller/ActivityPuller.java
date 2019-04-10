@@ -45,6 +45,14 @@ public class ActivityPuller implements
         return mActivityDatas.get(type);
     }
 
+    public synchronized void clearData(int type) {
+        if (mActivityDatas == null) {
+            return;
+        }
+        List<ActivitySimpleData> list = mActivityDatas.get(type);
+        ListUtils.clear(list);
+    }
+
     private synchronized void insertData(int type, List<ActivitySimpleData> list) {
         if (ListUtils.isEmpty(list)) {
             return;

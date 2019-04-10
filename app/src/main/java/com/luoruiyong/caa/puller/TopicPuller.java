@@ -1,5 +1,6 @@
 package com.luoruiyong.caa.puller;
 
+import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.bean.TopicSimpleData;
 import com.luoruiyong.caa.eventbus.PullFinishEvent;
 import com.luoruiyong.caa.http.HttpsUtils;
@@ -42,6 +43,14 @@ public class TopicPuller implements
     public synchronized List<TopicSimpleData> getData(int type) {
         initIfNeed();
         return mTopicDatas.get(type);
+    }
+
+    public synchronized void clearData(int type) {
+        if (mTopicDatas == null) {
+            return;
+        }
+        List<TopicSimpleData> list = mTopicDatas.get(type);
+        ListUtils.clear(list);
     }
 
     private synchronized void insertData(int type, List<TopicSimpleData> list) {

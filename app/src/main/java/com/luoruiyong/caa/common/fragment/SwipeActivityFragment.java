@@ -335,6 +335,9 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
     protected void onVisibleMaybeChange() {
         super.onVisibleMaybeChange();
         if (isVisibleToUser()) {
+            if (!EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().register(this);
+            }
             if (mPuller == null) {
                 mPuller = (ActivityPuller) PullerHelper.get(PullerHelper.TYPE_ACTIVITY);
             }
@@ -344,6 +347,10 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
                 mRecyclerView.setAdapter(mAdapter);
             } else if (!mRefreshLayout.isRefreshing()) {
                 doRefresh();
+            }
+        } else {
+            if (EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().unregister(this);
             }
         }
     }

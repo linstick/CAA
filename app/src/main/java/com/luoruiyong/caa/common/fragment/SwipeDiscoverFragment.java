@@ -26,6 +26,7 @@ import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -363,6 +364,9 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
     protected void onVisibleMaybeChange() {
         super.onVisibleMaybeChange();
         if (isVisibleToUser()) {
+            if (!EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().register(this);
+            }
             if (mPuller == null) {
                 mPuller = (DiscoverPuller) PullerHelper.get(PullerHelper.TYPE_DISCOVER);
             }
@@ -372,6 +376,10 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
                 mRecyclerView.setAdapter(mAdapter);
             } else if (!mRefreshLayout.isRefreshing()) {
                 doRefresh();
+            }
+        } else {
+            if (EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().unregister(this);
             }
         }
     }
