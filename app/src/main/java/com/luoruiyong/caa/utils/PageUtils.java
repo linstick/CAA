@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.luoruiyong.caa.bean.ActivitySimpleData;
-import com.luoruiyong.caa.bean.CommentData;
-import com.luoruiyong.caa.bean.TagSimpleData;
-import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.detail.DetailActivity;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.feedback.FeedbackActivity;

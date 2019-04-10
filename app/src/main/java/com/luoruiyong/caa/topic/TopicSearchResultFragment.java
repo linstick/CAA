@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
-import com.luoruiyong.caa.bean.TagSimpleData;
+import com.luoruiyong.caa.bean.TopicSimpleData;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.PageUtils;
 
@@ -24,7 +24,7 @@ import java.util.List;
  * Date: 2019/4/8/008
  * Description:
  **/
-public class TopicSearchResultFragment extends BaseSwipeFragment<TagSimpleData> {
+public class TopicSearchResultFragment extends BaseSwipeFragment<TopicSimpleData> {
 
     private TopicSearchActivity mActivity;
 
@@ -42,7 +42,7 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TagSimpleData> 
 
         // for test
 //        for (int i = 0; i < 30; i++) {
-//            mList.add(new TagSimpleData(i));
+//            mList.add(new TopicSimpleData(i));
 //        }
     }
 
@@ -63,7 +63,7 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TagSimpleData> 
             public void run() {
                 mRefreshLayout.setRefreshing(false);
                 for (int i = 0; i < 30; i++) {
-                    mList.add(new TagSimpleData(i));
+                    mList.add(new TopicSimpleData(i));
                 }
                 ((ListAdapter) mAdapter).mShowCreateTopic = true;
                 mAdapter.notifyDataSetChanged();
@@ -92,10 +92,10 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TagSimpleData> 
         private final static int TYPE_SEARCH_TOPIC = 1;
         private final static int TYPE_CREATE_TOPIC = 2;
 
-        private List<TagSimpleData> mList;
+        private List<TopicSimpleData> mList;
         private boolean mShowCreateTopic = true;
 
-        public ListAdapter(List<TagSimpleData> list) {
+        public ListAdapter(List<TopicSimpleData> list) {
             this.mList = list;
         }
 
@@ -134,7 +134,7 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TagSimpleData> 
                 ((NoTopicViewHolder) holder).itemView.setOnClickListener(this);
             } else if (holder instanceof TopicViewHolder) {
                 int realPos = position - 1;
-                TagSimpleData data = mList.get(realPos);
+                TopicSimpleData data = mList.get(realPos);
                 TopicViewHolder viewHolder = (TopicViewHolder) holder;
                 viewHolder.bindData(data);
                 viewHolder.itemView.setOnClickListener(this);
@@ -184,7 +184,7 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TagSimpleData> 
                     break;
                 case R.id.tv_choose:
                     if (mActivity != null) {
-                        TagSimpleData data = mList.get((int) v.getTag());
+                        TopicSimpleData data = mList.get((int) v.getTag());
                         mActivity.setSelectResultDataAndFinish(data);
                     }
                     break;
@@ -206,7 +206,7 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TagSimpleData> 
                 mSelectTv = itemView.findViewById(R.id.tv_choose);
             }
 
-            public void bindData(TagSimpleData data) {
+            public void bindData(TopicSimpleData data) {
                 mTopicTv.setText(String.format(getString(R.string.common_str_topic), data.getName()));
                 mLabelTv.setText(String.format(getString(R.string.common_str_join_count), data.getJoinCount()));
             }

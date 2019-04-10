@@ -11,8 +11,11 @@ import java.util.Map;
  * Description:
  **/
 public interface IPuller<T> {
-    String REFRESH_ACTIVITY_URL = "http://112.74.13.186/test.php";
-    String LOAD_MORE_ACTIVITY_URL = "http://112.74.13.186/test.php";
+    String REFRESH_ACTIVITY_URL = "http://112.74.13.186/Graduation/fetch_activities_test.php";
+    String LOAD_MORE_ACTIVITY_URL = "http://112.74.13.186/Graduation/fetch_activities_test.php";
+
+    String REFRESH_TOPIC_URL = "http://112.74.13.186/Graduation/fetch_topics_test.php";
+    String LOAD_MORE_TOPIC_URL = "http://112.74.13.186/Graduation/fetch_topics_test.php";
 
     String PARAM_KEY_REQUEST_TYPE = "request_type";
     String PARAM_KEY_REQUEST_COUNT= "request_count";

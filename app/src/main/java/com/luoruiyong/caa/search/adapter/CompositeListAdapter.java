@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.bean.ActivitySimpleData;
 import com.luoruiyong.caa.bean.DiscoverData;
-import com.luoruiyong.caa.bean.TagSimpleData;
+import com.luoruiyong.caa.bean.TopicSimpleData;
 import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
 import com.luoruiyong.caa.common.viewholder.DiscoverItemViewHolder;
@@ -46,7 +46,7 @@ public class CompositeListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private List<User> mUserList;
     private List<ActivitySimpleData> mActivityList;
-    private List<TagSimpleData> mTopicList;
+    private List<TopicSimpleData> mTopicList;
     private List<DiscoverData> mDiscoverList;
 
     private OnUserViewClickListener mUserViewListener;
@@ -58,7 +58,7 @@ public class CompositeListAdapter extends RecyclerView.Adapter<RecyclerView.View
     public CompositeListAdapter(
             List<User> userList,
             List<ActivitySimpleData> activityList,
-            List<TagSimpleData> topicList,
+            List<TopicSimpleData> topicList,
             List<DiscoverData> discoverList) {
         this.mUserList = userList;
         this.mActivityList = activityList;
@@ -151,7 +151,7 @@ public class CompositeListAdapter extends RecyclerView.Adapter<RecyclerView.View
             holder.setOnUserViewClickListener(mUserViewListener);
         } else if (viewHolder instanceof  TopicItemViewHolder) {
             int readPosition = position - getTopicOffset();
-            TagSimpleData data = mTopicList.get(readPosition);
+            TopicSimpleData data = mTopicList.get(readPosition);
             TopicItemViewHolder holder = (TopicItemViewHolder) viewHolder;
             holder.bindData(data);
             holder.itemView.setOnClickListener(mTopicViewListener);

@@ -2,15 +2,19 @@ package com.luoruiyong.caa.http;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.bean.ActivitySimpleData;
+import com.luoruiyong.caa.bean.TopicSimpleData;
 import com.luoruiyong.caa.puller.IPuller;
 import com.luoruiyong.caa.puller.bean.PullResponse;
+import com.luoruiyong.caa.utils.ResourcesUtils;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -43,7 +47,7 @@ public class HttpsUtils {
             @Override
             public void onFailure(Call call, IOException e) {
                 if (callback != null) {
-                    callback.onRefreshFail(e.getMessage());
+                    callback.onRefreshFail(ResourcesUtils.getString(R.string.common_tip_no_network));
                 }
             }
 
@@ -53,10 +57,10 @@ public class HttpsUtils {
                     String data = response.body().string();
                     Gson gson = new Gson();
                     PullResponse pullResponse = gson.fromJson(data, new TypeToken<PullResponse<ActivitySimpleData>>(){}.getType());
-                    if (pullResponse.getStatus() == RESPONSE_STATUS_OK) {
+                    if (pullResponse.getCode() == RESPONSE_STATUS_OK) {
                         callback.onRefreshSuccess(pullResponse.getRequestType(), pullResponse.getData());
                     } else {
-                        callback.onRefreshFail(pullResponse.getDescription());
+                        callback.onRefreshFail(pullResponse.getStatus());
                     }
                 } else {
                     callback.onRefreshFail("Unknow Error");
@@ -70,7 +74,7 @@ public class HttpsUtils {
             @Override
             public void onFailure(Call call, IOException e) {
                 if (callback != null) {
-                    callback.onLoadMoreFail(e.getMessage());
+                    callback.onLoadMoreFail(ResourcesUtils.getString(R.string.common_tip_no_network));
                 }
             }
 
@@ -80,16 +84,79 @@ public class HttpsUtils {
                     String data = response.body().string();
                     Gson gson = new Gson();
                     PullResponse pullResponse = gson.fromJson(data, new TypeToken<PullResponse<ActivitySimpleData>>(){}.getType());
-                    if (pullResponse.getStatus() == RESPONSE_STATUS_OK) {
+                    if (pullResponse.getCode() == RESPONSE_STATUS_OK) {
                         callback.onLoadMoreSuccess(pullResponse.getRequestType(), pullResponse.getData());
                     } else {
-                        callback.onLoadMoreFail(pullResponse.getDescription());
+                        callback.onLoadMoreFail(pullResponse.getStatus());
                     }
                 } else {
                     callback.onLoadMoreFail("Unknow Error");
                 }
             }
         });
+    }
+
+    public static void sendTopicRefreshPullRequest(Request request, final IPuller.RefreshCallback<TopicSimpleData> callback) {
+        HttpsUtils.getClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (callback != null) {
+                    callback.onRefreshFail(ResourcesUtils.getString(R.string.common_tip_no_network));
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful() && response.body() != null) {
+                    String data = response.body().string();
+                    Gson gson = new Gson();
+                    PullResponse pullResponse = gson.fromJson(data, new TypeToken<PullResponse<TopicSimpleData>>(){}.getType());
+                    if (pullResponse.getCode() == RESPONSE_STATUS_OK) {
+                        callback.onRefreshSuccess(pullResponse.getRequestType(), pullResponse.getData());
+                    } else {
+                        callback.onRefreshFail(pullResponse.getStatus());
+                    }
+                } else {
+                    callback.onRefreshFail("Unknow Error");
+                }
+            }
+        });
+    }
+
+    public static void sendTopicLoadMorePullRequest(Request request, final IPuller.LoadMoreCallback<TopicSimpleData> callback) {
+        HttpsUtils.getClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (callback != null) {
+                    callback.onLoadMoreFail(ResourcesUtils.getString(R.string.common_tip_no_network));
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful() && response.body() != null) {
+                    String data = response.body().string();
+                    Gson gson = new Gson();
+                    PullResponse pullResponse = gson.fromJson(data, new TypeToken<PullResponse<TopicSimpleData>>(){}.getType());
+                    if (pullResponse.getCode() == RESPONSE_STATUS_OK) {
+                        callback.onLoadMoreSuccess(pullResponse.getRequestType(), pullResponse.getData());
+                    } else {
+                        callback.onLoadMoreFail(pullResponse.getStatus());
+                    }
+                } else {
+                    callback.onLoadMoreFail("Unknow Error");
+                }
+            }
+        });
+    }
+
+    public static Request buildRequestWithParams(String url, Map<String, String> params, Map<String, String> defaultParams) {
+        HttpUrl.Builder httpBuilder = HttpUrl.parse(url).newBuilder();
+        for (String key : params.keySet()) {
+            String value = params.get(key);
+            httpBuilder.addQueryParameter(key, value != null ? value : defaultParams.get(key));
+        }
+        return new Request.Builder().url(httpBuilder.build()).build();
     }
 
 

@@ -36,6 +36,10 @@ import java.util.List;
 public abstract class BaseSwipeFragment<Item> extends BaseFragment {
 
     private static final String TAG = "BaseSwipeFragment";
+    public static final String KEY_TYPE = "key_type";
+    public static final String KEY_OTHER_UID = "key_other_uid";
+    public static final String KEY_KEYWORD = "key_keyword";
+
     private final int DEFAULT_LOAD_MORE_THRESHOLD = 10;
     protected final int DEFAULT_ITEM_MARGIN_PX = DisplayUtils.dp2px(10);
 
@@ -57,6 +61,8 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
     private List<String> mItemMoreStringArray;
     // 当前活动的类型，具体定义在其子类
     protected int mType;
+    protected int mOtherUid;
+    protected String mKeyword;
 
     private boolean mHasResume;
     private boolean mHasVisible;

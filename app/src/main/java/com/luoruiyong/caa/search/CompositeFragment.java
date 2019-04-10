@@ -5,7 +5,6 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +18,7 @@ import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseFragment;
 import com.luoruiyong.caa.bean.ActivitySimpleData;
 import com.luoruiyong.caa.bean.DiscoverData;
-import com.luoruiyong.caa.bean.TagSimpleData;
+import com.luoruiyong.caa.bean.TopicSimpleData;
 import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.search.adapter.CompositeListAdapter;
@@ -50,7 +49,7 @@ public class CompositeFragment extends BaseFragment {
     private String mKeyword;
     private List<User> mUserList;
     private List<ActivitySimpleData> mActivityList;
-    private List<TagSimpleData> mTopicList;
+    private List<TopicSimpleData> mTopicList;
     private List<DiscoverData> mDiscoverList;
     private List<String> mItemMoreStringArray;
 
@@ -123,7 +122,7 @@ public class CompositeFragment extends BaseFragment {
                 for (int i = 0; i < MAX_ITEM_COUNT_OF_ONE_TYPE; i++) {
                     mUserList.add(new User());
                     mActivityList.add(new ActivitySimpleData(i, (int) (Math.random() * 6) + 1));
-                    mTopicList.add(new TagSimpleData(i));
+                    mTopicList.add(new TopicSimpleData(i));
                     mDiscoverList.add(new DiscoverData(i));
                 }
                 mAdapter.notifyDataSetChanged();
@@ -204,7 +203,7 @@ public class CompositeFragment extends BaseFragment {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag();
-            TagSimpleData data = mTopicList.get(position);
+            TopicSimpleData data = mTopicList.get(position);
             switch (v.getId()) {
                 case R.id.ll_item_layout:
                     PageUtils.gotoTopicPage(getContext(), data.getId());
@@ -219,7 +218,7 @@ public class CompositeFragment extends BaseFragment {
 
         @Override
         public void onItemClick(View view, int position) {
-            TagSimpleData data = mTopicList.get(position);
+            TopicSimpleData data = mTopicList.get(position);
             PageUtils.gotoTopicPage(getContext(), data.getId(), position);
         }
     }

@@ -180,21 +180,14 @@ public class ActivityPuller implements
         doLoadMorePull(params);
     }
 
-    public Request buildRequestWithParams(String url, Map<String, String> params) {
-        HttpUrl.Builder httpBuilder = HttpUrl.parse(url).newBuilder();
-        for (String key : params.keySet()) {
-            String value = params.get(key);
-            httpBuilder.addQueryParameter(key, value != null ? value : mDefaultParams.get(key));
-        }
-        return new Request.Builder().url(httpBuilder.build()).build();
-    }
+
 
     @Override
     public void doRefreshPull(Map<String, String> params) {
         if (params == null) {
             return;
         }
-        Request request = buildRequestWithParams(REFRESH_ACTIVITY_URL, params);
+        Request request = HttpsUtils.buildRequestWithParams(REFRESH_ACTIVITY_URL, params, mDefaultParams);
         HttpsUtils.sendActivityRefreshPullRequest(request, this);
     }
 
@@ -203,7 +196,7 @@ public class ActivityPuller implements
         if (params == null) {
             return;
         }
-        Request request = buildRequestWithParams(LOAD_MORE_ACTIVITY_URL, params);
+        Request request =  HttpsUtils.buildRequestWithParams(LOAD_MORE_ACTIVITY_URL, params, mDefaultParams);
         HttpsUtils.sendActivityLoadMorePullRequest(request, this);
     }
 

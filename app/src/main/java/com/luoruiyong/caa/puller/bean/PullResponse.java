@@ -9,28 +9,28 @@ import java.util.List;
  * Description:
  **/
 public class PullResponse<T> {
-    private int status;
-    private String description;
+    private int code;
+    private String status;
     private int requestType;
     private List<T> data;
 
     public PullResponse() {
     }
 
-    public int getStatus() {
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public int getRequestType() {

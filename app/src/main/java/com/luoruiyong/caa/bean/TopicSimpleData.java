@@ -8,19 +8,21 @@ import java.util.List;
  * Author: luoruiyong
  * Date: 2019/3/17/017
  **/
-public class TagSimpleData implements Serializable{
+public class TopicSimpleData implements Serializable{
     private int uid;
     private int id;
     private String name;
     private String coverUrl;
     private int visitCount;
     private int joinCount;
+    private long publishTime;
 
-    private List<String> discoverList;
+    private List<DiscoverData> discoverList;
 
-    public TagSimpleData(int i) {
+    public TopicSimpleData(int i) {
         uid = 1000 + i;
         id = 1000 + i;
+        publishTime = 100000;
         name = "#Topic" + (i + 1) + "#";
         coverUrl = "https:www.baidu.com/1.jpg";
         visitCount = (int)(Math.random() * 100);
@@ -29,11 +31,11 @@ public class TagSimpleData implements Serializable{
         discoverList = new ArrayList<>();
         int count = (int) (Math.random() * 9);
         for (int j = 0; j < count; j++) {
-            discoverList.add("Inner item " + (j + 1));
+            discoverList.add(new DiscoverData(i));
         }
     }
 
-    public TagSimpleData() {
+    public TopicSimpleData() {
     }
 
     public int getUid() {
@@ -88,11 +90,19 @@ public class TagSimpleData implements Serializable{
         this.joinCount = joinCount;
     }
 
-    public List<String> getDiscoverList() {
+    public List<DiscoverData> getDiscoverList() {
         return discoverList;
     }
 
-    public void setDiscoverList(List<String> discoverList) {
+    public void setDiscoverList(List<DiscoverData> discoverList) {
         this.discoverList = discoverList;
+    }
+
+    public long getPublishTime() {
+        return publishTime;
+    }
+
+    public void setPublishTime(long publishTime) {
+        this.publishTime = publishTime;
     }
 }

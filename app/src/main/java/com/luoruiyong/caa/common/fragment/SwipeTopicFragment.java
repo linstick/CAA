@@ -5,29 +5,26 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
-import com.luoruiyong.caa.bean.ActivitySimpleData;
-import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
+import com.luoruiyong.caa.bean.TopicSimpleData;
+import com.luoruiyong.caa.common.viewholder.TopicItemViewHolder;
 import com.luoruiyong.caa.eventbus.PullFinishEvent;
 import com.luoruiyong.caa.puller.ActivityPuller;
 import com.luoruiyong.caa.puller.PullerHelper;
-import com.luoruiyong.caa.simple.PictureBrowseActivity;
+import com.luoruiyong.caa.puller.TopicPuller;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.LogUtils;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
-import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
+import com.luoruiyong.caa.widget.TagInnerItemContainer;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -37,46 +34,36 @@ import static com.luoruiyong.caa.eventbus.PullFinishEvent.TYPE_LOAD_MORE_FAIL;
 import static com.luoruiyong.caa.eventbus.PullFinishEvent.TYPE_LOAD_MORE_SUCCESS;
 import static com.luoruiyong.caa.eventbus.PullFinishEvent.TYPE_REFRESH_FAIL;
 import static com.luoruiyong.caa.eventbus.PullFinishEvent.TYPE_REFRESH_SUCCESS;
-import static com.luoruiyong.caa.puller.ActivityPuller.TYPE_ALL;
-import static com.luoruiyong.caa.puller.ActivityPuller.TYPE_OTHER_USER;
-import static com.luoruiyong.caa.puller.ActivityPuller.TYPE_SEARCH;
-import static com.luoruiyong.caa.puller.ActivityPuller.TYPE_SELF;
-import static com.luoruiyong.caa.puller.ActivityPuller.TYPE_SELF_COLLECT;
-import static com.luoruiyong.caa.puller.IPuller.REFRESH_ACTIVITY_URL;
 
 /**
  * Author: luoruiyong
  * Date: 2019/3/15/015
  **/
-public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData> {
+public class SwipeTopicFragment extends BaseSwipeFragment<TopicSimpleData> {
 
-    private static final String TAG = "SwipeActivityFragment";
+    private static final String TAG = "SwipeTopicFragment";
 
-    private ActivityPuller mPuller;
+    private TopicPuller mPuller;
 
-    public static SwipeActivityFragment newInstance() {
-        return newInstance(TYPE_ALL);
-    }
-
-    public static SwipeActivityFragment newInstance(int activityType) {
-        SwipeActivityFragment fm = new SwipeActivityFragment();
+    public static SwipeTopicFragment newInstance(int type) {
+        SwipeTopicFragment fm = new SwipeTopicFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt(KEY_TYPE, activityType);
+        bundle.putInt(KEY_TYPE, type);
         fm.setArguments(bundle);
         return fm;
     }
 
-    public static SwipeActivityFragment newInstance(String keyword) {
-        SwipeActivityFragment fm = new SwipeActivityFragment();
+    public static SwipeTopicFragment newInstance(String keyword) {
+        SwipeTopicFragment fm = new SwipeTopicFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt(KEY_TYPE, TYPE_SEARCH);
+        bundle.putInt(KEY_TYPE, TopicPuller.TYPE_SEARCH);
         bundle.putString(KEY_KEYWORD, keyword);
         fm.setArguments(bundle);
         return fm;
     }
 
-    public static SwipeActivityFragment newInstance(int type, int uid) {
-        SwipeActivityFragment fm = new SwipeActivityFragment();
+    public static SwipeTopicFragment newInstance(int type, int uid) {
+        SwipeTopicFragment fm = new SwipeTopicFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(KEY_TYPE, type);
         bundle.putInt(KEY_OTHER_UID, uid);
@@ -97,19 +84,19 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
             getActivity().finish();
             return;
         }
-        mType = bundle.getInt(KEY_TYPE, ActivityPuller.TYPE_ALL);
-        if (mType == ActivityPuller.TYPE_SEARCH) {
+        mType = bundle.getInt(KEY_TYPE, TopicPuller.TYPE_ALL);
+        if (mType == TopicPuller.TYPE_SEARCH) {
             mKeyword = bundle.getString(KEY_KEYWORD);
-        } else if (mType == ActivityPuller.TYPE_OTHER_USER) {
+        } else if (mType == TopicPuller.TYPE_OTHER_USER) {
             mOtherUid = bundle.getInt(KEY_OTHER_UID, -1);
         }
-        if (mType >= ActivityPuller.TYPE_SELF) {
+        if (mType != TopicPuller.TYPE_ALL) {
             setCanRefresh(false);
         }
     }
 
     @Override
-    protected RecyclerView.Adapter getListAdapter(List<ActivitySimpleData> list) {
+    protected RecyclerView.Adapter getListAdapter(List<TopicSimpleData> list) {
         return new ListAdapter(list);
     }
 
@@ -131,42 +118,45 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
     protected void doRefresh() {
         LogUtils.d(TAG, "doRefresh: " + mType);
         mRefreshLayout.setRefreshing(true);
-        if (mType == ActivityPuller.TYPE_ALL) {
-            mPuller.refreshAll(getFirstItemTime());
-        } else if (mType > 0 && mType < ActivityPuller.TYPE_SELF) {
-            mPuller.refreshOneKind(mType, getFirstItemTime());
-        } else if (mType == ActivityPuller.TYPE_SELF) {
-            mPuller.refreshSelf(getFirstItemTime());
-        } else if (mType == ActivityPuller.TYPE_OTHER_USER) {
-            mPuller.refreshOtherUser(mOtherUid, getFirstItemTime());
-        } else if (mType == ActivityPuller.TYPE_SELF_COLLECT) {
-            mPuller.refreshSelfCollect(getFirstItemTime());
-        } else if (mType == ActivityPuller.TYPE_SEARCH) {
-            mPuller.refreshSearch(mKeyword);
-        } else {
-            mRefreshLayout.setRefreshing(false);
-            LogUtils.d(TAG, "Unknow type");
+        switch (mType) {
+            case TopicPuller.TYPE_ALL:
+                mPuller.refreshAll(getFirstItemTime());
+                break;
+            case TopicPuller.TYPE_SELF:
+                mPuller.refreshSelf(getFirstItemTime());
+                break;
+            case TopicPuller.TYPE_OTHER_USER:
+                mPuller.refreshOtherUser(mOtherUid, getFirstItemTime());
+                break;
+            case TopicPuller.TYPE_SEARCH:
+                mPuller.refreshSearch(mKeyword);
+                break;
+            default:
+                LogUtils.d(TAG, "refresh unknow type");
+                break;
         }
     }
 
     @Override
     protected void doLoadMore() {
-        LogUtils.d(TAG, "doRefresh: " + mType);
+        LogUtils.d(TAG, "doLoadMore: " + mType);
         ((ListAdapter)mAdapter).showLoadMoreTip(getString(R.string.common_str_loading_more));
-        if (mType == ActivityPuller.TYPE_ALL) {
-            mPuller.loadMoreAll(getLastItemTime());
-        } else if (mType > 0 && mType < ActivityPuller.TYPE_SELF) {
-            mPuller.loadMoreOneKind(mType, getLastItemTime());
-        } else if (mType == ActivityPuller.TYPE_SELF) {
-            mPuller.loadMoreSelf(getLastItemTime());
-        } else if (mType == ActivityPuller.TYPE_OTHER_USER) {
-            mPuller.loadMoreOtherUser(mOtherUid, getLastItemTime());
-        } else if (mType == ActivityPuller.TYPE_SELF_COLLECT) {
-            mPuller.loadMoreSelfCollect(getLastItemTime());
-        } else if (mType == ActivityPuller.TYPE_SEARCH) {
-            mPuller.loadMoreSearch(mKeyword,getLastItemTime());
-        } else {
-            LogUtils.d(TAG, "Unknow type");
+        switch (mType) {
+            case TopicPuller.TYPE_ALL:
+                mPuller.loadMoreAll(getLastItemTime());
+                break;
+            case TopicPuller.TYPE_SELF:
+                mPuller.loadMoreSelf(getLastItemTime());
+                break;
+            case TopicPuller.TYPE_OTHER_USER:
+                mPuller.loadMoreOtherUser(mOtherUid, getLastItemTime());
+                break;
+            case TopicPuller.TYPE_SEARCH:
+                mPuller.loadMoreSearch(mKeyword,getLastItemTime());
+                break;
+            default:
+                LogUtils.d(TAG, "load more unknow type");
+                break;
         }
     }
 
@@ -192,7 +182,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
                     mList = mPuller.getData(mType);
                     mAdapter = getListAdapter(mList);
                     mRecyclerView.setAdapter(mAdapter);
-                } else if (mType >= 0 && mType < ActivityPuller.TYPE_SELF) {
+                } else if (mType == TopicPuller.TYPE_ALL) {
                     // 非首次根据条件是否展示更新成功提示
                     showTopTip((Integer) event.getData());
                 }
@@ -218,52 +208,42 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
         }
     }
 
-    private class ListAdapter extends LoadMoreSupportAdapter implements View.OnClickListener, ImageViewLayout.OnImageClickListener{
+    private class ListAdapter extends LoadMoreSupportAdapter implements View.OnClickListener, TagInnerItemContainer.OnItemClickListener{
 
-        private List<ActivitySimpleData> mList;
-
-        public ListAdapter(List<ActivitySimpleData> list) {
-            this.mList = list;
-        }
+        private List<TopicSimpleData> mList;
 
         public void showLoadMoreTip(String text) {
             setLoadMoreTip(text);
             setOnLoadMoreClickListener(this);
         }
 
+        public ListAdapter(List<TopicSimpleData> list) {
+            this.mList = list;
+        }
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             if (viewType == ITEM_TYPE_LOAD_MORE_TIP) {
                 return super.onCreateViewHolder(parent, viewType);
             }
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_activity_list, parent, false);
-            return new ActivityItemViewHolder(view);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_tag_list, parent, false);
+            return new TopicItemViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
             super.onBindViewHolder(viewHolder, position);
-            if (viewHolder instanceof ActivityItemViewHolder) {
-                ActivityItemViewHolder holder = (ActivityItemViewHolder) viewHolder;
-                ActivitySimpleData data = mList.get(position);
-                holder.bindData(data, mType);
+            if (viewHolder instanceof TopicItemViewHolder) {
+                TopicItemViewHolder holder = (TopicItemViewHolder) viewHolder;
+                TopicSimpleData data = mList.get(position);
+                holder.bindData(data);
+
                 holder.itemView.setOnClickListener(this);
-                holder.mUserAvatarIv.setOnClickListener(this);
-                holder.mNicknameTv.setOnClickListener(this);
-                holder.mTopicTv.setOnClickListener(this);
-                holder.mCollectTv.setOnClickListener(this);
-                holder.mCommentTv.setOnClickListener(this);
                 holder.mMoreIv.setOnClickListener(this);
-                holder.mImageViewLayout.setOnImageClickListener(this);
+                holder.mInnerContainerLayout.setOnItemClickListener(this);
                 holder.itemView.setTag(position);
-                holder.mUserAvatarIv.setTag(position);
-                holder.mNicknameTv.setTag(position);
-                holder.mTopicTv.setTag(position);
-                holder.mCollectTv.setTag(position);
-                holder.mCommentTv.setTag(position);
+                holder.mInnerContainerLayout.setTag(position);
                 holder.mMoreIv.setTag(position);
-                holder.mImageViewLayout.setTag(data);
             }
         }
 
@@ -283,45 +263,32 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
 
         @Override
         public void onClick(View v) {
-            if (v.getId() == R.id.tv_load_more_tip) {
-                if (!mIsLoadingMore) {
-                    setLoadMoreTip(getString(R.string.common_str_loading_more));
-                    mIsLoadingMore = true;
-                    doLoadMore();
-                }
-                return;
-            }
             int position = (int) v.getTag();
-            ActivitySimpleData data = mList.get(position);
+            TopicSimpleData data;
             switch (v.getId()) {
                 case R.id.ll_item_layout:
-                    PageUtils.gotoActivityDetailPage(getContext(), data);
+                    data = mList.get(position);
+                    PageUtils.gotoTopicPage(getContext(), data.getId());
                     break;
-                case R.id.iv_user_avatar:
-                case R.id.tv_nickname:
-                    PageUtils.gotoUserProfilePage(getContext(), data.getUid());
-                    break;
-                case R.id.tv_topic:
-                   PageUtils.gotoTopicPage(getContext(), data.getTopicId());
-                    break;
-                case R.id.tv_collect:
-                    Toast.makeText(getContext(), "click collect", Toast.LENGTH_SHORT).show();
-                    break;
-                case R.id.tv_comment:
-                    PageUtils.gotoActivityDetailPage(getContext(), data, true);
-                    break;
-                case R.id.tv_more:
+                case R.id.iv_more:
+                    data = mList.get(position);
                     showMoreOperateDialog(position, data.getUid());
                     break;
+                case R.id.tv_load_more_tip:
+                    if (!mIsLoadingMore) {
+                        setLoadMoreTip(getString(R.string.common_str_loading_more));
+                        mIsLoadingMore = true;
+                        doLoadMore();
+                    }
                 default:
                     break;
             }
         }
 
         @Override
-        public void onImageClick(View parent, int position) {
-            ActivitySimpleData data = (ActivitySimpleData) parent.getTag();
-            PictureBrowseActivity.startAction(getActivity(), data.getPictureList(), position, true);
+        public void onItemClick(View view, int position) {
+            TopicSimpleData data = mList.get(position);
+            PageUtils.gotoTopicPage(getContext(), data.getId(), position);
         }
     }
 
@@ -330,7 +297,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivitySimpleData>
         super.onVisibleMaybeChange();
         if (isVisibleToUser()) {
             if (mPuller == null) {
-                mPuller = (ActivityPuller) PullerHelper.get(PullerHelper.TYPE_ACTIVITY);
+                mPuller = (TopicPuller) PullerHelper.get(PullerHelper.TYPE_TOPIC);
             }
             mList = mPuller.getData(mType);
             if (mList != null) {

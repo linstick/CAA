@@ -6,9 +6,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.luoruiyong.caa.R;
-import com.luoruiyong.caa.bean.TagSimpleData;
+import com.luoruiyong.caa.bean.DiscoverData;
+import com.luoruiyong.caa.bean.TopicSimpleData;
 import com.luoruiyong.caa.utils.ListUtils;
+import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.TagInnerItemContainer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Author: luoruiyong
@@ -36,13 +41,18 @@ public class TopicItemViewHolder extends RecyclerView.ViewHolder {
         mInnerContainerLayout = itemView.findViewById(R.id.inner_container_layout);
     }
 
-    public void bindData(TagSimpleData data) {
+    public void bindData(TopicSimpleData data) {
 //                mTagCoverIv.setImageUrl(data.getCoverUrl());
-        mTagNameTv.setText(data.getName());
+        mTagNameTv.setText(String.format(ResourcesUtils.getString(R.string.common_str_topic), data.getName()));
         mVisitedCountTv.setText(data.getVisitedCount() + "");
         mJoinedCountTv.setText(data.getJoinCount() + "");
         mHeaderDividerView.setVisibility(ListUtils.isEmpty(data.getDiscoverList()) ? View.GONE : View.VISIBLE);
-        mInnerContainerLayout.setItems(data.getDiscoverList());
+        List<String> list = new ArrayList<>();
+        List<DiscoverData> discoverData = data.getDiscoverList();
+        for (int i = 0; i < ListUtils.getSize(discoverData); i++) {
+            list.add(discoverData.get(i).getContent());
+        }
+        mInnerContainerLayout.setItems(list);
     }
 }
 

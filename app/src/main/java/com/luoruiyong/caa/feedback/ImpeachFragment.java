@@ -14,7 +14,7 @@ import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.bean.ActivitySimpleData;
 import com.luoruiyong.caa.bean.CommentData;
 import com.luoruiyong.caa.bean.DiscoverData;
-import com.luoruiyong.caa.bean.TagSimpleData;
+import com.luoruiyong.caa.bean.TopicSimpleData;
 import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.edit.BaseCreateFragment;
 import com.luoruiyong.caa.edit.EditorActivity;
@@ -57,7 +57,7 @@ public class ImpeachFragment extends BaseCreateFragment implements
 
     private int mType;
     private ActivitySimpleData mTargetActivity;
-    private TagSimpleData mTargetTopic;
+    private TopicSimpleData mTargetTopic;
     private DiscoverData mTargetDiscover;
     private User mTargetUser;
     private CommentData mTargetComment;
@@ -143,9 +143,9 @@ public class ImpeachFragment extends BaseCreateFragment implements
             mType = FEEDBACK_TYPE_IMPEACH_ACTIVITY;
             mTargetActivity = (ActivitySimpleData) data;
             titleResId = R.string.title_impeach_activity;
-        } else if (data instanceof TagSimpleData) {
+        } else if (data instanceof TopicSimpleData) {
             mType = FEEDBACK_TYPE_IMPEACH_TOPIC;
-            mTargetTopic = (TagSimpleData) data;
+            mTargetTopic = (TopicSimpleData) data;
             titleResId = R.string.title_impeach_topic;
         } else if (data instanceof DiscoverData) {
             mType = FEEDBACK_TYPE_IMPEACH_DISCOVER;

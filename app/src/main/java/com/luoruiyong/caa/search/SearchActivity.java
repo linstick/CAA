@@ -18,8 +18,7 @@ import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.common.fragment.SwipeActivityFragment;
 import com.luoruiyong.caa.common.fragment.SwipeDiscoverFragment;
-import com.luoruiyong.caa.common.fragment.SwipeTagFragment;
-import com.luoruiyong.caa.search.adapter.CompositeListAdapter;
+import com.luoruiyong.caa.common.fragment.SwipeTopicFragment;
 import com.luoruiyong.caa.search.adapter.SearchTipsAdapter;
 
 import java.util.ArrayList;
@@ -49,7 +48,7 @@ public class SearchActivity extends BaseActivity implements
     private SwipeUserFragment mUserFragment;
     private SwipeActivityFragment mActivityFragment;
     private SwipeDiscoverFragment mDiscoverFragment;
-    private SwipeTagFragment mTopicFragment;
+    private SwipeTopicFragment mTopicFragment;
     private FragmentManager mFragmentManager;
 
     @Override
@@ -211,7 +210,7 @@ public class SearchActivity extends BaseActivity implements
             mFragmentManager = getSupportFragmentManager();
         }
         if (mTopicFragment == null) {
-            mTopicFragment = new SwipeTagFragment();
+            mTopicFragment = SwipeTopicFragment.newInstance(keyword) ;
         }
         mFragmentManager.beginTransaction()
                 .addToBackStack(TAB_COMPOSITE)

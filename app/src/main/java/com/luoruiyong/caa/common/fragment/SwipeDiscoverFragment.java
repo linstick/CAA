@@ -70,11 +70,6 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         super.onCreate(savedInstanceState);
 
         handleArguments();
-
-        // for test
-        for (int i = 0; i < 30; i++) {
-            mList.add(new DiscoverData(i));
-        }
     }
 
     private void handleArguments() {
