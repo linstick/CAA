@@ -22,6 +22,7 @@ import com.luoruiyong.caa.utils.DisplayUtils;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
+import com.luoruiyong.caa.widget.TopSmoothScroller;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -206,6 +207,17 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
                 }
             }
         });
+    }
+
+    protected void handleScrollPosition(int position) {
+        mRecyclerView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                TopSmoothScroller scroller = new TopSmoothScroller(getContext());
+                scroller.setTargetPosition(position);
+                mRecyclerView.getLayoutManager().startSmoothScroll(scroller);
+            }
+        }, 200);
     }
 
     protected abstract void initListAdapter(List<Item> list);
