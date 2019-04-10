@@ -17,6 +17,12 @@ public interface IPuller<T> {
     String REFRESH_TOPIC_URL = "http://112.74.13.186/Graduation/fetch_topics_test.php";
     String LOAD_MORE_TOPIC_URL = "http://112.74.13.186/Graduation/fetch_topics_test.php";
 
+    String REFRESH_DISCOVER_URL = "http://112.74.13.186/Graduation/fetch_discovers_test.php";
+    String LOAD_MORE_DISCOVER_URL = "http://112.74.13.186/Graduation/fetch_discovers_test.php";
+
+    String REFRESH_MESSAGE_URL = "http://112.74.13.186/Graduation/fetch_messages_test.php";
+    String LOAD_MORE_MESSAGE_URL = "http://112.74.13.186/Graduation/fetch_messages_test.php";
+
     String PARAM_KEY_REQUEST_TYPE = "request_type";
     String PARAM_KEY_REQUEST_COUNT= "request_count";
     String PARAM_KEY_TYPE = "type";
@@ -25,6 +31,7 @@ public interface IPuller<T> {
     String PARAM_KEY_KEYWORD = "keyword";
     String PARAM_KEY_LAST_ITEM_TIME = "last_time";
     String PARAM_KEY_FIRST_ITEM_TIME = "first_time";
+    String PARAM_KEY_TOPIC_ID = "topic_id";
 
     String DEFAULT_UID = String.valueOf(Enviroment.getCurUid());
     String DEFAULT_OTHER_UID = String.valueOf(-1);

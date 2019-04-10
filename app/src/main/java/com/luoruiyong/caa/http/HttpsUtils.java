@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.bean.ActivitySimpleData;
+import com.luoruiyong.caa.bean.DiscoverData;
+import com.luoruiyong.caa.bean.MessageData;
 import com.luoruiyong.caa.bean.TopicSimpleData;
 import com.luoruiyong.caa.puller.IPuller;
 import com.luoruiyong.caa.puller.bean.PullResponse;
@@ -123,6 +125,7 @@ public class HttpsUtils {
         });
     }
 
+
     public static void sendTopicLoadMorePullRequest(Request request, final IPuller.LoadMoreCallback<TopicSimpleData> callback) {
         HttpsUtils.getClient().newCall(request).enqueue(new Callback() {
             @Override
@@ -148,6 +151,120 @@ public class HttpsUtils {
                 }
             }
         });
+    }
+
+    public static void sendDiscoverRefreshPullRequest(Request request, final IPuller.RefreshCallback<DiscoverData> callback) {
+        HttpsUtils.getClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (callback != null) {
+                    callback.onRefreshFail(ResourcesUtils.getString(R.string.common_tip_no_network));
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful() && response.body() != null) {
+                    String data = response.body().string();
+                    Gson gson = new Gson();
+                    PullResponse pullResponse = gson.fromJson(data, new TypeToken<PullResponse<DiscoverData>>(){}.getType());
+                    if (pullResponse.getCode() == RESPONSE_STATUS_OK) {
+                        callback.onRefreshSuccess(pullResponse.getRequestType(), pullResponse.getData());
+                    } else {
+                        callback.onRefreshFail(pullResponse.getStatus());
+                    }
+                } else {
+                    callback.onRefreshFail("Unknow Error");
+                }
+            }
+        });
+    }
+
+
+    public static void sendDiscoverLoadMorePullRequest(Request request, final IPuller.LoadMoreCallback<DiscoverData> callback) {
+        HttpsUtils.getClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (callback != null) {
+                    callback.onLoadMoreFail(ResourcesUtils.getString(R.string.common_tip_no_network));
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful() && response.body() != null) {
+                    String data = response.body().string();
+                    Gson gson = new Gson();
+                    PullResponse pullResponse = gson.fromJson(data, new TypeToken<PullResponse<DiscoverData>>(){}.getType());
+                    if (pullResponse.getCode() == RESPONSE_STATUS_OK) {
+                        callback.onLoadMoreSuccess(pullResponse.getRequestType(), pullResponse.getData());
+                    } else {
+                        callback.onLoadMoreFail(pullResponse.getStatus());
+                    }
+                } else {
+                    callback.onLoadMoreFail("Unknow Error");
+                }
+            }
+        });
+    }
+
+    public static void sendMessageRefreshPullRequest(Request request, final IPuller.RefreshCallback<MessageData> callback) {
+        HttpsUtils.getClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (callback != null) {
+                    callback.onRefreshFail(ResourcesUtils.getString(R.string.common_tip_no_network));
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful() && response.body() != null) {
+                    String data = response.body().string();
+                    Gson gson = new Gson();
+                    PullResponse pullResponse = gson.fromJson(data, new TypeToken<PullResponse<MessageData>>(){}.getType());
+                    if (pullResponse.getCode() == RESPONSE_STATUS_OK) {
+                        callback.onRefreshSuccess(pullResponse.getRequestType(), pullResponse.getData());
+                    } else {
+                        callback.onRefreshFail(pullResponse.getStatus());
+                    }
+                } else {
+                    callback.onRefreshFail("Unknow Error");
+                }
+            }
+        });
+    }
+
+
+    public static void sendMessageLoadMorePullRequest(Request request, final IPuller.LoadMoreCallback<MessageData> callback) {
+        HttpsUtils.getClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (callback != null) {
+                    callback.onLoadMoreFail(ResourcesUtils.getString(R.string.common_tip_no_network));
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful() && response.body() != null) {
+                    String data = response.body().string();
+                    Gson gson = new Gson();
+                    PullResponse pullResponse = gson.fromJson(data, new TypeToken<PullResponse<MessageData>>(){}.getType());
+                    if (pullResponse.getCode() == RESPONSE_STATUS_OK) {
+                        callback.onLoadMoreSuccess(pullResponse.getRequestType(), pullResponse.getData());
+                    } else {
+                        callback.onLoadMoreFail(pullResponse.getStatus());
+                    }
+                } else {
+                    callback.onLoadMoreFail("Unknow Error");
+                }
+            }
+        });
+    }
+
+    public static Request buildRequestWithParams(String url, Map<String, String> params) {
+        return buildRequestWithParams(url, params, params);
     }
 
     public static Request buildRequestWithParams(String url, Map<String, String> params, Map<String, String> defaultParams) {

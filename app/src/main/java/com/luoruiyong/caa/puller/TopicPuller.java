@@ -1,7 +1,5 @@
 package com.luoruiyong.caa.puller;
 
-import android.util.Log;
-
 import com.luoruiyong.caa.bean.TopicSimpleData;
 import com.luoruiyong.caa.eventbus.PullFinishEvent;
 import com.luoruiyong.caa.http.HttpsUtils;
@@ -198,21 +196,10 @@ public class TopicPuller implements
     @Override
     public void onLoadMoreSuccess(int requestType, List<TopicSimpleData> result) {
         LogUtils.d(TAG, "onLoadMoreSuccess: requestType = " + requestType + "  result = " + result);
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                appendData(requestType, result);
-                PullFinishEvent event = new PullFinishEvent();
-                event.setType(PullFinishEvent.TYPE_LOAD_MORE_SUCCESS);
-                event.setData(ListUtils.getSize(result));
-                EventBus.getDefault().post(event);
-            }
-        }).start();
+        appendData(requestType, result);
+        PullFinishEvent event = new PullFinishEvent();
+        event.setType(PullFinishEvent.TYPE_LOAD_MORE_SUCCESS);
+        event.setData(ListUtils.getSize(result));
+        EventBus.getDefault().post(event);
     }
 }

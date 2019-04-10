@@ -15,13 +15,29 @@ import android.widget.Toast;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
+import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
 import com.luoruiyong.caa.bean.MessageData;
 
+import com.luoruiyong.caa.common.fragment.SwipeTopicFragment;
+import com.luoruiyong.caa.eventbus.PullFinishEvent;
+import com.luoruiyong.caa.puller.MessagePuller;
+import com.luoruiyong.caa.puller.PullerHelper;
+import com.luoruiyong.caa.puller.TopicPuller;
+import com.luoruiyong.caa.utils.ListUtils;
+import com.luoruiyong.caa.utils.LogUtils;
 import com.luoruiyong.caa.utils.PageUtils;
+import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.TopSmoothScroller;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
+import static com.luoruiyong.caa.eventbus.PullFinishEvent.TYPE_LOAD_MORE_FAIL;
+import static com.luoruiyong.caa.eventbus.PullFinishEvent.TYPE_LOAD_MORE_SUCCESS;
+import static com.luoruiyong.caa.eventbus.PullFinishEvent.TYPE_REFRESH_FAIL;
+import static com.luoruiyong.caa.eventbus.PullFinishEvent.TYPE_REFRESH_SUCCESS;
 import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_ACTIVITY_ID;
 import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_DISCOVER_ID;
 
@@ -31,14 +47,90 @@ import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_DISCOVER_ID;
  **/
 public class MessageFragment extends BaseSwipeFragment<MessageData> {
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    private static final String TAG = "MessageFragment";
 
-        // for test
-//        for (int i = 0; i < 20 ; i++) {
-//            mList.add(new MessageData(i));
-//        }
+    private MessagePuller mPuller;
+
+    private long getFirstItemTime() {
+        if (!ListUtils.isEmpty(mList)) {
+            return mList.get(0).getPublishTime();
+        }
+        return 0;
+    }
+
+    private long getLastItemTime() {
+        if (!ListUtils.isEmpty(mList)) {
+            return mList.get(mList.size() - 1).getPublishTime();
+        }
+        return 0;
+    }
+
+    @Override
+    protected void doRefresh() {
+        LogUtils.d(TAG, "doRefresh: " + mType);
+        mRefreshLayout.setRefreshing(true);
+        mPuller.refresh(getFirstItemTime());
+    }
+
+    @Override
+    protected void doLoadMore() {
+        LogUtils.d(TAG, "doLoadMore: " + mType);
+        ((ListAdapter)mAdapter).showLoadMoreTip(getString(R.string.common_str_loading_more));
+        mPuller.loadMore(getLastItemTime());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPullFinishEvent(PullFinishEvent event) {
+        switch (event.getType()) {
+            case TYPE_REFRESH_FAIL:
+                mRefreshLayout.setRefreshing(false);
+                String error = (String) event.getData();
+                if (TextUtils.equals(error, ResourcesUtils.getString(R.string.common_tip_no_network))) {
+                    if (ListUtils.isEmpty(mList)) {
+                        showErrorView(R.drawable.bg_no_network, error);
+                    } else {
+                        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    if (ListUtils.isEmpty(mList)) {
+                        showErrorView(R.drawable.bg_load_fail, error);
+                    } else {
+                        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+                    }
+                }
+                LogUtils.d(TAG, "refresh fail: " + event.getData());
+                break;
+            case TYPE_REFRESH_SUCCESS:
+                mRefreshLayout.setRefreshing(false);
+                if (mList == null) {
+                    // 首次拉取数据成功，设置到列表中
+                    mList = mPuller.getData();
+                    mAdapter = getListAdapter(mList);
+                    mRecyclerView.setAdapter(mAdapter);
+                } else if (mType == TopicPuller.TYPE_ALL) {
+                    // 非首次根据条件是否展示更新成功提示
+                    showTopTip((Integer) event.getData());
+                }
+                mAdapter.notifyDataSetChanged();
+                LogUtils.d(TAG, "refresh success: " + event.getData());
+                break;
+            case TYPE_LOAD_MORE_FAIL:
+                mIsLoadingMore = false;
+                mCanLoadMore = false;
+                ((ListAdapter) mAdapter).showLoadMoreTip(getString(R.string.common_str_load_fail));
+                mAdapter.notifyDataSetChanged();
+                LogUtils.d(TAG, "load more fail: " + event.getData());
+                break;
+            case TYPE_LOAD_MORE_SUCCESS:
+                mIsLoadingMore = false;
+                mCanLoadMore = true;
+                ((ListAdapter) mAdapter).showLoadMoreTip(getString(R.string.common_str_load_finish));
+                mAdapter.notifyDataSetChanged();
+                LogUtils.d(TAG, "load more success: " + event.getData());
+                break;
+            default:
+                break;
+        }
     }
 
     private void gotoSrcDetailPage(int messageType, long id) {
@@ -66,17 +158,7 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
         return new ListAdapter(list);
     }
 
-    @Override
-    protected void doRefresh() {
-        Toast.makeText(getContext(), "doRefresh", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    protected void doLoadMore() {
-        Toast.makeText(getContext(), "doLoadMore", Toast.LENGTH_SHORT).show();
-    }
-
-    private class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> implements View.OnClickListener{
+    private class ListAdapter extends LoadMoreSupportAdapter implements View.OnClickListener{
 
         private List<MessageData> mList;
 
@@ -84,35 +166,64 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
             this.mList = list;
         }
 
+        public void showLoadMoreTip(String text) {
+            setLoadMoreTip(text);
+            setOnLoadMoreClickListener(this);
+        }
+
         @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            if (viewType == ITEM_TYPE_LOAD_MORE_TIP) {
+                return super.onCreateViewHolder(parent, viewType);
+            }
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_list, parent, false);
             return new ViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            MessageData data = mList.get(position);
-            holder.bindData(data);
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+            super.onBindViewHolder(viewHolder, position);
+            if (viewHolder instanceof ViewHolder) {
+                ViewHolder holder = (ViewHolder) viewHolder;
+                MessageData data = mList.get(position);
+                holder.bindData(data);
 
-            holder.itemView.setOnClickListener(this);
-            holder.mSrcLayout.setOnClickListener(this);
-            holder.mUserAvatarIv.setOnClickListener(this);
-            holder.mNicknameTv.setOnClickListener(this);
-            holder.itemView.setTag(position);
-            holder.mSrcLayout.setTag(position);
-            holder.mUserAvatarIv.setTag(position);
-            holder.mNicknameTv.setTag(position);
+                holder.itemView.setOnClickListener(this);
+                holder.mSrcLayout.setOnClickListener(this);
+                holder.mUserAvatarIv.setOnClickListener(this);
+                holder.mNicknameTv.setOnClickListener(this);
+                holder.itemView.setTag(position);
+                holder.mSrcLayout.setTag(position);
+                holder.mUserAvatarIv.setTag(position);
+                holder.mNicknameTv.setTag(position);
+            }
         }
 
         @Override
         public int getItemCount() {
-            return mList == null ? 0 : mList.size();
+            int count = ListUtils.getSize(mList);
+            return count == 0 ? 0 : count + 1;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if (ListUtils.getSize(mList) == position) {
+                return ITEM_TYPE_LOAD_MORE_TIP;
+            }
+            return ITEM_TYPE_NORMAL;
         }
 
         @Override
         public void onClick(View v) {
+            if (v.getId() == R.id.tv_load_more_tip) {
+                if (!mIsLoadingMore) {
+                    setLoadMoreTip(getString(R.string.common_str_loading_more));
+                    mIsLoadingMore = true;
+                    doLoadMore();
+                }
+                return;
+            }
             int position = (int) v.getTag();
             MessageData data = mList.get(position);
             switch (v.getId()) {
@@ -180,6 +291,23 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
                     mSrcContentTv.setVisibility(View.VISIBLE);
                     mSrcContentTv.setText(data.getSrcContent());
                 }
+            }
+        }
+    }
+
+    @Override
+    protected void onVisibleMaybeChange() {
+        super.onVisibleMaybeChange();
+        if (isVisibleToUser()) {
+            if (mPuller == null) {
+                mPuller = (MessagePuller) PullerHelper.get(PullerHelper.TYPE_MESSAGE);
+            }
+            mList = mPuller.getData();
+            if (mList != null) {
+                mAdapter = getListAdapter(mList);
+                mRecyclerView.setAdapter(mAdapter);
+            } else if (!mRefreshLayout.isRefreshing()) {
+                doRefresh();
             }
         }
     }

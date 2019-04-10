@@ -19,6 +19,7 @@ import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.fragment.SwipeDiscoverFragment;
+import com.luoruiyong.caa.puller.DiscoverPuller;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 
@@ -165,10 +166,10 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
         mFragmentList = new ArrayList<>();
 
         mTitleList.add(getString(R.string.topic_detail_str_hot));
-        mFragmentList.add(SwipeDiscoverFragment.newInstance(SwipeDiscoverFragment.TYPE_TOPIC_HOT, mData.getId(), mPosition));
+        mFragmentList.add(SwipeDiscoverFragment.newInstance(DiscoverPuller.TYPE_TOPIC_HOT, mData.getId(), mPosition));
 
         mTitleList.add(getString(R.string.topic_detail_str_lasted));
-        mFragmentList.add(SwipeDiscoverFragment.newInstance(SwipeDiscoverFragment.TYPE_TOPIC_LASTED, mData.getId()));
+        mFragmentList.add(SwipeDiscoverFragment.newInstance(DiscoverPuller.TYPE_TOPIC_LASTED, mData.getId()));
 
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setupWithViewPager(mViewPager);

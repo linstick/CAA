@@ -165,12 +165,18 @@ public class SwipeTopicFragment extends BaseSwipeFragment<TopicSimpleData> {
         switch (event.getType()) {
             case TYPE_REFRESH_FAIL:
                 mRefreshLayout.setRefreshing(false);
-                if (ListUtils.isEmpty(mList)) {
-                    String error = (String) event.getData();
-                    if (TextUtils.equals(error, ResourcesUtils.getString(R.string.common_tip_no_network))) {
+                String error = (String) event.getData();
+                if (TextUtils.equals(error, ResourcesUtils.getString(R.string.common_tip_no_network))) {
+                    if (ListUtils.isEmpty(mList)) {
                         showErrorView(R.drawable.bg_no_network, error);
                     } else {
+                        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    if (ListUtils.isEmpty(mList)) {
                         showErrorView(R.drawable.bg_load_fail, error);
+                    } else {
+                        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
                     }
                 }
                 LogUtils.d(TAG, "refresh fail: " + event.getData());
@@ -263,23 +269,23 @@ public class SwipeTopicFragment extends BaseSwipeFragment<TopicSimpleData> {
 
         @Override
         public void onClick(View v) {
+            if (v.getId() == R.id.tv_load_more_tip) {
+                if (!mIsLoadingMore) {
+                    setLoadMoreTip(getString(R.string.common_str_loading_more));
+                    mIsLoadingMore = true;
+                    doLoadMore();
+                }
+                return;
+            }
             int position = (int) v.getTag();
-            TopicSimpleData data;
+            TopicSimpleData data = mList.get(position);
             switch (v.getId()) {
                 case R.id.ll_item_layout:
-                    data = mList.get(position);
                     PageUtils.gotoTopicPage(getContext(), data.getId());
                     break;
                 case R.id.iv_more:
-                    data = mList.get(position);
                     showMoreOperateDialog(position, data.getUid());
                     break;
-                case R.id.tv_load_more_tip:
-                    if (!mIsLoadingMore) {
-                        setLoadMoreTip(getString(R.string.common_str_loading_more));
-                        mIsLoadingMore = true;
-                        doLoadMore();
-                    }
                 default:
                     break;
             }

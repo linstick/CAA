@@ -225,7 +225,7 @@ public class SearchActivity extends BaseActivity implements
             mFragmentManager = getSupportFragmentManager();
         }
         if (mDiscoverFragment == null) {
-            mDiscoverFragment = new SwipeDiscoverFragment();
+            mDiscoverFragment = SwipeDiscoverFragment.newInstance(keyword);
         }
         mFragmentManager.beginTransaction()
                 .addToBackStack(TAB_COMPOSITE)

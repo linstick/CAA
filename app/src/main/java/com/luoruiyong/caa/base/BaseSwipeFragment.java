@@ -149,8 +149,6 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
         }
     }
 
-
-
     public void setCanRefresh(boolean canRefresh) {
         this.mCanRefresh = canRefresh;
         if (mRefreshLayout != null) {

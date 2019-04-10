@@ -20,6 +20,7 @@ import com.luoruiyong.caa.common.fragment.SwipeActivityFragment;
 import com.luoruiyong.caa.common.fragment.SwipeDiscoverFragment;
 import com.luoruiyong.caa.common.fragment.SwipeTopicFragment;
 import com.luoruiyong.caa.puller.ActivityPuller;
+import com.luoruiyong.caa.puller.DiscoverPuller;
 import com.luoruiyong.caa.puller.TopicPuller;
 import com.luoruiyong.caa.simple.SettingsActivity;
 import com.luoruiyong.caa.utils.PageUtils;
@@ -158,12 +159,12 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
         if (Enviroment.isSelf(mUid)) {
             mFragmentList.add(SwipeActivityFragment.newInstance(ActivityPuller.TYPE_SELF));
             mFragmentList.add(SwipeTopicFragment.newInstance(TopicPuller.TYPE_SELF));
-            mFragmentList.add(SwipeDiscoverFragment.newInstance(TYPE_SELF));
+            mFragmentList.add(SwipeDiscoverFragment.newInstance(DiscoverPuller.TYPE_SELF));
             mFragmentList.add(SwipeActivityFragment.newInstance(ActivityPuller.TYPE_SELF_COLLECT));
         } else {
             mFragmentList.add(SwipeActivityFragment.newInstance(ActivityPuller.TYPE_OTHER_USER, mUid));
             mFragmentList.add(SwipeTopicFragment.newInstance(TopicPuller.TYPE_OTHER_USER, mUid));
-            mFragmentList.add(SwipeDiscoverFragment.newInstance(TYPE_SELF));
+            mFragmentList.add(SwipeDiscoverFragment.newInstance(DiscoverPuller.TYPE_SELF));
         }
 
         mTabTitleList = new ArrayList<>();

@@ -51,7 +51,7 @@ public class DiscoverItemViewHolder extends RecyclerView.ViewHolder {
 
         if (!TextUtils.isEmpty(data.getTopic())) {
             mTopicTv.setVisibility(View.VISIBLE);
-            mTopicTv.setText(data.getTopic());
+            mTopicTv.setText(String.format(ResourcesUtils.getString(R.string.common_str_topic), data.getTopic()));
         }
 
         if (!TextUtils.isEmpty(data.getCollege())) {

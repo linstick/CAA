@@ -227,21 +227,10 @@ public class ActivityPuller implements
 
     @Override
     public void onLoadMoreSuccess(int requestType, List<ActivitySimpleData> result) {
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                appendData(requestType, result);
-                PullFinishEvent event = new PullFinishEvent();
-                event.setType(PullFinishEvent.TYPE_LOAD_MORE_SUCCESS);
-                event.setData(ListUtils.getSize(result));
-                EventBus.getDefault().post(event);
-            }
-        }).start();
+        appendData(requestType, result);
+        PullFinishEvent event = new PullFinishEvent();
+        event.setType(PullFinishEvent.TYPE_LOAD_MORE_SUCCESS);
+        event.setData(ListUtils.getSize(result));
+        EventBus.getDefault().post(event);
     }
 }
