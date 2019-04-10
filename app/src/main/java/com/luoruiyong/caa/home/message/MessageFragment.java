@@ -36,9 +36,9 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
         super.onCreate(savedInstanceState);
 
         // for test
-        for (int i = 0; i < 20 ; i++) {
-            mList.add(new MessageData(i));
-        }
+//        for (int i = 0; i < 20 ; i++) {
+//            mList.add(new MessageData(i));
+//        }
     }
 
     private void gotoSrcDetailPage(int messageType, long id) {
@@ -62,8 +62,8 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
     }
 
     @Override
-    protected void initListAdapter(List<MessageData> list) {
-        mAdapter = new ListAdapter(list);
+    protected RecyclerView.Adapter getListAdapter(List<MessageData> list) {
+        return new ListAdapter(list);
     }
 
     @Override

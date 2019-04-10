@@ -66,7 +66,7 @@ public class ActivityItemViewHolder extends RecyclerView.ViewHolder {
 
         if (!TextUtils.isEmpty(data.getTopic())) {
             mTopicTv.setVisibility(View.VISIBLE);
-            mTopicTv.setText(data.getTopic());
+            mTopicTv.setText(String.format(ResourcesUtils.getString(R.string.common_str_topic), data.getTopic()));
         }
 
         mCollectTv.setText(data.getCollectCount() == 0 ? ResourcesUtils.getString(R.string.common_str_collect) : data.getCollectCount() + "");

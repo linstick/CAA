@@ -128,6 +128,10 @@
     <string name="common_str_total">共%1d张</string>
     <string name="common_str_other">其他</string>
     <string name="common_str_refresh">刷新</string>
+    <string name="common_str_refresh_success_tip">更新%d条数据</string>
+    <string name="common_str_loading_more">正在加载数据...</string>
+    <string name="common_str_load_fail">数据加载失败</string>
+    <string name="common_str_load_finish">加载完成</string>
 
     <string name="common_str_relate_topic">关联话题</string>
     <string name="common_str_location">定位</string>

@@ -43,9 +43,9 @@ public class AdditionFragment extends BaseSwipeFragment<AdditionData> {
         handleArguments();
 
         // for test
-        for (int i = 0; i < 30; i++) {
-            mList.add(new AdditionData(i));
-        }
+//        for (int i = 0; i < 30; i++) {
+//            mList.add(new AdditionData(i));
+//        }
     }
 
     @Nullable
@@ -72,8 +72,8 @@ public class AdditionFragment extends BaseSwipeFragment<AdditionData> {
     }
 
     @Override
-    protected void initListAdapter(List<AdditionData> list) {
-        mAdapter = new ListAdapter(mList);
+    protected RecyclerView.Adapter getListAdapter(List<AdditionData> list) {
+        return new ListAdapter(mList);
     }
 
     @Override

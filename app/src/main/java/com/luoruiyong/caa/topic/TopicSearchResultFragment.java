@@ -41,9 +41,9 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TagSimpleData> 
         super.onCreate(savedInstanceState);
 
         // for test
-        for (int i = 0; i < 30; i++) {
-            mList.add(new TagSimpleData(i));
-        }
+//        for (int i = 0; i < 30; i++) {
+//            mList.add(new TagSimpleData(i));
+//        }
     }
 
     public void searchQuietly(String text) {
@@ -72,8 +72,8 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TagSimpleData> 
     }
 
     @Override
-    protected void initListAdapter(List list) {
-        mAdapter = new ListAdapter(list);
+    protected RecyclerView.Adapter getListAdapter(List list) {
+        return new ListAdapter(list);
     }
 
     @Override

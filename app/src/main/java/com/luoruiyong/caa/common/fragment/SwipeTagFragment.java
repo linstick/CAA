@@ -24,19 +24,14 @@ import java.util.List;
  **/
 public class SwipeTagFragment extends BaseSwipeFragment<TagSimpleData> {
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        // for test
-        for (int i = 0; i < 20 ; i++) {
-            mList.add(new TagSimpleData(i));
-        }
-    }
+    public static final int TYPE_ALL = 0;
+    public static final int TYPE_SELF = 1;
+    public static final int TYPE_OTHER_USER = 2;
+    public static final int TYPE_SEARCH = 3;
 
     @Override
-    protected void initListAdapter(List<TagSimpleData> list) {
-        mAdapter = new ListAdapter(list);
+    protected RecyclerView.Adapter getListAdapter(List<TagSimpleData> list) {
+        return new ListAdapter(list);
     }
 
     @Override

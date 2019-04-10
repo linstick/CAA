@@ -14,11 +14,15 @@ import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.common.viewholder.DiscoverItemViewHolder;
+import com.luoruiyong.caa.eventbus.PullFinishEvent;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.widget.TopSmoothScroller;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -34,8 +38,10 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
 
     public static final int TYPE_ALL = 0;
     public static final int TYPE_SELF = 1;
-    public static final int TYPE_TOPIC_HOT = 2;
-    public static final int TYPE_TOPIC_LASTED = 3;
+    public static final int TYPE_OTHER_USER = 2;
+    public static final int TYPE_TOPIC_HOT = 3;
+    public static final int TYPE_TOPIC_LASTED = 4;
+    public static final int TYPE_SEARCH = 4;
 
     private int mType = TYPE_ALL;
     private int mTopicId = -1;
@@ -81,8 +87,8 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
     }
 
     @Override
-    protected void initListAdapter(List<DiscoverData> list) {
-        mAdapter = new ListAdapter(list);
+    protected RecyclerView.Adapter getListAdapter(List<DiscoverData> list) {
+        return new ListAdapter(list);
     }
 
     @Override
@@ -93,6 +99,11 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
     @Override
     protected void doLoadMore() {
         Toast.makeText(getContext(), "doLoadMore: type = " + mType + " topic id = " + mTopicId, Toast.LENGTH_SHORT).show();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPullFinishEvent(PullFinishEvent event) {
+        // 接收下拉刷新，上拉加载更多的回调
     }
 
     private class ListAdapter extends RecyclerView.Adapter<DiscoverItemViewHolder> implements View.OnClickListener, ImageViewLayout.OnImageClickListener{

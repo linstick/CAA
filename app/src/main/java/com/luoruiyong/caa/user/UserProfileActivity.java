@@ -25,6 +25,10 @@ import com.luoruiyong.caa.utils.PageUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.luoruiyong.caa.puller.ActivityPuller.TYPE_OTHER_USER;
+import static com.luoruiyong.caa.puller.ActivityPuller.TYPE_SELF;
+import static com.luoruiyong.caa.puller.ActivityPuller.TYPE_SELF_COLLECT;
+
 
 /**
  * Author: luoruiyong
@@ -46,6 +50,7 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
 
+    private int mUid;
     private User mUser;
     private List<String> mTabTitleList;
     private List<Fragment> mFragmentList;
@@ -88,12 +93,11 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
 
     private void handleIntent() {
         Intent intent = getIntent();
-        int uid;
-        if (intent == null || (uid = intent.getIntExtra(PageUtils.KEY_USER_PROFILE_PAGE_UID, -1)) == -1) {
+        if (intent == null || (mUid = intent.getIntExtra(PageUtils.KEY_USER_PROFILE_PAGE_UID, -1)) == -1) {
             finish();
             return;
         }
-        if (Enviroment.isSelf(uid)) {
+        if (Enviroment.isSelf(mUid)) {
             mUser = Enviroment.getCurUser();
             bindData();
         } else {
@@ -149,16 +153,19 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
 
     private void initFragment() {
         mFragmentList = new ArrayList<>();
-        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_SELF));
+        mFragmentList.add(SwipeActivityFragment.newInstance(Enviroment.isSelf(mUid) ? TYPE_SELF : TYPE_OTHER_USER));
         mFragmentList.add(new SwipeTagFragment());
         mFragmentList.add(SwipeDiscoverFragment.newInstance(SwipeDiscoverFragment.TYPE_SELF));
-        mFragmentList.add(SwipeActivityFragment.newInstance(SwipeActivityFragment.TYPE_COLLECT));
 
         mTabTitleList = new ArrayList<>();
         mTabTitleList.add(getString(R.string.title_activity));
         mTabTitleList.add(getString(R.string.title_topic));
         mTabTitleList.add(getString(R.string.title_discover));
-        mTabTitleList.add(getString(R.string.title_collect));
+
+        if (Enviroment.isSelf(mUid)) {
+            mFragmentList.add(SwipeActivityFragment.newInstance(TYPE_SELF_COLLECT));
+            mTabTitleList.add(getString(R.string.title_collect));
+        }
 
         mTabLayout.setupWithViewPager(mViewPager);
         mAdapter = new ViewPagerAdapter(getSupportFragmentManager(), mFragmentList, mTabTitleList);

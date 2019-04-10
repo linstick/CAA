@@ -31,14 +31,14 @@ public class SwipeUserFragment extends BaseSwipeFragment<User> {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        for (int i = 0; i < 30; i++) {
-            mList.add(new User());
-        }
+//        for (int i = 0; i < 30; i++) {
+//            mList.add(new User());
+//        }
     }
 
     @Override
-    protected void initListAdapter(List list) {
-        mAdapter = new ListAdapter(list);
+    protected RecyclerView.Adapter getListAdapter(List list) {
+        return new ListAdapter(list);
     }
 
     @Override

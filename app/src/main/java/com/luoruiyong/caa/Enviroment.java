@@ -1,6 +1,10 @@
 package com.luoruiyong.caa;
 
+import android.util.DebugUtils;
+
 import com.luoruiyong.caa.bean.User;
+import com.luoruiyong.caa.login.LoginActivity;
+import com.luoruiyong.caa.utils.LogUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 
 import java.util.Arrays;
@@ -16,6 +20,7 @@ public class Enviroment {
 
     public final static boolean VAR_RELEASE = false;
     public final static boolean VAR_DEBUG = true;
+    public final static int LOG_GRADE = LogUtils.DEBUG;
 
     public final static String AMAP_WEB_API_KEY = "c3bab68b9ed24b289631570eb02750fa";
 

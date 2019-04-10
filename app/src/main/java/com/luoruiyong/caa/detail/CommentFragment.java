@@ -47,9 +47,9 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
 
         handleArguments();
         // for test
-        for (int i = 0; i < 30; i++) {
-            mList.add(new CommentData(i));
-        }
+//        for (int i = 0; i < 30; i++) {
+//            mList.add(new CommentData(i));
+//        }
     }
 
     @Nullable
@@ -76,8 +76,8 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
     }
 
     @Override
-    protected void initListAdapter(List<CommentData> list) {
-        mAdapter = new ListAdapter(mList);
+    protected RecyclerView.Adapter getListAdapter(List<CommentData> list) {
+        return new ListAdapter(mList);
     }
 
     @Override

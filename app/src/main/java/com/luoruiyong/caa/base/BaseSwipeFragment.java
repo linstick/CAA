@@ -4,7 +4,6 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +23,8 @@ import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.TopSmoothScroller;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +35,9 @@ import java.util.List;
  **/
 public abstract class BaseSwipeFragment<Item> extends BaseFragment {
 
-    private final int DEFAULT_LOAD_MORE_THRESHOLD = 5;
+    private static final String TAG = "BaseSwipeFragment";
+    private final int DEFAULT_LOAD_MORE_THRESHOLD = 10;
     protected final int DEFAULT_ITEM_MARGIN_PX = DisplayUtils.dp2px(10);
-    protected final int ITEM_TYPE_NORMAL = 0;
-    protected final int ITEM_TYPE_TIP = 1;
 
     protected View mRootView;
     protected TextView mTopTipTv;
@@ -50,18 +50,21 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
 
     private boolean mNeedSetCanRefresh = false;
     private boolean mCanRefresh = true;
-    private boolean mCanLoadMore = true;
-    private boolean mIsLoadingMore = false;
-    private boolean mHasMore = true;
+    protected boolean mIsLoadingMore = false;
+    protected boolean mCanLoadMore = true;
     private int mLoadMoreThreshold = DEFAULT_LOAD_MORE_THRESHOLD;
 
     private List<String> mItemMoreStringArray;
+    // 当前活动的类型，具体定义在其子类
+    protected int mType;
+
+    private boolean mHasResume;
+    private boolean mHasVisible;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mList = new ArrayList<>();
-        initListAdapter(mList);
     }
 
     @Nullable
@@ -72,6 +75,14 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
         initView(mRootView);
 
         return mRootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mHasResume = true;
+
+        onVisibleMaybeChange();
     }
 
     private void initView(View rootView) {
@@ -87,12 +98,6 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
             @Override
             public void onRefresh() {
                 doRefresh();
-                mRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        onRefreshResult();
-                    }
-                }, 2000);
             }
         });
         if (mNeedSetCanRefresh) {
@@ -101,7 +106,6 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
 
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -112,13 +116,34 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 int position = mLayoutManager.findLastVisibleItemPosition();
-                if (!mIsLoadingMore && mHasMore && position + mLoadMoreThreshold > mList.size()) {
+                if (mCanLoadMore && !mIsLoadingMore && position + mLoadMoreThreshold > mList.size()) {
                     mIsLoadingMore = true;
                     doLoadMore();
                 }
             }
         });
     }
+
+    protected void onVisibleMaybeChange() {
+        if (isVisibleToUser()) {
+            if (!EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().register(this);
+            }
+        } else {
+            if (EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().unregister(this);
+            }
+            if (mRefreshLayout != null && mRefreshLayout.isRefreshing()) {
+                mRefreshLayout.setRefreshing(false);
+            }
+            if (mTopTipTv != null && mTopTipTv.getVisibility() == View.VISIBLE) {
+                mTopTipTv.setVisibility(View.GONE);
+            }
+            mIsLoadingMore = false;
+        }
+    }
+
+
 
     public void setCanRefresh(boolean canRefresh) {
         this.mCanRefresh = canRefresh;
@@ -139,18 +164,17 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
     }
 
 
-    protected void onRefreshResult() {
-//        mRefreshLayout.setRefreshing(false);
-//        mTopTipTv.setVisibility(View.VISIBLE);
-//        mTopTipTv.setText("Update ten new activities");
-//        mTopTipTv.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                mTopTipTv.setVisibility(View.GONE);
-//            }
-//        }, 2000);
-        mRefreshLayout.setRefreshing(false);
-        showErrorView();
+    protected void showTopTip(int count) {
+        mTopTipTv.setText(String.format(getString(R.string.common_str_refresh_success_tip), count));
+        mTopTipTv.setVisibility(View.VISIBLE);
+        mTopTipTv.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mTopTipTv.getContext() != null) {
+                    mTopTipTv.setVisibility(View.GONE);
+                }
+            }
+        }, 2000);
     }
 
     protected void onLoadMoreResult() {
@@ -202,9 +226,6 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
                 if (parent.getChildAdapterPosition(view) != 0) {
                     outRect.top = DEFAULT_ITEM_MARGIN_PX;
                 }
-                if (parent.getChildAdapterPosition(view) == ListUtils.getSize(mList) - 1) {
-                    outRect.bottom = DEFAULT_ITEM_MARGIN_PX;
-                }
             }
         });
     }
@@ -220,7 +241,18 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
         }, 200);
     }
 
-    protected abstract void initListAdapter(List<Item> list);
+    protected boolean isVisibleToUser() {
+        return mHasVisible && mHasResume;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        mHasVisible = isVisibleToUser;
+        onVisibleMaybeChange();
+    }
+
+    protected abstract RecyclerView.Adapter getListAdapter(List<Item> list);
 
     protected void doRefresh() {
 
@@ -229,5 +261,4 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
     protected void doLoadMore() {
 
     }
-
 }
