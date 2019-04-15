@@ -85,9 +85,6 @@ public class FindPasswordFragment extends Fragment implements View.OnClickListen
         if (TextUtils.isEmpty(account)) {
             return;
         }
-        if (mCallback != null) {
-            mCallback.doFetchAvatar(account);
-        }
     }
 
     @Override

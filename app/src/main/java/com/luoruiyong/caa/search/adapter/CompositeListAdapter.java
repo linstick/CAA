@@ -10,9 +10,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.luoruiyong.caa.R;
-import com.luoruiyong.caa.bean.ActivitySimpleData;
+import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.bean.DiscoverData;
-import com.luoruiyong.caa.bean.TopicSimpleData;
+import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
 import com.luoruiyong.caa.common.viewholder.DiscoverItemViewHolder;
@@ -45,8 +45,8 @@ public class CompositeListAdapter extends RecyclerView.Adapter<RecyclerView.View
     private final int TYPE_DISCOVER_MORE_TIP = 8;
 
     private List<User> mUserList;
-    private List<ActivitySimpleData> mActivityList;
-    private List<TopicSimpleData> mTopicList;
+    private List<ActivityData> mActivityList;
+    private List<TopicData> mTopicList;
     private List<DiscoverData> mDiscoverList;
 
     private OnUserViewClickListener mUserViewListener;
@@ -57,8 +57,8 @@ public class CompositeListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public CompositeListAdapter(
             List<User> userList,
-            List<ActivitySimpleData> activityList,
-            List<TopicSimpleData> topicList,
+            List<ActivityData> activityList,
+            List<TopicData> topicList,
             List<DiscoverData> discoverList) {
         this.mUserList = userList;
         this.mActivityList = activityList;
@@ -125,7 +125,7 @@ public class CompositeListAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (viewHolder instanceof ActivityItemViewHolder) {
             ActivityItemViewHolder holder = (ActivityItemViewHolder) viewHolder;
             int realPosition = position;
-            ActivitySimpleData data = mActivityList.get(realPosition);
+            ActivityData data = mActivityList.get(realPosition);
             holder.bindData(data, -1);
             holder.itemView.setOnClickListener(mActivityViewListener);
             holder.mUserAvatarIv.setOnClickListener(mActivityViewListener);
@@ -151,12 +151,12 @@ public class CompositeListAdapter extends RecyclerView.Adapter<RecyclerView.View
             holder.setOnUserViewClickListener(mUserViewListener);
         } else if (viewHolder instanceof  TopicItemViewHolder) {
             int readPosition = position - getTopicOffset();
-            TopicSimpleData data = mTopicList.get(readPosition);
+            TopicData data = mTopicList.get(readPosition);
             TopicItemViewHolder holder = (TopicItemViewHolder) viewHolder;
             holder.bindData(data);
             holder.itemView.setOnClickListener(mTopicViewListener);
             holder.mMoreIv.setOnClickListener(mTopicViewListener);
-            holder.mInnerContainerLayout.setOnItemClickListener(mTopicViewListener);
+            holder.mInnerContainerLayout.setOnItemClickListener(readPosition, mTopicViewListener);
             holder.itemView.setTag(readPosition);
             holder.mInnerContainerLayout.setTag(readPosition);
             holder.mMoreIv.setTag(readPosition);

@@ -11,8 +11,7 @@ public class User implements Serializable{
     private int uid;
     private String id;
     private String avatar;
-    private String nickName;
-    private String realName;
+    private String nickname;
     private String gender;
     private int age;
     private String cellNumber;
@@ -21,16 +20,16 @@ public class User implements Serializable{
     private CollegeInfo collegeInfo;
 
     public User() {
-        uid = 1000;
-        id = "PSC52193";
-        avatar = "https://www.baidu.com/1.jpg";
-        nickName = "会飞的猪" + ((int) (Math.random() * 10));
-        gender = "男";
-        age = 23;
-        cellNumber = "15102032936";
-        email = "linstick@163.com";
-        description = "这是用户的个性签名，我是一个Android开发入门Coder";
-        collegeInfo = new CollegeInfo();
+//        uid = 1000;
+//        id = "PSC52193";
+//        avatar = "https://www.baidu.com/1.jpg";
+//        nickname = "会飞的猪" + ((int) (Math.random() * 10));
+//        gender = "男";
+//        age = 23;
+//        cellNumber = "15102032936";
+//        email = "linstick@163.com";
+//        description = "这是用户的个性签名，我是一个Android开发入门Coder";
+//        collegeInfo = new CollegeInfo();
     }
 
     public int getUid() {
@@ -57,20 +56,12 @@ public class User implements Serializable{
         this.avatar = avatar;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
-    public String getRealName() {
-        return realName;
-    }
-
-    public void setRealName(String realName) {
-        this.realName = realName;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public String getGender() {
@@ -126,8 +117,7 @@ public class User implements Serializable{
         return "User{" +
                 "uid=" + uid +
                 ", avatar='" + avatar + '\'' +
-                ", nickName='" + nickName + '\'' +
-                ", realName='" + realName + '\'' +
+                ", nickname='" + nickname + '\'' +
                 ", gender='" + gender + '\'' +
                 ", age=" + age +
                 ", cellNumber='" + cellNumber + '\'' +
@@ -138,26 +128,16 @@ public class User implements Serializable{
     }
 
     public static class CollegeInfo {
-        private int id;
         private String name;
         private String department;
         private String major;
         private String klass;
 
         public CollegeInfo() {
-            id = 10001;
-            name = "广东工业大学";
-            department  = "计算机学院";
-            major = "软件工程";
-            klass = "15级";
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
+//            name = "广东工业大学";
+//            department  = "计算机学院";
+//            major = "软件工程";
+//            klass = "15级";
         }
 
         public String getName() {
@@ -195,7 +175,6 @@ public class User implements Serializable{
         @Override
         public String toString() {
             return "CollegeInfo{" +
-                    "id=" + id +
                     ", name='" + name + '\'' +
                     ", department='" + department + '\'' +
                     ", major='" + major + '\'' +

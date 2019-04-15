@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/iv_picture"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/bg_setting_header"
-        android:scaleType="fitXY"/>
+        app:actualImageScaleType="centerCrop"
+        app:roundedCornerRadius="5dp"
+        app:placeholderImage="@drawable/bg_default_image_placeholder"
+        app:failureImage="@drawable/bg_load_image_fail"/>
 
     <TextView
         android:id="@+id/tv_total_tip"

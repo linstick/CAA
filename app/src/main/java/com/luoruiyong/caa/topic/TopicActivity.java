@@ -14,18 +14,28 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.fragment.SwipeDiscoverFragment;
-import com.luoruiyong.caa.puller.DiscoverPuller;
+import com.luoruiyong.caa.eventbus.DetailFinishEvent;
+import com.luoruiyong.caa.model.CommonFetcher;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_TOPIC_ID;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_DATA;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_TYPE;
 import static com.luoruiyong.caa.utils.PageUtils.KEY_TOPIC_PAGE_ID;
 import static com.luoruiyong.caa.utils.PageUtils.KEY_TOPIC_PAGE_POSITION;
 
@@ -42,13 +52,13 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
     private View mTabLayoutContainer;
     private View mDividerView;
 
-    private ImageView mUserAvatarIv;
+    private SimpleDraweeView mUserAvatarIv;
     private TextView mNicknameTv;
     private TextView mTagNameTv;
     private TextView mJoinedCountTv;
     private TextView mVisitedCountTv;
     private TextView mIntroductionTv;
-    private ImageView mTagCoverIv;
+    private SimpleDraweeView mTagCoverIv;
     private View mCenterDivider;
     private View mIntroductionLayout;
     AppBarLayout mAppBarLayout;
@@ -58,8 +68,8 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
     private ViewPagerAdapter mAdapter;
 
     private State mCurState = State.IDLE;
-    private int mTargetId;
     private int mPosition;
+    private int mTopicId;
     private TopicData mData;
 
     @Override
@@ -70,6 +80,18 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
         initView();
 
         handleIntent();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initView() {
@@ -120,44 +142,42 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
 
     private void handleIntent() {
         Intent intent = getIntent();
-        if (intent == null || (mTargetId = intent.getIntExtra(KEY_TOPIC_PAGE_ID, -1)) == -1) {
+        int type;
+        if (intent == null || (type = intent.getIntExtra(KEY_DETAIL_PAGE_TYPE, -1)) == -1) {
             finish();
             return;
         }
         mPosition = intent.getIntExtra(KEY_TOPIC_PAGE_POSITION, 0);
-
-        // 联网拉取数据
-
-        // 模拟
-        mBackIv.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                hideTipView();
-                mData = new TopicData();
-                bindBasicData();
-                initFragment();
+        if (type == DETAIL_TYPE_TOPIC_ID) {
+            if ((mTopicId = intent.getIntExtra(KEY_TOPIC_PAGE_ID, -1)) == -1) {
+                finish();
+                return;
             }
-        }, 1200);
-
+            CommonFetcher.doFetchTopicDetail(mTopicId);
+        } else {
+            if ((mData = (TopicData) intent.getSerializableExtra(KEY_DETAIL_PAGE_DATA)) == null) {
+                finish();
+                return;
+            }
+            bindBasicData();
+            initFragment();
+        }
     }
 
     private void bindBasicData() {
         if (mData == null) {
             return;
         }
-//        mUserAvatarIv.setImageUrl(mData.getAvatarUrl());
+        mUserAvatarIv.setImageURI(mData.getAvatarUrl());
+        mTagCoverIv.setImageURI(mData.getCoverUrl());
         mNicknameTv.setText(mData.getNickname());
         mTagNameTv.setText(String.format(getString(R.string.common_str_topic), mData.getName()));
         mVisitedCountTv.setText(String.format(getString(R.string.common_str_visit_count), mData.getVisitedCount()));
-        mJoinedCountTv.setText(String.format(getString(R.string.common_str_join_count), mData.getJoinedCount()));
+        mJoinedCountTv.setText(String.format(getString(R.string.common_str_join_count), mData.getJoinCount()));
         mCenterDivider.setVisibility(View.VISIBLE);
         if (!TextUtils.isEmpty(mData.getIntroduction())) {
             mIntroductionLayout.setVisibility(View.VISIBLE);
             mIntroductionTv.setText(mData.getIntroduction());
-        }
-        if (mPosition != 0) {
-            // 折叠
-            mAppBarLayout.setExpanded(false);
         }
     }
 
@@ -165,11 +185,8 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
         mTitleList = new ArrayList<>();
         mFragmentList = new ArrayList<>();
 
-        mTitleList.add(getString(R.string.topic_detail_str_hot));
-        mFragmentList.add(SwipeDiscoverFragment.newInstance(DiscoverPuller.TYPE_TOPIC_HOT, mData.getId(), mPosition));
-
-        mTitleList.add(getString(R.string.topic_detail_str_lasted));
-        mFragmentList.add(SwipeDiscoverFragment.newInstance(DiscoverPuller.TYPE_TOPIC_LASTED, mData.getId()));
+        mTitleList.add(getString(R.string.topic_detail_str_discover));
+        mFragmentList.add(SwipeDiscoverFragment.newInstance(Config.PAGE_ID_DISCOVER_TOPIC, mData.getId(), mPosition));
 
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setupWithViewPager(mViewPager);
@@ -209,6 +226,24 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
             default:
                 break;
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDetailFinishEvent(DetailFinishEvent<TopicData> event) {
+        hideTipView();
+        if (event.getCode() == Config.CODE_OK) {
+            mData = event.getData();
+            bindBasicData();
+            initFragment();
+        } else if (event.getCode() == Config.CODE_NO_DATA) {
+            showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_data));
+        } else if (event.getCode() == Config.CODE_NETWORK_ERROR) {
+            showErrorView(R.drawable.bg_no_network, getString(R.string.common_tip_no_network));
+        }
+    }
+
+    public void setAppBarExpanded(boolean expanded) {
+        mAppBarLayout.setExpanded(expanded);
     }
 
     enum State {

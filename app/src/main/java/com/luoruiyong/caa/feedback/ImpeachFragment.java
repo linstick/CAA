@@ -11,10 +11,10 @@ import android.widget.Toast;
 
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
-import com.luoruiyong.caa.bean.ActivitySimpleData;
+import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.bean.CommentData;
 import com.luoruiyong.caa.bean.DiscoverData;
-import com.luoruiyong.caa.bean.TopicSimpleData;
+import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.edit.BaseCreateFragment;
 import com.luoruiyong.caa.edit.EditorActivity;
@@ -56,8 +56,8 @@ public class ImpeachFragment extends BaseCreateFragment implements
     private List<DynamicInputView> mCheckNonNullList;
 
     private int mType;
-    private ActivitySimpleData mTargetActivity;
-    private TopicSimpleData mTargetTopic;
+    private ActivityData mTargetActivity;
+    private TopicData mTargetTopic;
     private DiscoverData mTargetDiscover;
     private User mTargetUser;
     private CommentData mTargetComment;
@@ -139,13 +139,13 @@ public class ImpeachFragment extends BaseCreateFragment implements
             return;
         }
         int titleResId = -1;
-        if (data instanceof ActivitySimpleData) {
+        if (data instanceof ActivityData) {
             mType = FEEDBACK_TYPE_IMPEACH_ACTIVITY;
-            mTargetActivity = (ActivitySimpleData) data;
+            mTargetActivity = (ActivityData) data;
             titleResId = R.string.title_impeach_activity;
-        } else if (data instanceof TopicSimpleData) {
+        } else if (data instanceof TopicData) {
             mType = FEEDBACK_TYPE_IMPEACH_TOPIC;
-            mTargetTopic = (TopicSimpleData) data;
+            mTargetTopic = (TopicData) data;
             titleResId = R.string.title_impeach_topic;
         } else if (data instanceof DiscoverData) {
             mType = FEEDBACK_TYPE_IMPEACH_DISCOVER;
@@ -241,7 +241,7 @@ public class ImpeachFragment extends BaseCreateFragment implements
             for (int i = 0; i < mPictureUrls.size() - 1; i++) {
                 list.add(mPictureUrls.get(i));
             }
-            PictureBrowseActivity.startAction(this, list, position, false, true, EditorActivity.BROWSE_PICTURE_REQUEST_CODE);
+            PictureBrowseActivity.startAction(this, list, position, true, EditorActivity.BROWSE_PICTURE_REQUEST_CODE);
         }
     }
 }

@@ -10,7 +10,7 @@ import com.luoruiyong.caa.utils.DisplayUtils;
  * Date: 2019/4/5/005
  **/
 public interface ILayoutStrategy {
-    int DEFAULT_CHILD_VIEW_MARGIN_PX = DisplayUtils.dp2px(3);
+    int DEFAULT_CHILD_VIEW_MARGIN_PX = DisplayUtils.dp2px(5);
 
     void setChildViewMarginPx(int pxValue);
 

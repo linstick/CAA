@@ -3,6 +3,8 @@ package com.luoruiyong.caa.simple;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,15 +13,21 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
+import com.luoruiyong.caa.model.ImageLoader;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -34,6 +42,7 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
 
     private final static String KEY_URL_LIST = "key_url_list";
     private final static String KEY_CUR_POSITION = "key_cur_position";
+    private final static String KEY_IS_LOCAL_FILE = "key_is_local_file";
     private final static String KEY_SUPPORT_DOWNLOAD = "key_support_download";
     private final static String KEY_SUPPORT_DELETE = "key_support_delete";
     public final static String KEY_DELETE_LIST = "key_delete_list";
@@ -48,25 +57,27 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
     private SimpleViewPagerAdapter mAdapter;
     private List<String> mUrls;
     private int mCurPosition;
-    private boolean mSupportDownload;
-    private boolean mSupportDelete;
+    private boolean mIsLocalFile;
 
     private ArrayList<Integer> mDeleteList;
+
+    public static void startAction(Fragment fragment, List<String> list) {
+        startAction(fragment, list, 0);
+    }
 
     public static void startAction(Fragment fragment, List<String> list, int position) {
         startAction(fragment, list, position, false);
     }
 
-    public static void startAction(Fragment fragment, List<String> list, int position, boolean supportDownload) {
-        startAction(fragment, list, position, supportDownload, false, -1);
+    public static void startAction(Fragment fragment, List<String> list, int position, boolean isLocalFile) {
+        startAction(fragment, list, position, isLocalFile, -1);
     }
 
-    public static void startAction(Fragment fragment, List<String> list, int position, boolean supportDownload, boolean supportDelete, int requestCode) {
+    public static void startAction(Fragment fragment, List<String> list, int position, boolean isLocalFile, int requestCode) {
         Intent intent = new Intent(fragment.getContext(), PictureBrowseActivity.class);
         intent.putStringArrayListExtra(KEY_URL_LIST, (ArrayList<String>) list);
         intent.putExtra(KEY_CUR_POSITION, position);
-        intent.putExtra(KEY_SUPPORT_DOWNLOAD, supportDownload);
-        intent.putExtra(KEY_SUPPORT_DELETE, supportDelete);
+        intent.putExtra(KEY_IS_LOCAL_FILE, isLocalFile);
         if (requestCode != -1) {
             fragment.startActivityForResult(intent, requestCode);
         } else {
@@ -74,20 +85,23 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
         }
     }
 
-    public static void startAction(Activity fragment, List<String> list, int position) {
-        startAction(fragment, list, position, false);
+    public static void startAction(Activity activity, List<String> list) {
+        startAction(activity, list, 0);
     }
 
-    public static void startAction(Activity fragment, List<String> list, int position, boolean supportDownload) {
-        startAction(fragment, list, position, supportDownload, false, -1);
+    public static void startAction(Activity activity, List<String> list, int position) {
+        startAction(activity, list, position, false);
     }
 
-    public static void startAction(Activity fragment, List<String> list, int position, boolean supportDownload, boolean supportDelete, int requestCode) {
+    public static void startAction(Activity fragment, List<String> list, int position, boolean isLocalFile) {
+        startAction(fragment, list, position, isLocalFile, -1);
+    }
+
+    public static void startAction(Activity fragment, List<String> list, int position, boolean isLocalFile, int requestCode) {
         Intent intent = new Intent(fragment, PictureBrowseActivity.class);
         intent.putStringArrayListExtra(KEY_URL_LIST, (ArrayList<String>) list);
         intent.putExtra(KEY_CUR_POSITION, position);
-        intent.putExtra(KEY_SUPPORT_DOWNLOAD, supportDownload);
-        intent.putExtra(KEY_SUPPORT_DELETE, supportDelete);
+        intent.putExtra(KEY_IS_LOCAL_FILE, isLocalFile);
         if (requestCode != -1) {
             fragment.startActivityForResult(intent, requestCode);
         } else {
@@ -107,11 +121,11 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
 
     private void initView() {
         mViewPager = findViewById(R.id.view_pager);
-        mBackIv = findViewById(R.id.iv_back);
         mCurIndexTv = findViewById(R.id.tv_cur_index);
         mTotalIndexTv = findViewById(R.id.tv_total_index);
         mDownloadIv = findViewById(R.id.iv_download);
         mDeleteIv = findViewById(R.id.iv_delete);
+        mBackIv = findViewById(R.id.iv_back);
 
         mBackIv.setOnClickListener(this);
     }
@@ -121,14 +135,13 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
         if (intent != null) {
             mUrls = intent.getStringArrayListExtra(KEY_URL_LIST);
             mCurPosition = intent.getIntExtra(KEY_CUR_POSITION, -1);
-            mSupportDownload = intent.getBooleanExtra(KEY_SUPPORT_DOWNLOAD, false);
-            mSupportDelete = intent.getBooleanExtra(KEY_SUPPORT_DELETE, false);
+            mIsLocalFile = intent.getBooleanExtra(KEY_IS_LOCAL_FILE, false);
         }
         if (ListUtils.isEmpty(mUrls) || !ListUtils.isIndexBetween(mUrls, mCurPosition)) {
             finish();
             return;
         }
-        mAdapter = new SimpleViewPagerAdapter(mUrls);
+        mAdapter = new SimpleViewPagerAdapter(mUrls, mIsLocalFile);
         mViewPager.setAdapter(mAdapter);
         mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -149,11 +162,11 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
         mCurIndexTv.setText(String.valueOf(mCurPosition + 1));
         mTotalIndexTv.setText(String.valueOf(mUrls.size()));
 
-        if (mSupportDownload) {
+        if (!mIsLocalFile) {
             mDownloadIv.setVisibility(View.VISIBLE);
             mDownloadIv.setOnClickListener(this);
         }
-        if (mSupportDelete) {
+        if (mIsLocalFile) {
             mDeleteIv.setVisibility(View.VISIBLE);
             mDeleteIv.setOnClickListener(this);
             mDeleteList = new ArrayList<>();
@@ -174,7 +187,17 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_download:
-                Toast.makeText(this, "download " + mCurPosition, Toast.LENGTH_SHORT).show();
+                ImageLoader.loadAndSave(mUrls.get(mCurPosition), new ImageLoader.OnLoadAndSaveCallback() {
+                    @Override
+                    public void onSuccess(Bitmap bitmap, String path) {
+                        Toast.makeText(PictureBrowseActivity.this, String.format(getString(R.string.common_image_save_success), path), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFail(String error) {
+                        Toast.makeText(PictureBrowseActivity.this, error, Toast.LENGTH_SHORT).show();
+                    }
+                });
                 break;
             case R.id.iv_delete:
                 mDeleteList.add(mCurPosition);
@@ -202,8 +225,10 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
 
         private List<String> mList;
         private List<View> mViewCache;
+        private boolean mIsLocalFile;
 
-        public SimpleViewPagerAdapter(List<String> list) {
+        public SimpleViewPagerAdapter(List<String> list, boolean isLoacalFile) {
+            this.mIsLocalFile = isLoacalFile;
             this.mList = list;
             this.mViewCache = new LinkedList<>();
         }
@@ -215,14 +240,18 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
             if (!ListUtils.isEmpty(mViewCache)) {
                 view = mViewCache.remove(0);
             } else {
-                ImageView imageView = new ImageView(container.getContext());
-                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                SimpleDraweeView imageView = new SimpleDraweeView(container.getContext());
+                imageView.getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
                 ViewGroup.LayoutParams params = new ViewPager.LayoutParams();
                 params.width = ViewGroup.LayoutParams.MATCH_PARENT;
                 params.height = ViewGroup.LayoutParams.MATCH_PARENT;
                 imageView.setLayoutParams(params);
-                imageView.setImageResource(R.drawable.bg_setting_header);
                 imageView.setId(R.id.iv_picture);
+                if (mIsLocalFile) {
+                    imageView.setImageURI(Uri.fromFile(new File(mUrls.get(position))));
+                } else {
+                    imageView.setImageURI(mUrls.get(position));
+                }
                 view = imageView;
             }
             view.setOnClickListener(PictureBrowseActivity.this);

@@ -2,37 +2,43 @@ package com.luoruiyong.caa.home;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
-import com.luoruiyong.caa.base.BaseSwipeFragment;
+import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
-import com.luoruiyong.caa.common.fragment.SwipeActivityFragment;
 import com.luoruiyong.caa.common.fragment.SwipeDiscoverFragment;
 import com.luoruiyong.caa.common.fragment.SwipeTopicFragment;
-import com.luoruiyong.caa.puller.DiscoverPuller;
-import com.luoruiyong.caa.puller.TopicPuller;
+import com.luoruiyong.caa.eventbus.LoginStateChangedEvent;
+import com.luoruiyong.caa.model.bean.GlobalSource;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.edit.EditorActivity;
 import com.luoruiyong.caa.home.activity.ActivityFragment;
 import com.luoruiyong.caa.home.message.MessageFragment;
 import com.luoruiyong.caa.login.LoginActivity;
 import com.luoruiyong.caa.search.SearchActivity;
+import com.luoruiyong.caa.utils.MainActivity;
 import com.luoruiyong.caa.utils.PageUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.luoruiyong.caa.puller.TopicPuller.TYPE_ALL;
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener{
 
@@ -45,7 +51,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
     private TextView mTitleTv;
     private ViewPager mViewPager;
 
-    private ImageView mUserAvatarIv;
+    private SimpleDraweeView mUserAvatarIv;
     private TextView mActivityTabTv;
     private TextView mTagTabTv;
     private TextView mDiscoverTabTv;
@@ -55,6 +61,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
     private List<Fragment> mFragmentList;
     private ViewPagerAdapter mAdapter;
     private List<String> mEditTypeList;
+
+    private int mCurIndex = ACTIVITY_TAB_INDEX;
 
     private static void startAction(Context context, int tabIndex) {
         Intent intent = new Intent(context, HomeActivity.class);
@@ -72,6 +80,18 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
         initFragment();
 
         handleIntent();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initView() {
@@ -95,8 +115,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
     private void initFragment() {
         mFragmentList = new ArrayList<>();
         mFragmentList.add(new ActivityFragment());
-        mFragmentList.add(SwipeTopicFragment.newInstance(TopicPuller.TYPE_ALL));
-        mFragmentList.add(SwipeDiscoverFragment.newInstance(DiscoverPuller.TYPE_ALL));
+        mFragmentList.add(SwipeTopicFragment.newInstance());
+        mFragmentList.add(SwipeDiscoverFragment.newInstance());
         mFragmentList.add(new MessageFragment());
 
         mBottomTabList = new ArrayList<>();
@@ -119,6 +139,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
             public void onPageScrollStateChanged(int state) {
             }
         });
+        if (mCurIndex != ACTIVITY_TAB_INDEX) {
+            mViewPager.setCurrentItem(mCurIndex);
+        }
     }
 
     private void handleIntent() {
@@ -135,6 +158,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
         if (needCheck && (index < 0 || index >= mFragmentList.size() || index == mViewPager.getCurrentItem())) {
             return;
         }
+        mCurIndex = index;
         mViewPager.setCurrentItem(index, false);
         String title;
         switch (index) {
@@ -162,10 +186,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
                 mBottomTabList.get(i).setSelected(false);
             }
         }
-    }
-
-    private void doLogout() {
-        Toast.makeText(this, "logout", Toast.LENGTH_SHORT).show();
     }
 
     private void showEditTypeChooseDialog() {
@@ -219,6 +239,30 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
                 break;
             case R.id.iv_add:
                 showEditTypeChooseDialog();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onLoginStateChangedEvent(LoginStateChangedEvent event) {
+        EventBus.getDefault().removeStickyEvent(event);
+        GlobalSource.clearAll();
+        switch (event) {
+            case LOGIN_SUCCESS:
+                User curUser = Enviroment.getCurUser();
+                if (curUser != null) {
+                    mUserAvatarIv.setImageURI(curUser.getAvatar());
+                }
+                break;
+            case LOGOUT_SUCCESS:
+                mUserAvatarIv.setImageURI(Uri.EMPTY);
+                if (mCurIndex == MESSAGE_TAB_INDEX) {
+                    // 回到活动页
+                    updateFragmentByIndex(ACTIVITY_TAB_INDEX, false);
+                    ((ActivityFragment)mFragmentList.get(ACTIVITY_TAB_INDEX)).forceToAllTab();
+                }
                 break;
             default:
                 break;

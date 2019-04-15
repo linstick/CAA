@@ -10,34 +10,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
 import com.luoruiyong.caa.bean.MessageData;
 
-import com.luoruiyong.caa.common.fragment.SwipeTopicFragment;
-import com.luoruiyong.caa.eventbus.PullFinishEvent;
-import com.luoruiyong.caa.puller.MessagePuller;
-import com.luoruiyong.caa.puller.PullerHelper;
-import com.luoruiyong.caa.puller.TopicPuller;
+import com.luoruiyong.caa.login.LoginActivity;
+import com.luoruiyong.caa.model.puller.CommonPuller;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.LogUtils;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
-import com.luoruiyong.caa.widget.TopSmoothScroller;
 
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
-import static com.luoruiyong.caa.eventbus.PullFinishEvent.TYPE_LOAD_MORE_FAIL;
-import static com.luoruiyong.caa.eventbus.PullFinishEvent.TYPE_LOAD_MORE_SUCCESS;
-import static com.luoruiyong.caa.eventbus.PullFinishEvent.TYPE_REFRESH_FAIL;
-import static com.luoruiyong.caa.eventbus.PullFinishEvent.TYPE_REFRESH_SUCCESS;
 import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_ACTIVITY_ID;
 import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_DISCOVER_ID;
 
@@ -49,91 +40,60 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
 
     private static final String TAG = "MessageFragment";
 
-    private MessagePuller mPuller;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mPageId = Config.PAGE_ID_MESSAGE;
+    }
 
-    private long getFirstItemTime() {
+    @Override
+    public void onResume() {
+        // 顺序不能变，未登录的用户切换到消息页不主动刷新
+        checkUserState();
+        super.onResume();
+    }
+
+    private String getFirstItemTime() {
         if (!ListUtils.isEmpty(mList)) {
             return mList.get(0).getPublishTime();
         }
-        return 0;
+        return Config.DEFAULT_TIME_STAMP;
     }
 
-    private long getLastItemTime() {
+    private String getLastItemTime() {
         if (!ListUtils.isEmpty(mList)) {
             return mList.get(mList.size() - 1).getPublishTime();
         }
-        return 0;
+        return Config.DEFAULT_TIME_STAMP;
     }
 
     @Override
     protected void doRefresh() {
-        LogUtils.d(TAG, "doRefresh: " + mType);
+        LogUtils.d(TAG, "doRefreshClick: " + mPageId);
+        hideTipView();
         mRefreshLayout.setRefreshing(true);
-        mPuller.refresh(getFirstItemTime());
+        CommonPuller.refreshMessage(getFirstItemTime());
+    }
+
+    @Override
+    protected void onRefreshClick() {
+        if (Enviroment.isVisitor()) {
+            LoginActivity.startAction(getContext(), LoginActivity.LOGIN_TAB);
+        } else {
+            doRefresh();
+        }
     }
 
     @Override
     protected void doLoadMore() {
-        LogUtils.d(TAG, "doLoadMore: " + mType);
-        ((ListAdapter)mAdapter).showLoadMoreTip(getString(R.string.common_str_loading_more));
-        mPuller.loadMore(getLastItemTime());
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onPullFinishEvent(PullFinishEvent event) {
-        switch (event.getType()) {
-            case TYPE_REFRESH_FAIL:
-                mRefreshLayout.setRefreshing(false);
-                String error = (String) event.getData();
-                if (TextUtils.equals(error, ResourcesUtils.getString(R.string.common_tip_no_network))) {
-                    if (ListUtils.isEmpty(mList)) {
-                        showErrorView(R.drawable.bg_no_network, error);
-                    } else {
-                        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    if (ListUtils.isEmpty(mList)) {
-                        showErrorView(R.drawable.bg_load_fail, error);
-                    } else {
-                        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
-                    }
-                }
-                LogUtils.d(TAG, "refresh fail: " + event.getData());
-                break;
-            case TYPE_REFRESH_SUCCESS:
-                mRefreshLayout.setRefreshing(false);
-                if (mList == null) {
-                    // 首次拉取数据成功，设置到列表中
-                    mList = mPuller.getData();
-                    mAdapter = getListAdapter(mList);
-                    mRecyclerView.setAdapter(mAdapter);
-                } else if (mType == TopicPuller.TYPE_ALL) {
-                    // 非首次根据条件是否展示更新成功提示
-                    showTopTip((Integer) event.getData());
-                }
-                mAdapter.notifyDataSetChanged();
-                LogUtils.d(TAG, "refresh success: " + event.getData());
-                break;
-            case TYPE_LOAD_MORE_FAIL:
-                mIsLoadingMore = false;
-                mCanLoadMore = false;
-                ((ListAdapter) mAdapter).showLoadMoreTip(getString(R.string.common_str_load_fail));
-                mAdapter.notifyDataSetChanged();
-                LogUtils.d(TAG, "load more fail: " + event.getData());
-                break;
-            case TYPE_LOAD_MORE_SUCCESS:
-                mIsLoadingMore = false;
-                mCanLoadMore = true;
-                ((ListAdapter) mAdapter).showLoadMoreTip(getString(R.string.common_str_load_finish));
-                mAdapter.notifyDataSetChanged();
-                LogUtils.d(TAG, "load more success: " + event.getData());
-                break;
-            default:
-                break;
+        LogUtils.d(TAG, "doLoadMore: " + mPageId);
+        if (mAdapter instanceof LoadMoreSupportAdapter) {
+            ((LoadMoreSupportAdapter) mAdapter).setLoadMoreTip(getString(R.string.common_str_loading_more));
         }
+        CommonPuller.loadMoreMessage(getLastItemTime());
     }
 
-    private void gotoSrcDetailPage(int messageType, long id) {
+    private void gotoSrcDetailPage(int messageType, int id) {
         switch (messageType) {
             case 0:
             case 1:
@@ -142,7 +102,7 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
                 break;
             case 2:
             case 6:
-                PageUtils.gotoTopicPage(getContext(), (int) id);
+                PageUtils.gotoTopicPage(getContext(), id);
                 break;
             case 3:
             case 4:
@@ -158,17 +118,10 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
         return new ListAdapter(list);
     }
 
-    private class ListAdapter extends LoadMoreSupportAdapter implements View.OnClickListener{
-
-        private List<MessageData> mList;
+    private class ListAdapter extends LoadMoreSupportAdapter<MessageData> implements View.OnClickListener{
 
         public ListAdapter(List<MessageData> list) {
-            this.mList = list;
-        }
-
-        public void showLoadMoreTip(String text) {
-            setLoadMoreTip(text);
-            setOnLoadMoreClickListener(this);
+            super(list);
         }
 
         @NonNull
@@ -201,35 +154,13 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
         }
 
         @Override
-        public int getItemCount() {
-            int count = ListUtils.getSize(mList);
-            return count == 0 ? 0 : count + 1;
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            if (ListUtils.getSize(mList) == position) {
-                return ITEM_TYPE_LOAD_MORE_TIP;
-            }
-            return ITEM_TYPE_NORMAL;
-        }
-
-        @Override
         public void onClick(View v) {
-            if (v.getId() == R.id.tv_load_more_tip) {
-                if (!mIsLoadingMore) {
-                    setLoadMoreTip(getString(R.string.common_str_loading_more));
-                    mIsLoadingMore = true;
-                    doLoadMore();
-                }
-                return;
-            }
             int position = (int) v.getTag();
             MessageData data = mList.get(position);
             switch (v.getId()) {
                 case R.id.ll_item_layout:
                 case R.id.ll_src_layout:
-                    gotoSrcDetailPage(data.getType(), data.getSrcId());
+                    gotoSrcDetailPage(data.getType(), data.getTargetId());
                     break;
                 case R.id.iv_user_avatar:
                 case R.id.tv_nickname:
@@ -243,14 +174,14 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
 
         class ViewHolder extends RecyclerView.ViewHolder {
 
-            private ImageView mUserAvatarIv;
+            private SimpleDraweeView mUserAvatarIv;
             private TextView mNicknameTv;
             private TextView mPublishTimeTv;
             private TextView mMessageTypeTv;
             private TextView mContentTv;
 
             private View mSrcLayout;
-            private ImageView mSrcCoverIv;
+            private SimpleDraweeView mSrcCoverIv;
             private TextView mSrcTitleTv;
             private TextView mSrcContentTv;
 
@@ -269,46 +200,49 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
             }
 
             public void bindData(MessageData data) {
-//                mUserAvatarIv.setImageUrl(data.getAvatarUrl());
+                mUserAvatarIv.setImageURI(data.getAvatarUrl());
                 mNicknameTv.setText(data.getNickname());
                 mMessageTypeTv.setText(Enviroment.getMessageTypeNameById(data.getType()));
+                mPublishTimeTv.setText(data.getPublishTime());
                 if (!TextUtils.isEmpty(data.getContent())) {
                     mContentTv.setVisibility(View.VISIBLE);
                     mContentTv.setText(data.getContent());
                 }
 
-                if (!TextUtils.isEmpty(data.getSrcCoverUrl())) {
+                if (!TextUtils.isEmpty(data.getTargetCoverUrl())) {
                     mSrcCoverIv.setVisibility(View.VISIBLE);
-//                    mSrcCoverIv.setImageUrl(data.getSrcCoverUrl());
+                    mSrcCoverIv.setImageURI(data.getTargetCoverUrl());
                 }
 
-                if (!TextUtils.isEmpty(data.getSrcTitle())) {
+                if (!TextUtils.isEmpty(data.getTargetTitle())) {
                     mSrcTitleTv.setVisibility(View.VISIBLE);
-                    mSrcTitleTv.setText(data.getSrcTitle());
+                    mSrcTitleTv.setText(data.getTargetTitle());
                 }
 
-                if (!TextUtils.isEmpty(data.getSrcContent())) {
+                if (!TextUtils.isEmpty(data.getTargetContent())) {
                     mSrcContentTv.setVisibility(View.VISIBLE);
-                    mSrcContentTv.setText(data.getSrcContent());
+                    mSrcContentTv.setText(data.getTargetContent());
                 }
             }
         }
     }
 
     @Override
-    protected void onVisibleMaybeChange() {
-        super.onVisibleMaybeChange();
-        if (isVisibleToUser()) {
-            if (mPuller == null) {
-                mPuller = (MessagePuller) PullerHelper.get(PullerHelper.TYPE_MESSAGE);
-            }
-            mList = mPuller.getData();
-            if (mList != null) {
-                mAdapter = getListAdapter(mList);
-                mRecyclerView.setAdapter(mAdapter);
-            } else if (!mRefreshLayout.isRefreshing()) {
-                doRefresh();
-            }
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        if (Enviroment.isVisitor()) {
+            setAutoHideError(false);
+        } else {
+            setAutoHideError(true);
+        }
+        super.setUserVisibleHint(isVisibleToUser);
+    }
+
+    public void checkUserState() {
+        if (Enviroment.isVisitor()) {
+            setAutoRefreshForEmpty(false);
+            showErrorView(R.drawable.ic_user_default_avatar_light_gray_60, ResourcesUtils.getString(R.string.fm_login_str_not_login), ResourcesUtils.getString(R.string.fm_login_str_goto_login));
+        } else {
+            setAutoRefreshForEmpty(true);
         }
     }
 }

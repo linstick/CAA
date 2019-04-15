@@ -5,9 +5,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.bean.DiscoverData;
-import com.luoruiyong.caa.bean.TopicSimpleData;
+import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.TagInnerItemContainer;
@@ -22,7 +23,7 @@ import java.util.List;
  **/
 public class TopicItemViewHolder extends RecyclerView.ViewHolder {
 
-    public ImageView mTagCoverIv;
+    public SimpleDraweeView mTagCoverIv;
     public TextView mTagNameTv;
     public TextView mVisitedCountTv;
     public TextView mJoinedCountTv;
@@ -41,8 +42,8 @@ public class TopicItemViewHolder extends RecyclerView.ViewHolder {
         mInnerContainerLayout = itemView.findViewById(R.id.inner_container_layout);
     }
 
-    public void bindData(TopicSimpleData data) {
-//                mTagCoverIv.setImageUrl(data.getCoverUrl());
+    public void bindData(TopicData data) {
+        mTagCoverIv.setImageURI(data.getCoverUrl());
         mTagNameTv.setText(String.format(ResourcesUtils.getString(R.string.common_str_topic), data.getName()));
         mVisitedCountTv.setText(data.getVisitedCount() + "");
         mJoinedCountTv.setText(data.getJoinCount() + "");

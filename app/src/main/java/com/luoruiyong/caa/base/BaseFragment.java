@@ -1,6 +1,7 @@
 package com.luoruiyong.caa.base;
 
 import android.support.v4.app.Fragment;
+import android.view.View;
 import android.view.ViewStub;
 
 import com.luoruiyong.caa.widget.TipView;
@@ -18,6 +19,17 @@ public class BaseFragment extends Fragment {
 
     protected void setUpErrorViewStub(ViewStub viewStub) {
         mErrorTipViewStub = viewStub;
+    }
+
+    protected void setUpErrorView(TipView view) {
+        mTipView = view;
+        mTipView.setRefreshNeedHide(mRefreshNeedHide);
+        mTipView.setOnRefreshCallback(new TipView.OnRefreshClickCallBack() {
+            @Override
+            public void onRefreshClick() {
+                BaseFragment.this.onRefreshClick();
+            }
+        });
     }
 
     protected void setRefreshNeedHide(boolean needHide) {
@@ -43,6 +55,11 @@ public class BaseFragment extends Fragment {
         mTipView.showError(imageResId, info);
     }
 
+    protected void showErrorView(int imageResId, String info, String refreshText) {
+        initErrorViewIfNeed();
+        mTipView.showError(imageResId, info, refreshText);
+    }
+
     protected void showLoadingView() {
         initErrorViewIfNeed();
         mTipView.showProgressBar();
@@ -55,19 +72,26 @@ public class BaseFragment extends Fragment {
     }
 
     private void initErrorViewIfNeed() {
+        if (mErrorTipViewStub == null) {
+            return;
+        }
         if (mTipView == null) {
             mTipView = (TipView) mErrorTipViewStub.inflate();
             mTipView.setRefreshNeedHide(mRefreshNeedHide);
             mTipView.setOnRefreshCallback(new TipView.OnRefreshClickCallBack() {
                 @Override
                 public void onRefreshClick() {
-                    doRefresh();
+                    BaseFragment.this.onRefreshClick();
                 }
             });
         }
     }
 
     protected void doRefresh() {
+
+    }
+
+    protected void onRefreshClick() {
 
     }
 }

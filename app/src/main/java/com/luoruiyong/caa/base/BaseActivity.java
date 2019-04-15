@@ -1,7 +1,6 @@
 package com.luoruiyong.caa.base;
 
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.view.ViewStub;
 
 import com.luoruiyong.caa.widget.TipView;
@@ -30,6 +29,11 @@ public class BaseActivity extends AppCompatActivity {
         mTipView.showError(imageResId, info);
     }
 
+    protected void showErrorView(int imageResId, String info, String refreshText) {
+        initErrorViewIfNeed();
+        mTipView.showError(imageResId, info, refreshText);
+    }
+
     protected void showLoadingView() {
         initErrorViewIfNeed();
         mTipView.showProgressBar();
@@ -47,13 +51,13 @@ public class BaseActivity extends AppCompatActivity {
             mTipView.setOnRefreshCallback(new TipView.OnRefreshClickCallBack() {
                 @Override
                 public void onRefreshClick() {
-                    doRefresh();
+                    doRefreshClick();
                 }
             });
         }
     }
 
-    protected void doRefresh() {
+    protected void doRefreshClick() {
 
     }
 }

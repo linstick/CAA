@@ -1,43 +1,34 @@
 package com.luoruiyong.caa.common.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.common.viewholder.DiscoverItemViewHolder;
 import com.luoruiyong.caa.eventbus.PullFinishEvent;
-import com.luoruiyong.caa.puller.ActivityPuller;
-import com.luoruiyong.caa.puller.DiscoverPuller;
-import com.luoruiyong.caa.puller.PullerHelper;
+import com.luoruiyong.caa.model.puller.DiscoverPuller;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
+import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.LogUtils;
 import com.luoruiyong.caa.utils.PageUtils;
-import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
-
-import static com.luoruiyong.caa.eventbus.PullFinishEvent.TYPE_LOAD_MORE_FAIL;
-import static com.luoruiyong.caa.eventbus.PullFinishEvent.TYPE_LOAD_MORE_SUCCESS;
-import static com.luoruiyong.caa.eventbus.PullFinishEvent.TYPE_REFRESH_FAIL;
-import static com.luoruiyong.caa.eventbus.PullFinishEvent.TYPE_REFRESH_SUCCESS;
-import static com.luoruiyong.caa.puller.ActivityPuller.TYPE_SEARCH;
-import static com.luoruiyong.caa.puller.DiscoverPuller.TYPE_TOPIC_HOT;
 
 /**
  * Author: luoruiyong
@@ -54,7 +45,9 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
     private int mTopicId = -1;
     private int mPosition = 0;
 
-    private DiscoverPuller mPuller;
+    public static SwipeDiscoverFragment newInstance() {
+        return newInstance(Config.PAGE_ID_DISCOVER_ALL);
+    }
 
     public static SwipeDiscoverFragment newInstance(int type) {
         SwipeDiscoverFragment fm = new SwipeDiscoverFragment();
@@ -67,7 +60,7 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
     public static SwipeDiscoverFragment newInstance(String keyword) {
         SwipeDiscoverFragment fm = new SwipeDiscoverFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt(KEY_TYPE, TYPE_SEARCH);
+        bundle.putInt(KEY_TYPE, Config.PAGE_ID_DISCOVER_SEARCH);
         bundle.putString(KEY_KEYWORD, keyword);
         fm.setArguments(bundle);
         return fm;
@@ -77,10 +70,10 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         SwipeDiscoverFragment fm = new SwipeDiscoverFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(KEY_TYPE, type);
-        if (type == DiscoverPuller.TYPE_OTHER_USER) {
+        if (type == Config.PAGE_ID_DISCOVER_OTHER_USER) {
             bundle.putInt(KEY_OTHER_UID, data);
-        } else if (type == TYPE_TOPIC_HOT
-                || type == DiscoverPuller.TYPE_TOPIC_LASTED) {
+        } else if (type == Config.PAGE_ID_ACTIVITY_TOPIC
+                || type == Config.PAGE_ID_DISCOVER_TOPIC) {
             bundle.putInt(KEY_TOPIC_ID, data);
         }
         fm.setArguments(bundle);
@@ -104,21 +97,26 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         handleArguments();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
     private void handleArguments() {
         Bundle bundle = getArguments();
         if (bundle != null) {
-            mType = bundle.getInt(KEY_TYPE, DiscoverPuller.TYPE_ALL);
-            if (mType == DiscoverPuller.TYPE_TOPIC_HOT
-                    || mType == DiscoverPuller.TYPE_TOPIC_LASTED) {
+            mPageId = bundle.getInt(KEY_TYPE, Config.PAGE_ID_DISCOVER_ALL);
+            if (mPageId == Config.PAGE_ID_ACTIVITY_TOPIC
+                    || mPageId == Config.PAGE_ID_DISCOVER_TOPIC) {
                 mTopicId = bundle.getInt(KEY_TOPIC_ID);
                 mPosition = bundle.getInt(KEY_ITEM_POSITION);
-            } else if (mType == DiscoverPuller.TYPE_SEARCH) {
+            } else if (mPageId == Config.PAGE_ID_DISCOVER_SEARCH) {
                 mKeyword = bundle.getString(KEY_KEYWORD);
-            } else if (mType == DiscoverPuller.TYPE_OTHER_USER) {
+            } else if (mPageId == Config.PAGE_ID_DISCOVER_OTHER_USER) {
                 mOtherUid = bundle.getInt(KEY_OTHER_UID, -1);
             }
-            if (mType != DiscoverPuller.TYPE_ALL) {
-                setCanRefresh(false);
+            if (mPageId != Config.PAGE_ID_DISCOVER_ALL && mPageId != Config.PAGE_ID_DISCOVER_SELF) {
+                setCanPullRefresh(false);
             }
         }
     }
@@ -128,42 +126,42 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         return new ListAdapter(list);
     }
 
-    private long getFirstItemTime() {
+    private String getFirstItemTime() {
         if (!ListUtils.isEmpty(mList)) {
             return mList.get(0).getPublishTime();
         }
-        return 0;
+        return Config.DEFAULT_TIME_STAMP;
     }
 
-    private long getLastItemTime() {
+    private String getLastItemTime() {
         if (!ListUtils.isEmpty(mList)) {
             return mList.get(mList.size() - 1).getPublishTime();
         }
-        return 0;
+        return Config.DEFAULT_TIME_STAMP;
     }
 
     @Override
     protected void doRefresh() {
-        LogUtils.d(TAG, "doRefresh: " + mType);
+        LogUtils.d(TAG, "doRefreshClick: " + mPageId);
         mRefreshLayout.setRefreshing(true);
-        switch (mType) {
-            case DiscoverPuller.TYPE_ALL:
-                mPuller.refreshAll(getFirstItemTime());
+        switch (mPageId) {
+            case Config.PAGE_ID_DISCOVER_ALL:
+                DiscoverPuller.refreshAll(getFirstItemTime());
                 break;
-            case DiscoverPuller.TYPE_SELF:
-                mPuller.refreshSelf(getFirstItemTime());
+            case Config.PAGE_ID_DISCOVER_SELF:
+                DiscoverPuller.refreshSelf(getFirstItemTime());
                 break;
-            case DiscoverPuller.TYPE_OTHER_USER:
-                mPuller.refreshOtherUser(mOtherUid, getFirstItemTime());
+            case Config.PAGE_ID_DISCOVER_OTHER_USER:
+                DiscoverPuller.refreshOtherUser(mOtherUid, getFirstItemTime());
                 break;
-            case DiscoverPuller.TYPE_SEARCH:
-                mPuller.refreshSearch(mKeyword);
+            case Config.PAGE_ID_DISCOVER_SEARCH:
+                DiscoverPuller.refreshSearch(mKeyword);
                 break;
-            case DiscoverPuller.TYPE_TOPIC_HOT:
-                mPuller.refreshTopicHot(mTopicId, getFirstItemTime());
+            case Config.PAGE_ID_ACTIVITY_TOPIC:
+                DiscoverPuller.refreshTopicHot(mTopicId, getFirstItemTime());
                 break;
-            case DiscoverPuller.TYPE_TOPIC_LASTED:
-                mPuller.refreshTopicLasted(mTopicId,getFirstItemTime());
+            case Config.PAGE_ID_DISCOVER_TOPIC:
+                DiscoverPuller.refreshTopicLasted(mTopicId,getFirstItemTime());
                 break;
             default:
                 LogUtils.d(TAG, "load more unknow type");
@@ -173,26 +171,28 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
 
     @Override
     protected void doLoadMore() {
-        LogUtils.d(TAG, "doRefresh: " + mType);
-        ((ListAdapter)mAdapter).showLoadMoreTip(getString(R.string.common_str_loading_more));
-        switch (mType) {
-            case DiscoverPuller.TYPE_ALL:
-                mPuller.loadMoreAll(getLastItemTime());
+        LogUtils.d(TAG, "doLoadMore: " + mPageId);
+        if (mAdapter instanceof LoadMoreSupportAdapter) {
+            ((LoadMoreSupportAdapter) mAdapter).setLoadMoreTip(getString(R.string.common_str_loading_more));
+        }
+        switch (mPageId) {
+            case Config.PAGE_ID_DISCOVER_ALL:
+                DiscoverPuller.loadMoreAll(getLastItemTime());
                 break;
-            case DiscoverPuller.TYPE_SELF:
-                mPuller.loadMoreSelf(getLastItemTime());
+            case Config.PAGE_ID_DISCOVER_SELF:
+                DiscoverPuller.loadMoreSelf(getLastItemTime());
                 break;
-            case DiscoverPuller.TYPE_OTHER_USER:
-                mPuller.loadMoreOtherUser(mOtherUid, getLastItemTime());
+            case Config.PAGE_ID_DISCOVER_OTHER_USER:
+                DiscoverPuller.loadMoreOtherUser(mOtherUid, getLastItemTime());
                 break;
-            case DiscoverPuller.TYPE_SEARCH:
-                mPuller.loadMoreSearch(mKeyword,getLastItemTime());
+            case Config.PAGE_ID_DISCOVER_SEARCH:
+                DiscoverPuller.loadMoreSearch(mKeyword,getLastItemTime());
                 break;
-            case DiscoverPuller.TYPE_TOPIC_HOT:
-                mPuller.loadMoreTopicHot(mTopicId, getLastItemTime());
+            case Config.PAGE_ID_ACTIVITY_TOPIC:
+                DiscoverPuller.loadMoreTopicHot(mTopicId, getLastItemTime());
                 break;
-            case DiscoverPuller.TYPE_TOPIC_LASTED:
-                mPuller.loadMoreTopicLasted(mTopicId,getLastItemTime());
+            case Config.PAGE_ID_DISCOVER_TOPIC:
+                DiscoverPuller.loadMoreTopicLasted(mTopicId,getLastItemTime());
                 break;
             default:
                 LogUtils.d(TAG, "load more unknow type");
@@ -200,70 +200,10 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onPullFinishEvent(PullFinishEvent event) {
-        switch (event.getType()) {
-            case TYPE_REFRESH_FAIL:
-                mRefreshLayout.setRefreshing(false);
-                String error = (String) event.getData();
-                if (TextUtils.equals(error, ResourcesUtils.getString(R.string.common_tip_no_network))) {
-                    if (ListUtils.isEmpty(mList)) {
-                        showErrorView(R.drawable.bg_no_network, error);
-                    } else {
-                        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    if (ListUtils.isEmpty(mList)) {
-                        showErrorView(R.drawable.bg_load_fail, error);
-                    } else {
-                        Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
-                    }
-                }
-                LogUtils.d(TAG, "refresh fail: " + event.getData());
-                break;
-            case TYPE_REFRESH_SUCCESS:
-                mRefreshLayout.setRefreshing(false);
-                if (mList == null) {
-                    // 首次拉取数据成功，设置到列表中
-                    mList = mPuller.getData(mType);
-                    mAdapter = getListAdapter(mList);
-                    mRecyclerView.setAdapter(mAdapter);
-                } else if (mType >= 0 && mType < ActivityPuller.TYPE_SELF) {
-                    // 非首次根据条件是否展示更新成功提示
-                    showTopTip((Integer) event.getData());
-                }
-                mAdapter.notifyDataSetChanged();
-                LogUtils.d(TAG, "refresh success: " + event.getData());
-                break;
-            case TYPE_LOAD_MORE_FAIL:
-                mIsLoadingMore = false;
-                mCanLoadMore = false;
-                ((ListAdapter) mAdapter).showLoadMoreTip(getString(R.string.common_str_load_fail));
-                mAdapter.notifyDataSetChanged();
-                LogUtils.d(TAG, "load more fail: " + event.getData());
-                break;
-            case TYPE_LOAD_MORE_SUCCESS:
-                mIsLoadingMore = false;
-                mCanLoadMore = true;
-                ((ListAdapter) mAdapter).showLoadMoreTip(getString(R.string.common_str_load_finish));
-                mAdapter.notifyDataSetChanged();
-                LogUtils.d(TAG, "load more success: " + event.getData());
-                break;
-            default:
-                break;
-        }
-    }
+    private class ListAdapter extends LoadMoreSupportAdapter<DiscoverData> implements View.OnClickListener, ImageViewLayout.OnImageClickListener{
 
-    private class ListAdapter extends LoadMoreSupportAdapter implements View.OnClickListener, ImageViewLayout.OnImageClickListener{
-
-        private List<DiscoverData> mList;
         public ListAdapter(List<DiscoverData> list) {
-            this.mList = list;
-        }
-
-        public void showLoadMoreTip(String text) {
-            setLoadMoreTip(text);
-            setOnLoadMoreClickListener(this);
+            super(list);
         }
 
         @NonNull
@@ -300,20 +240,6 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
                 holder.mCommentTv.setTag(position);
                 holder.mImageViewLayout.setTag(data);
             }
-        }
-
-        @Override
-        public int getItemCount() {
-            int count = ListUtils.getSize(mList);
-            return count == 0 ? 0 : count + 1;
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            if (ListUtils.getSize(mList) == position) {
-                return ITEM_TYPE_LOAD_MORE_TIP;
-            }
-            return ITEM_TYPE_NORMAL;
         }
 
         @Override
@@ -356,31 +282,30 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         @Override
         public void onImageClick(View parent, int position) {
             DiscoverData data = (DiscoverData) parent.getTag();
-            PictureBrowseActivity.startAction(getActivity(), data.getPictureList(), position, true);
+            PictureBrowseActivity.startAction(getActivity(), data.getPictureList(), position, false);
         }
     }
 
-    @Override
-    protected void onVisibleMaybeChange() {
-        super.onVisibleMaybeChange();
-        if (isVisibleToUser()) {
-            if (!EventBus.getDefault().isRegistered(this)) {
-                EventBus.getDefault().register(this);
-            }
-            if (mPuller == null) {
-                mPuller = (DiscoverPuller) PullerHelper.get(PullerHelper.TYPE_DISCOVER);
-            }
-            mList = mPuller.getData(mType);
-            if (mList != null) {
-                mAdapter = getListAdapter(mList);
-                mRecyclerView.setAdapter(mAdapter);
-            } else if (!mRefreshLayout.isRefreshing()) {
-                doRefresh();
-            }
-        } else {
-            if (EventBus.getDefault().isRegistered(this)) {
-                EventBus.getDefault().unregister(this);
-            }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPullFinishEvent(PullFinishEvent event) {
+        super.onPullFinishEvent(event);
+        if (mPosition < 1
+                || event.getTargetPage() != Config.PAGE_ID_DISCOVER_TOPIC
+                || event.getPullType() != Config.PULL_TYPE_REFRESH
+                || event.getCode() != Config.CODE_OK) {
+            return;
         }
+        // 第一次拉去数据成功，话题详情页需要滚动到对应的位置
+        mRecyclerView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Activity activity = getActivity();
+                if (activity != null && !activity.isFinishing())
+                handleScrollPosition(mPosition);
+                if (activity instanceof TopicActivity) {
+                    ((TopicActivity) activity).setAppBarExpanded(false);
+                }
+            }
+        }, 500);
     }
 }

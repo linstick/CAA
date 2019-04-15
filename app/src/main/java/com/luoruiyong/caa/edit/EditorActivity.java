@@ -26,6 +26,8 @@ public class EditorActivity extends BaseActivity implements View.OnClickListener
     public final static int BROWSE_PICTURE_REQUEST_CODE = 1;
     public final static int RELATE_TOPIC_REQUEST_CODE = 2;
     public final static int CHOOSE_LOCATION_REQUEST_CODE = 3;
+    public final static int CHOOSE_PICTURE_CODE = 4;
+
 
     private ImageView mBackIv;
     private TextView mTitleTv;

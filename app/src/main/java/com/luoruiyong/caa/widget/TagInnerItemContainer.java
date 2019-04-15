@@ -23,6 +23,7 @@ public class TagInnerItemContainer extends LinearLayout implements View.OnClickL
 
     private List<String> mItems;
     private int mMaxChildrenCount = DEFAULT_MAX_CHILDREN_COUNT;
+    private int mParentPosition;
     private OnItemClickListener mListener;
 
     public TagInnerItemContainer(Context context) {
@@ -59,7 +60,8 @@ public class TagInnerItemContainer extends LinearLayout implements View.OnClickL
         }
     }
 
-    public void setOnItemClickListener(OnItemClickListener listener) {
+    public void setOnItemClickListener(int parentPosition, OnItemClickListener listener) {
+        mParentPosition = parentPosition;
         mListener = listener;
     }
 
@@ -68,13 +70,13 @@ public class TagInnerItemContainer extends LinearLayout implements View.OnClickL
         switch (v.getId()) {
             case R.id.ll_item_container:
                 if (mListener != null) {
-                    mListener.onItemClick(this, (Integer) v.getTag());
+                    mListener.onItemClick(mParentPosition, (Integer) v.getTag());
                 }
                 break;
         }
     }
 
     public interface OnItemClickListener {
-        void onItemClick(View view, int position);
+        void onItemClick(int parentPosition, int position);
     }
 }

@@ -7,6 +7,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,19 +17,26 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseFragment;
-import com.luoruiyong.caa.bean.ActivitySimpleData;
+import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
+import com.luoruiyong.caa.eventbus.DetailFinishEvent;
+import com.luoruiyong.caa.model.CommonFetcher;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.KeyboardUtils;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,23 +70,25 @@ public class ActivityDetailFragment extends BaseFragment implements
     private AppBarLayout mAppBarLayout;
 
     private ActivityItemViewHolder mViewHolder;
-    private ActivitySimpleData mData;
+
+    private int mActivityId;
+    private ActivityData mData;
     private List<String> mTitleList;
     private List<Fragment> mFragmentList;
     private ViewPagerAdapter mAdapter;
 
     private int mInputType = INPUT_TYPE_COMMENT;
 
-    public static ActivityDetailFragment newInstance(long id) {
+    public static ActivityDetailFragment newInstance(int id) {
         ActivityDetailFragment fm = new ActivityDetailFragment();
         Bundle bundle = new Bundle();
-        bundle.putLong(KEY_DETAIL_PAGE_ID, id);
+        bundle.putInt(KEY_DETAIL_PAGE_ID, id);
         bundle.putInt(KEY_DETAIL_PAGE_TYPE, DETAIL_TYPE_ACTIVITY_ID);
         fm.setArguments(bundle);
         return fm;
     }
 
-    public static ActivityDetailFragment newInstance(ActivitySimpleData data, boolean isComment) {
+    public static ActivityDetailFragment newInstance(ActivityData data, boolean isComment) {
         ActivityDetailFragment fm = new ActivityDetailFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(KEY_DETAIL_PAGE_DATA, data);
@@ -97,6 +107,18 @@ public class ActivityDetailFragment extends BaseFragment implements
         handleArguments();
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initView(View rootView) {
@@ -127,6 +149,7 @@ public class ActivityDetailFragment extends BaseFragment implements
     }
 
     private void handleArguments() {
+        showLoadingView();
         Bundle bundle = getArguments();
         int type;
         if (bundle == null || (type = bundle.getInt(KEY_DETAIL_PAGE_TYPE, -1)) == -1) {
@@ -134,28 +157,24 @@ public class ActivityDetailFragment extends BaseFragment implements
             return;
         }
         if (type == DETAIL_TYPE_ACTIVITY_ID) {
-            // 联网拉数据，并展示加载UI
-
-            // 模拟
-            showLoadingView();
-            mCommentInputEt.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    hideTipView();
-                    mData = new ActivitySimpleData(0, 1);
-                    mViewHolder.bindData(mData, -1);
-                    initFragment();
-                }
-            }, 2000);
-
+            if ((mActivityId = bundle.getInt(KEY_DETAIL_PAGE_ID, -1)) == -1) {
+                getActivity().finish();
+                return;
+            }
+            // 联网获取活动详情数据
+            CommonFetcher.doFetchActivityDetail(mActivityId);
         } else {
-            mData = (ActivitySimpleData) bundle.getSerializable(KEY_DETAIL_PAGE_DATA);
-            mViewHolder.bindData(mData, -1);
+            if ((mData = (ActivityData) bundle.getSerializable(KEY_DETAIL_PAGE_DATA)) == null) {
+                getActivity().finish();
+                return;
+            }
+            hideTipView();
+            mViewHolder.bindData(mData);
+            bindExtrasInfo();
             initFragment();
-            if ( bundle.getBoolean(KEY_DETAIL_PAGE_BROWSE_COMMENT, false)) {
+            if (bundle.getBoolean(KEY_DETAIL_PAGE_BROWSE_COMMENT, false)) {
                 toggleCommentBar();
             }
-            // 联网拉取其他数据，但不需要展示加载UI
         }
     }
 
@@ -164,9 +183,9 @@ public class ActivityDetailFragment extends BaseFragment implements
         mFragmentList = new ArrayList<>();
 
         mTitleList.add(String.format(getString(R.string.activity_detail_str_comment), mData.getCommentCount()));
-        mFragmentList.add(CommentFragment.newInstance(CommentFragment.TYPE_ACTIVITY_COMMENT));
+        mFragmentList.add(CommentFragment.newInstance(Config.PAGE_ID_ACTIVITY_COMMENT, mData.getId()));
         mTitleList.add(String.format(getString(R.string.activity_detail_str_addition), mData.getAdditionCount()));
-        mFragmentList.add(AdditionFragment.newInstance(mData.getUid()));
+        mFragmentList.add(AdditionFragment.newInstance(mData.getUid(), mData.getId()));
 
         mAdapter = new ViewPagerAdapter(getChildFragmentManager(), mFragmentList, mTitleList);
         mViewPager.setAdapter(mAdapter);
@@ -199,24 +218,29 @@ public class ActivityDetailFragment extends BaseFragment implements
             }
         });
         mTabLayout.setupWithViewPager(mViewPager);
-
-        // 模拟拉取额外的数据
-        mCommentInputEt.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                bindExtrasInfo();
-            }
-        }, 1200);
     }
 
     private void bindExtrasInfo() {
-        // for test
-        mExtrasRootView.setVisibility(View.VISIBLE);
-        for (int i = 0; i < 3; i++) {
+        if (!TextUtils.isEmpty(mData.getHost())) {
             View view = LayoutInflater.from(getContext()).inflate(R.layout.item_extras_list, mExtrasContainer, false);
-            ((TextView)view.findViewById(R.id.tv_label)).setText("extra" + (i + 1));
-            ((TextView)view.findViewById(R.id.tv_value)).setText("value" + (i + 1));
+            ((TextView)view.findViewById(R.id.tv_label)).setText(getString(R.string.activity_detail_str_host));
+            ((TextView)view.findViewById(R.id.tv_value)).setText(mData.getHost());
             mExtrasContainer.addView(view);
+        }
+        if (!TextUtils.isEmpty(mData.getTime())) {
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.item_extras_list, mExtrasContainer, false);
+            ((TextView)view.findViewById(R.id.tv_label)).setText(getString(R.string.activity_detail_str_time));
+            ((TextView)view.findViewById(R.id.tv_value)).setText(mData.getTime());
+            mExtrasContainer.addView(view);
+        }
+        if (!TextUtils.isEmpty(mData.getAddress())) {
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.item_extras_list, mExtrasContainer, false);
+            ((TextView)view.findViewById(R.id.tv_label)).setText(getString(R.string.activity_detail_str_address));
+            ((TextView)view.findViewById(R.id.tv_value)).setText(mData.getAddress());
+            mExtrasContainer.addView(view);
+        }
+        if (mExtrasContainer.getChildCount() > 0) {
+            mExtrasRootView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -262,7 +286,7 @@ public class ActivityDetailFragment extends BaseFragment implements
 
     @Override
     public void onImageClick(View parent, int position) {
-        PictureBrowseActivity.startAction(getActivity(), mData.getPictureList(), position, true);
+        PictureBrowseActivity.startAction(getActivity(), mData.getPictureList(), position);
     }
 
     private void toggleCommentBar() {
@@ -273,6 +297,27 @@ public class ActivityDetailFragment extends BaseFragment implements
             mCommentBarLayout.setVisibility(View.VISIBLE);
             mCommentInputEt.requestFocus();
             KeyboardUtils.showKeyboard(mCommentInputEt);
+        }
+    }
+
+    @Override
+    protected void doRefresh() {
+        showLoadingView();
+        CommonFetcher.doFetchActivityDetail(mActivityId);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDetailFinishEvent(DetailFinishEvent<ActivityData> event) {
+        hideTipView();
+        if (event.getCode() == Config.CODE_OK) {
+            mData = event.getData();
+            mViewHolder.bindData(mData);
+            bindExtrasInfo();
+            initFragment();
+        } else if (event.getCode() == Config.CODE_NO_DATA) {
+            showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_data));
+        } else if (event.getCode() == Config.CODE_NETWORK_ERROR) {
+            showErrorView(R.drawable.bg_no_network, getString(R.string.common_tip_no_network));
         }
     }
 }

@@ -77,7 +77,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserIt
         public void bindData(User user) {
 //            mBackgroundIv.setImageUrl(user.getAvatar());
 //            mUserAvatarIv.setImageUrl(user.getAvatar());
-            mNicknameTv.setText(user.getNickName());
+            mNicknameTv.setText(user.getNickname());
             mIntroduceTv.setText(user.getDescription());
         }
     }

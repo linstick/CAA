@@ -1,7 +1,10 @@
 package com.luoruiyong.caa.bean;
 
+import com.luoruiyong.caa.Config;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -10,10 +13,10 @@ import java.util.List;
  **/
 public class DiscoverData implements Serializable{
     private int uid;
-    private long id;
+    private int id;
     private String avatarUrl;
     private String nickname;
-    private long publishTime;
+    private String publishTime;
     private String college;
     private String content;
     private String location;
@@ -21,6 +24,7 @@ public class DiscoverData implements Serializable{
     private int topicId;
     private int likeCount;
     private int commentCount;
+    private boolean hasLike;
     private List<String> pictureList;
 
 
@@ -30,7 +34,7 @@ public class DiscoverData implements Serializable{
         id = 10000 + i;
         avatarUrl = "https://www.baidu.com/1.jpg";
         nickname = "nickname " + i;
-        publishTime = System.currentTimeMillis();
+        publishTime = Config.DEFAULT_TIME_STAMP;
         content = "This is the content of activity, long long long long long long long long long sentence!!! " + i;
         college = Math.random() > 0.5 ? "Guangdong University Of Technology " + i : null;
         location = Math.random() > 0.5 ? "Guangdong·Guangzhou " + i : null;
@@ -45,11 +49,11 @@ public class DiscoverData implements Serializable{
         }
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -77,11 +81,11 @@ public class DiscoverData implements Serializable{
         this.nickname = nickname;
     }
 
-    public long getPublishTime() {
+    public String getPublishTime() {
         return publishTime;
     }
 
-    public void setPublishTime(long publishTime) {
+    public void setPublishTime(String publishTime) {
         this.publishTime = publishTime;
     }
 
@@ -147,5 +151,13 @@ public class DiscoverData implements Serializable{
 
     public void setPictureList(List<String> pictureList) {
         this.pictureList = pictureList;
+    }
+
+    public boolean isHasLike() {
+        return hasLike;
+    }
+
+    public void setHasLike(boolean hasLike) {
+        this.hasLike = hasLike;
     }
 }

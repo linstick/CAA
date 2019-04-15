@@ -16,9 +16,9 @@ import android.widget.Toast;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseFragment;
-import com.luoruiyong.caa.bean.ActivitySimpleData;
+import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.bean.DiscoverData;
-import com.luoruiyong.caa.bean.TopicSimpleData;
+import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.search.adapter.CompositeListAdapter;
@@ -48,8 +48,8 @@ public class CompositeFragment extends BaseFragment {
 
     private String mKeyword;
     private List<User> mUserList;
-    private List<ActivitySimpleData> mActivityList;
-    private List<TopicSimpleData> mTopicList;
+    private List<ActivityData> mActivityList;
+    private List<TopicData> mTopicList;
     private List<DiscoverData> mDiscoverList;
     private List<String> mItemMoreStringArray;
 
@@ -121,8 +121,8 @@ public class CompositeFragment extends BaseFragment {
             public void run() {
                 for (int i = 0; i < MAX_ITEM_COUNT_OF_ONE_TYPE; i++) {
                     mUserList.add(new User());
-                    mActivityList.add(new ActivitySimpleData(i, (int) (Math.random() * 6) + 1));
-                    mTopicList.add(new TopicSimpleData(i));
+                    mActivityList.add(new ActivityData(i, (int) (Math.random() * 6) + 1));
+                    mTopicList.add(new TopicData(i));
                     mDiscoverList.add(new DiscoverData(i));
                 }
                 mAdapter.notifyDataSetChanged();
@@ -165,7 +165,7 @@ public class CompositeFragment extends BaseFragment {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag();
-            ActivitySimpleData data = mActivityList.get(position);
+            ActivityData data = mActivityList.get(position);
             switch (v.getId()) {
                 case R.id.ll_item_layout:
                     PageUtils.gotoActivityDetailPage(getContext(), data);
@@ -193,8 +193,8 @@ public class CompositeFragment extends BaseFragment {
 
         @Override
         public void onImageClick(View parent, int position) {
-            ActivitySimpleData data = (ActivitySimpleData) parent.getTag();
-            PictureBrowseActivity.startAction(getActivity(), data.getPictureList(), position, true);
+            ActivityData data = (ActivityData) parent.getTag();
+            PictureBrowseActivity.startAction(getActivity(), data.getPictureList(), position, false);
         }
     }
 
@@ -203,7 +203,7 @@ public class CompositeFragment extends BaseFragment {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag();
-            TopicSimpleData data = mTopicList.get(position);
+            TopicData data = mTopicList.get(position);
             switch (v.getId()) {
                 case R.id.ll_item_layout:
                     PageUtils.gotoTopicPage(getContext(), data.getId());
@@ -217,9 +217,9 @@ public class CompositeFragment extends BaseFragment {
         }
 
         @Override
-        public void onItemClick(View view, int position) {
-            TopicSimpleData data = mTopicList.get(position);
-            PageUtils.gotoTopicPage(getContext(), data.getId(), position);
+        public void onItemClick(int parentPosition, int position) {
+            TopicData data = mTopicList.get(parentPosition);
+            PageUtils.gotoTopicPage(getContext(), data, position);
         }
     }
 
@@ -257,7 +257,7 @@ public class CompositeFragment extends BaseFragment {
         @Override
         public void onImageClick(View parent, int position) {
             DiscoverData data = (DiscoverData) parent.getTag();
-            PictureBrowseActivity.startAction(getActivity(), data.getPictureList(), position, true);
+            PictureBrowseActivity.startAction(getActivity(), data.getPictureList(), position, false);
         }
     }
 

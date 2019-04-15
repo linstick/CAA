@@ -7,15 +7,16 @@ import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
-import com.luoruiyong.caa.bean.ActivitySimpleData;
+import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
 public class ActivityItemViewHolder extends RecyclerView.ViewHolder {
 
-    public ImageView mUserAvatarIv;
+    public SimpleDraweeView mUserAvatarIv;
     public TextView mNicknameTv;
     public TextView mPublishTimeTv;
     public TextView mActivityTypeTv;
@@ -46,10 +47,14 @@ public class ActivityItemViewHolder extends RecyclerView.ViewHolder {
         mExtrasVs = itemView.findViewById(R.id.vs_activity_extras);
     }
 
-    public void bindData(ActivitySimpleData data, int type) {
-//                mUserAvatarIv.setImageUrl(data.getAvatarUrl());
+    public void bindData(ActivityData data) {
+        bindData(data, -1);
+    }
+
+    public void bindData(ActivityData data, int type) {
+        mUserAvatarIv.setImageURI(data.getAvatarUrl());
         mNicknameTv.setText(data.getNickname());
-//                mPublishTimeTv.setText(data.getPublishTime());
+        mPublishTimeTv.setText(data.getPublishTime());
 
         if (data.getType() != type) {
             mActivityTypeTv.setText(Enviroment.getActivityTypeNameById(data.getType()));
@@ -70,6 +75,7 @@ public class ActivityItemViewHolder extends RecyclerView.ViewHolder {
         }
 
         mCollectTv.setText(data.getCollectCount() == 0 ? ResourcesUtils.getString(R.string.common_str_collect) : data.getCollectCount() + "");
+        mCollectTv.setSelected(data.isHasCollect());
         mCommentTv.setText(data.getCommentCount() == 0 ? ResourcesUtils.getString(R.string.common_str_comment) : data.getCommentCount() + "");
 
         mImageViewLayout.setPictureUrls(data.getPictureList());

@@ -1,38 +1,47 @@
 package com.luoruiyong.caa.bean;
 
+import com.luoruiyong.caa.Config;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 /**
  * Author: luoruiyong
- * Date: 2019/4/10/010
- * Description:
+ * Date: 2019/3/17/017
  **/
-public class TopicData {
-    private int id;
+public class TopicData implements Serializable{
     private int uid;
-    private String avatarUrl;
     private String nickname;
-    private String coverUrl;
+    private String avatarUrl;
+    private int id;
     private String name;
+    private String coverUrl;
     private String introduction;
-    private int joinedCount;
-    private int visitedCount;
+    private int visitCount;
+    private int joinCount;
+    private String publishTime;
+
+    private List<DiscoverData> discoverList;
+
+    public TopicData(int i) {
+        uid = 1000 + i;
+        id = 1000 + i;
+        publishTime = Config.DEFAULT_TIME_STAMP;
+        name = "#Topic" + (i + 1) + "#";
+        coverUrl = "https:www.baidu.com/1.jpg";
+        visitCount = (int)(Math.random() * 100);
+        joinCount = (int)(Math.random() * 100);
+
+        discoverList = new ArrayList<>();
+        int count = (int) (Math.random() * 9);
+        for (int j = 0; j < count; j++) {
+            discoverList.add(new DiscoverData(i));
+        }
+    }
 
     public TopicData() {
-        id = 1001;
-        uid = 1000;
-        avatarUrl = "https://www.baidu.com";
-        nickname = "会飞的猪";
-        name = "都挺好";
-        introduction = "这是话题导语部分，它可能是很长很长的一段文字";
-        joinedCount = (int) (Math.random() * 100);
-        visitedCount = (int) (Math.random() * 100);
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public int getUid() {
@@ -43,14 +52,6 @@ public class TopicData {
         this.uid = uid;
     }
 
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
-
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-    }
-
     public String getNickname() {
         return nickname;
     }
@@ -59,20 +60,12 @@ public class TopicData {
         this.nickname = nickname;
     }
 
-    public String getCoverUrl() {
-        return coverUrl;
+    public String getAvatarUrl() {
+        return avatarUrl;
     }
 
-    public void setCoverUrl(String coverUrl) {
-        this.coverUrl = coverUrl;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     public String getIntroduction() {
@@ -83,19 +76,63 @@ public class TopicData {
         this.introduction = introduction;
     }
 
-    public int getJoinedCount() {
-        return joinedCount;
+    public int getVisitCount() {
+        return visitCount;
     }
 
-    public void setJoinedCount(int joinedCount) {
-        this.joinedCount = joinedCount;
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCoverUrl() {
+        return coverUrl;
+    }
+
+    public void setCoverUrl(String coverUrl) {
+        this.coverUrl = coverUrl;
     }
 
     public int getVisitedCount() {
-        return visitedCount;
+        return visitCount;
     }
 
-    public void setVisitedCount(int visitedCount) {
-        this.visitedCount = visitedCount;
+    public void setVisitCount(int visitCount) {
+        this.visitCount = visitCount;
+    }
+
+    public int getJoinCount() {
+        return joinCount;
+    }
+
+    public void setJoinCount(int joinCount) {
+        this.joinCount = joinCount;
+    }
+
+    public List<DiscoverData> getDiscoverList() {
+        return discoverList;
+    }
+
+    public void setDiscoverList(List<DiscoverData> discoverList) {
+        this.discoverList = discoverList;
+    }
+
+    public String getPublishTime() {
+        return publishTime;
+    }
+
+    public void setPublishTime(String publishTime) {
+        this.publishTime = publishTime;
     }
 }

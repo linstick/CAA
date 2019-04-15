@@ -1,40 +1,42 @@
 package com.luoruiyong.caa.eventbus;
 
+import java.util.List;
+
 /**
  * Author: luoruiyong
  * Date: 2019/4/10/010
  * Description:
  **/
-public class PullFinishEvent {
+public class PullFinishEvent<T> extends BaseResponseEvent {
 
-    public final static int TYPE_REFRESH_FAIL = 0;
-    public final static int TYPE_REFRESH_SUCCESS = 1;
-    public final static int TYPE_LOAD_MORE_FAIL = 2;
-    public final static int TYPE_LOAD_MORE_SUCCESS = 3;
-
-    private int type;
-    private Object data;
+    private int targetPage;
+    private int pullType;
+    private List<T> data;
 
     public PullFinishEvent() {
     }
 
-    public PullFinishEvent(int type) {
-        this.type = type;
+    public int getTargetPage() {
+        return targetPage;
     }
 
-    public int getType() {
-        return type;
+    public void setTargetPage(int targetPage) {
+        this.targetPage = targetPage;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public int getPullType() {
+        return pullType;
     }
 
-    public Object getData() {
+    public void setPullType(int pullType) {
+        this.pullType = pullType;
+    }
+
+    public List<T> getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(List<T> data) {
         this.data = data;
     }
 }

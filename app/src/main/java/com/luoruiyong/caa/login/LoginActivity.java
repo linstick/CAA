@@ -1,5 +1,6 @@
 package com.luoruiyong.caa.login;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,9 +13,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
+import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
+import com.luoruiyong.caa.bean.User;
+import com.luoruiyong.caa.common.dialog.CommonDialog;
+import com.luoruiyong.caa.eventbus.CommonEvent;
+import com.luoruiyong.caa.eventbus.LoginStateChangedEvent;
+import com.luoruiyong.caa.eventbus.UserFinishEvent;
+import com.luoruiyong.caa.model.CommonPoster;
+import com.luoruiyong.caa.utils.DialogHelper;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import static com.luoruiyong.caa.eventbus.UserFinishEvent.TYPE_LOGIN;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
@@ -26,13 +42,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     private ImageView mBackIv;
     private TextView mTitleTv;
     private TextView mCancelTv;
+    private Dialog mLoadingDialog;
 
     private String mCurTab;
+    private boolean mHasCancelLogin = true;
+    private boolean mHasCancelSignUp = true;
 
-    public static void startAction(Context context, String whichTab) {
-        Intent intent = new Intent(context, LoginActivity.class);
+    public static void startAction(Context activity, String whichTab) {
+        Intent intent = new Intent(activity, LoginActivity.class);
         intent.putExtra(KEY_TAB, whichTab);
-        context.startActivity(intent);
+        activity.startActivity(intent);
     }
 
     @Override
@@ -43,6 +62,18 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         initView();
 
         handleIntent();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initView() {
@@ -105,16 +136,25 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     }
 
     public void doLogin(String account, String password) {
-        Toast.makeText(this, "doLogin", Toast.LENGTH_SHORT).show();
-
-        // for test
-        Enviroment.createVirtualUser();
-        Toast.makeText(this, "doLogin", Toast.LENGTH_SHORT).show();
-        finish();
+        mHasCancelLogin = false;
+        mLoadingDialog = DialogHelper.showLoadingDialog(this, getString(R.string.fm_login_str_on_login), false, new CommonDialog.Builder.OnClickListener() {
+            @Override
+            public void onClick(String extras) {
+                mHasCancelLogin = true;
+            }
+        });
+        CommonPoster.doLogin(account, password);
     }
 
-    public void doSignUp(String cellPhoneNumber, String nickname, String password) {
-        Toast.makeText(this, "doSignUp", Toast.LENGTH_SHORT).show();
+    public void doSignUp(String account, String nickname, String password) {
+        mHasCancelSignUp = false;
+        mLoadingDialog = DialogHelper.showLoadingDialog(this, getString(R.string.fm_login_str_on_sign_up), false, new CommonDialog.Builder.OnClickListener() {
+            @Override
+            public void onClick(String extras) {
+                mHasCancelSignUp = true;
+            }
+        });
+        CommonPoster.doSignUp(account, nickname, password);
     }
 
     public void doRequestCode(String cellPhoneNumber) {
@@ -123,10 +163,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
     public void doVerifyAuth(String cellPhoneNumber, String code) {
         Toast.makeText(this, "doVerifyAuth", Toast.LENGTH_SHORT).show();
-    }
-
-    public void doFetchAvatar(String account) {
-        Toast.makeText(this, "doFetchAvatar", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -147,6 +183,65 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             updateFragment(LOGIN_TAB);
         } else {
             finish();
+        }
+    }
+
+    private void hideLoadingDialog() {
+        if (mLoadingDialog != null && mLoadingDialog.isShowing()) {
+            mLoadingDialog.dismiss();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommonEvent(CommonEvent<User> event) {
+        switch (event.getType()) {
+            case LOGIN:
+                if (mHasCancelLogin) {
+                    // 用户已经取消登录，不处理结果
+                    return;
+                }
+                hideLoadingDialog();
+                if (event.getCode() == Config.CODE_OK) {
+                    Enviroment.setCurUser(event.getData());
+                    EventBus.getDefault().postSticky(LoginStateChangedEvent.LOGIN_SUCCESS);
+                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_login_tip_login_success, Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(this, event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case SIGN_UP:
+                if (mHasCancelSignUp) {
+                    // 用户已经点击了取消注册，如果这时接收到注册成功结果，
+                    // 这时需要把刚刚注册的用户删除掉
+                    if (event.getCode() == Config.CODE_OK) {
+                        User user = event.getData();
+                        CommonPoster.doSignOut(user.getUid());
+                    }
+                    return;
+                }
+                hideLoadingDialog();
+                if (event.getCode() == Config.CODE_OK) {
+                    // 注册成功，顺便帮用户登录
+                    Enviroment.setCurUser(event.getData());
+                    EventBus.getDefault().postSticky(LoginStateChangedEvent.LOGIN_SUCCESS);
+                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_sign_tip_sign_up_success, Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(this, event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case FETCH_AVATAR:
+
+                break;
+            case CHECK_ACCOUNT:
+
+                break;
+            case MODIFY_PASSWORD:
+
+                break;
+            default:
+                break;
         }
     }
 }

@@ -72,7 +72,7 @@ public class EditBasicInfoActivity extends BaseActivity implements View.OnClickL
 
         info = new UserBasicMap();
         info.setLabel(getString(R.string.common_str_nickname));
-        info.setValue(mCurUser.getNickName());
+        info.setValue(mCurUser.getNickname());
         mList.add(info);
 
         info = new UserBasicMap();

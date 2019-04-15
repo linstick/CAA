@@ -1,6 +1,9 @@
 package com.luoruiyong.caa.bean;
 
+import com.luoruiyong.caa.Config;
+
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Author: luoruiyong
@@ -11,7 +14,7 @@ public class CommentData implements Serializable{
     private int uid;
     private String avatarUrl;
     private String nickname;
-    private long publishTime;
+    private String publishTime;
     private String content;
 
     public CommentData(int i) {
@@ -19,7 +22,7 @@ public class CommentData implements Serializable{
         uid = 1000 + i;
         avatarUrl = "https://www.baidu.com/1.jpg";
         nickname = "昵称" + i;
-        publishTime = System.currentTimeMillis();
+        publishTime = Config.DEFAULT_TIME_STAMP;
         content = "This is the content of comment " + i;
     }
 
@@ -55,11 +58,11 @@ public class CommentData implements Serializable{
         this.nickname = nickname;
     }
 
-    public long getPublishTime() {
+    public String getPublishTime() {
         return publishTime;
     }
 
-    public void setPublishTime(long publishTime) {
+    public void setPublishTime(String publishTime) {
         this.publishTime = publishTime;
     }
 

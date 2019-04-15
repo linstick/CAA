@@ -1,15 +1,21 @@
 package com.luoruiyong.caa.edit;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.bean.ImageBean;
+import com.luoruiyong.caa.utils.PictureUtils;
 import com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
@@ -31,7 +37,7 @@ public class CreateTopicFragment extends BaseCreateFragment implements
     private DynamicInputView mCoverInputView;
 
     private List<DynamicInputView> mCheckEmptyList;
-    private List<String> mPictureUrls;
+    private List<ImageBean> mTopicCoverList;
 
     @Nullable
     @Override
@@ -58,11 +64,17 @@ public class CreateTopicFragment extends BaseCreateFragment implements
         mCheckEmptyList.add(mNameInputView);
         mCheckEmptyList.add(mIntroduceInputView);
         mCheckEmptyList.add(mCoverInputView);
+
+        mTopicCoverList = new ArrayList<>();
+        mCoverInputView.setPictureDataList(mTopicCoverList);
     }
 
-    private void chooseCoverImage() {
-        // 选择话题封面图片
-
+    @Override
+    protected void onStoragePermissionGranted() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_CHOOSE_COVER_CODE);
     }
 
     @Override
@@ -98,18 +110,31 @@ public class CreateTopicFragment extends BaseCreateFragment implements
     @Override
     public void onImageClick(View parent, int position) {
         // 选择封面图片
-        chooseCoverImage();
+        requestStoragePermission();
     }
 
     @Override
     public void onContentViewClick(View v) {
-        if (Enviroment.VAR_DEBUG) {
-            // for test
-            mPictureUrls = new ArrayList<>();
-            mPictureUrls.add("htpps://www.baidu.com/1.jpg");
-            mCoverInputView.setPictureUrls(mPictureUrls);
-        } else {
-            chooseCoverImage();
+        requestStoragePermission();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            switch (requestCode) {
+                case REQUEST_CHOOSE_COVER_CODE:
+                    Uri uri = data.getData();
+                    String path = PictureUtils.getPath(getContext(), uri);
+                    ImageBean imageBean = new ImageBean();
+                    imageBean.setType(ImageBean.TYPE_LOCAL_FILE);
+                    imageBean.setPath(path);
+                    mTopicCoverList.clear();
+                    mTopicCoverList.add(imageBean);
+                    mCoverInputView.notifyInputDataChanged();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

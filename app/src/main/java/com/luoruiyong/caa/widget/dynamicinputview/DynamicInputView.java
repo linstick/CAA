@@ -16,12 +16,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.bean.ImageBean;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.utils.KeyboardUtils;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -62,7 +64,7 @@ public class DynamicInputView extends LinearLayout implements
     private OnFocusLostOrTextChangeListener mOnFocusLostOrTextChangeListener;
 
     private int mSelectedItem = -1;
-    private List<String> mPictureUrls;
+    private List<ImageBean> mPictureDataList;
     private boolean mIsSpread = false;
 
     private TextView mLabelTv;
@@ -129,7 +131,7 @@ public class DynamicInputView extends LinearLayout implements
         boolean showError = false;
         if (!mNullable) {
             if (mType == TYPE_IMAGE) {
-                showError = ListUtils.isEmpty(mPictureUrls);
+                showError = ListUtils.isEmpty(mPictureDataList);
             } else {
                 showError = TextUtils.isEmpty(getInputText());
             }
@@ -154,7 +156,7 @@ public class DynamicInputView extends LinearLayout implements
         return isEmpty;
     }
     public boolean isImageEmpty() {
-        return mIgnoreLastImageItem ? ListUtils.getSize(mPictureUrls) <= 1 : ListUtils.getSize(mPictureUrls) == 0;
+        return mIgnoreLastImageItem ? ListUtils.getSize(mPictureDataList) <= 1 : ListUtils.getSize(mPictureDataList) == 0;
     }
 
     public boolean isInputEmpty() {
@@ -170,9 +172,21 @@ public class DynamicInputView extends LinearLayout implements
         return mInputEt.getText().toString().trim();
     }
 
+    public void setPictureDataList(List<ImageBean> list) {
+        mPictureDataList = list;
+        mImageViewLayout.setPictureDataList(list);
+        notifyInputDataChanged();
+    }
+
     public void setPictureUrls(List<String> urls) {
-        mPictureUrls = urls;
-        mImageViewLayout.setPictureUrls(urls);
+        List<ImageBean> list = new ArrayList<>();
+        if (urls != null) {
+            for (String url : urls) {
+                list.add(new ImageBean(url));
+            }
+        }
+        mPictureDataList = list;
+        mImageViewLayout.setPictureDataList(mPictureDataList);
         notifyInputDataChanged();
     }
 
@@ -190,7 +204,7 @@ public class DynamicInputView extends LinearLayout implements
     }
 
     public List<String> getPictureUrls() {
-        return mPictureUrls;
+        return mImageViewLayout.getPictureUrls();
     }
 
     public void setSpinnerSelectedItem(int position) {
@@ -450,7 +464,7 @@ public class DynamicInputView extends LinearLayout implements
                 if (mType == TYPE_IMAGE) {
                     setViewVisibleStatus(mInputContainerLl, GONE);
                 }
-                setViewVisibleStatus(mImageViewLayout, ListUtils.isEmpty(mPictureUrls) ? GONE : VISIBLE);
+                setViewVisibleStatus(mImageViewLayout, ListUtils.isEmpty(mPictureDataList) ? GONE : VISIBLE);
             }
             mIsSpread = true;
         }

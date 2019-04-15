@@ -2,6 +2,7 @@ package com.luoruiyong.caa.edit;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,11 +14,13 @@ import android.widget.Toast;
 
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.bean.ImageBean;
 import com.luoruiyong.caa.edit.EditorActivity.OnActionBarClickListener;
 import com.luoruiyong.caa.location.LocationActivity;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicSearchActivity;
 import com.luoruiyong.caa.utils.ListUtils;
+import com.luoruiyong.caa.utils.PictureUtils;
 import com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
@@ -42,11 +45,12 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
     private View mRelateTopicExtrasContainer;
 
     private List<DynamicInputView> mCheckEmptyList;
-    private List<String> mPictureUrls;
-    private List<String> mTopicCoverUrls;
+    private List<ImageBean> mPictureDataList;
+    private List<ImageBean> mTopicCoverList;
 
     private int mRelateTopicId;
     private int mRelateTopicType = TopicSearchActivity.RELATE_TOPIC_TYPE_NONE;
+    private int mChoosePictureRequestCode = -1;
 
     @Nullable
     @Override
@@ -73,11 +77,12 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
         mCheckEmptyList.add(mRelatedTopicInputView);
         mCheckEmptyList.add(mLocationInputView);
 
-        if (Enviroment.VAR_DEBUG) {
-            mPictureUrls = new ArrayList<>();
-            mPictureUrls.add("https://www.baidu.com/1.jpg");
-            mContentInputView.setPictureUrls(mPictureUrls);
-        }
+        ImageBean imageBean = new ImageBean();
+        imageBean.setType(ImageBean.TYPE_RESOURCE_ID);
+        imageBean.setResId(R.drawable.bg_choose_picture);
+        mPictureDataList = new ArrayList<>();
+        mPictureDataList.add(imageBean);
+        mContentInputView.setPictureDataList(mPictureDataList);
     }
 
     private void inflateRelateTopicExtras() {
@@ -91,9 +96,13 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
         mTopicCoverInputView.setOnImageClickListener(new ImageViewLayout.OnImageClickListener() {
             @Override
             public void onImageClick(View parent, int position) {
-
+                mChoosePictureRequestCode = REQUEST_CHOOSE_COVER_CODE;
+                requestStoragePermission();
             }
         });
+
+        mTopicCoverList = new ArrayList<>();
+        mTopicCoverInputView.setPictureDataList(mTopicCoverList);
 
         mTopicCoverInputView.setOnContentViewClickListener(this);
         mTopicCoverInputView.setSupportAllChildDelete(true);
@@ -107,8 +116,8 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
             return;
         }
         mIntroduceInputView.setInputText(null);
-        mTopicCoverUrls = null;
-        mTopicCoverInputView.setPictureUrls(null);
+        mTopicCoverList.clear();
+        mTopicCoverInputView.notifyInputDataChanged();
     }
 
     private void handleChooseRelateTopicResult(Intent data) {
@@ -131,6 +140,22 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
             }
         }
         mRelatedTopicInputView.setInputText(topicName);
+    }
+
+    @Override
+    protected void onStoragePermissionGranted() {
+        if (mChoosePictureRequestCode == -1) {
+            return;
+        }
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        startActivityForResult(intent, mChoosePictureRequestCode);
+    }
+
+    @Override
+    protected void onLocationPermissionGranted() {
+        startActivityForResult(new Intent(getContext(), LocationActivity.class), EditorActivity.CHOOSE_LOCATION_REQUEST_CODE);
     }
 
     @Override
@@ -168,10 +193,8 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
                 startActivityForResult(new Intent(getContext(), LocationActivity.class), EditorActivity.CHOOSE_LOCATION_REQUEST_CODE);
                 break;
             case R.id.input_view_topic_cover:
-                // for test
-                mTopicCoverUrls = new ArrayList<>();
-                mTopicCoverUrls.add("htpps://www.baidu.com/1.jpg");
-                mTopicCoverInputView.setPictureUrls(mTopicCoverUrls);
+                mChoosePictureRequestCode = REQUEST_CHOOSE_COVER_CODE;
+                requestStoragePermission();
                 break;
             default:
                 break;
@@ -180,22 +203,17 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
 
     @Override
     public void onImageClick(View parent, int position) {
-        if (position + 1 == mPictureUrls.size()) {
+        if (position + 1 == mPictureDataList.size()) {
             // 添加图片
-            // for test
-            if (Enviroment.VAR_DEBUG) {
-                Toast.makeText(getContext(), "选择图片添加", Toast.LENGTH_SHORT).show();
-                mPictureUrls.add(mPictureUrls.size() - 1, "https://www.baidu.com/1.jpg");
-                mContentInputView.notifyInputDataChanged();
-            }
+            mChoosePictureRequestCode = REQUEST_CHOOSE_PICTURE_CODE;
+            requestStoragePermission();
         } else {
             // 查看图片
-            List list = new ArrayList();
-            // 需要移除最后的那一张添加
-            for (int i = 0; i < mPictureUrls.size() - 1; i++) {
-                list.add(mPictureUrls.get(i));
+            List<String> list = ImageBean.toStringList(mPictureDataList);
+            if (ListUtils.getSize(list) > 1) {
+                list.remove(list.size() - 1);
             }
-            PictureBrowseActivity.startAction(getActivity(), list, position, false, true, EditorActivity.BROWSE_PICTURE_REQUEST_CODE);
+            PictureBrowseActivity.startAction(getActivity(), list, position, true, EditorActivity.BROWSE_PICTURE_REQUEST_CODE);
         }
     }
 
@@ -207,7 +225,7 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
                     List<Integer> deleteList = data.getIntegerArrayListExtra(PictureBrowseActivity.KEY_DELETE_LIST);
                     for (int i = 0; i < ListUtils.getSize(deleteList); i++) {
                         int index = deleteList.get(i);
-                        mPictureUrls.remove(index);
+                        mPictureDataList.remove(index);
                     }
                     mContentInputView.notifyInputDataChanged();
                     break;
@@ -217,6 +235,22 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
                 case EditorActivity.CHOOSE_LOCATION_REQUEST_CODE:
                     String location = data.getStringExtra(LocationActivity.KEY_LOCATION_INFO);
                     mLocationInputView.setInputText(location);
+                    break;
+                case REQUEST_CHOOSE_PICTURE_CODE:
+                case REQUEST_CHOOSE_COVER_CODE:
+                    Uri uri = data.getData();
+                    String path = PictureUtils.getPath(getContext(), uri);
+                    ImageBean imageBean = new ImageBean();
+                    imageBean.setType(ImageBean.TYPE_LOCAL_FILE);
+                    imageBean.setPath(path);
+                    if (requestCode == REQUEST_CHOOSE_PICTURE_CODE) {
+                        mPictureDataList.add(mPictureDataList.size() - 1, imageBean);
+                        mContentInputView.notifyInputDataChanged();
+                    } else {
+                        mTopicCoverList.clear();
+                        mTopicCoverList.add(imageBean);
+                        mTopicCoverInputView.notifyInputDataChanged();
+                    }
                     break;
                 default:
                     break;

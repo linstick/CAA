@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.utils.ResourcesUtils;
@@ -13,7 +14,7 @@ import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
 public class DiscoverItemViewHolder extends RecyclerView.ViewHolder {
 
-    public ImageView mUserAvatarIv;
+    public SimpleDraweeView mUserAvatarIv;
     public TextView mNicknameTv;
     public TextView mPublishTimeTv;
     public TextView mCollegeTv;
@@ -45,9 +46,9 @@ public class DiscoverItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindData(DiscoverData data) {
-//                mUserAvatarIv.setImageUrl(data.getAvatarUrl());
+        mUserAvatarIv.setImageURI(data.getAvatarUrl());
         mNicknameTv.setText(data.getNickname());
-//                mPublishTimeTv.setText(data.getPublishTime());
+        mPublishTimeTv.setText(data.getPublishTime());
 
         if (!TextUtils.isEmpty(data.getTopic())) {
             mTopicTv.setVisibility(View.VISIBLE);

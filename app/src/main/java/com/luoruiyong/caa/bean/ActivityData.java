@@ -1,41 +1,48 @@
 package com.luoruiyong.caa.bean;
 
+import com.luoruiyong.caa.Config;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Author: luoruiyong
  * Date: 2019/3/15/015
  **/
-public class ActivitySimpleData implements Serializable{
+public class ActivityData implements Serializable{
 
     private int uid;
     private String avatarUrl;
     private String nickname;
-    private long publishTime;
-    private long id;
+    private String publishTime;
+    private int id;
     private int type;
     private String title;
     private String content;
+    private String host;
+    private String address;
+    private String time;
     private String location;
     private String topic;
     private int topicId;
     private int collectCount;
     private int commentCount;
     private int additionCount;
+    private boolean hasCollect;
     private List<String> pictureList;
 
-    public ActivitySimpleData() {
+    public ActivityData() {
     }
 
     // for text
-    public ActivitySimpleData(int i, int type) {
+    public ActivityData(int i, int type) {
         // for test
         uid = 1000 + i;
         avatarUrl = "https://www.baidu.com/1.jpg";
         nickname = "昵称" + i;
-        publishTime = System.currentTimeMillis();
+        publishTime = Config.DEFAULT_TIME_STAMP;
         id = 10000 + i;
         this.type = type;
         title = "This is the title of activity " + i;
@@ -77,19 +84,19 @@ public class ActivitySimpleData implements Serializable{
         this.nickname = nickname;
     }
 
-    public long getPublishTime() {
+    public String getPublishTime() {
         return publishTime;
     }
 
-    public void setPublishTime(long publishTime) {
+    public void setPublishTime(String publishTime) {
         this.publishTime = publishTime;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -173,9 +180,41 @@ public class ActivitySimpleData implements Serializable{
         this.pictureList = pictureList;
     }
 
+    public boolean isHasCollect() {
+        return hasCollect;
+    }
+
+    public void setHasCollect(boolean hasCollect) {
+        this.hasCollect = hasCollect;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
     @Override
     public String toString() {
-        return "ActivitySimpleData{" +
+        return "ActivityData{" +
                 "uid='" + uid + '\'' +
                 ", avatarUrl='" + avatarUrl + '\'' +
                 ", nickname='" + nickname + '\'' +

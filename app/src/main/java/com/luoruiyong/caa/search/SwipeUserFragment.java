@@ -103,7 +103,7 @@ public class SwipeUserFragment extends BaseSwipeFragment<User> {
 
             public void bindData(User user) {
 //            mUserAvatarIv.setImageUrl(user.getAvatar());
-                mNicknameTv.setText(user.getNickName());
+                mNicknameTv.setText(user.getNickname());
                 mIntroduceTv.setText(user.getDescription());
             }
         }

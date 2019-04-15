@@ -1,5 +1,7 @@
 package com.luoruiyong.caa.bean;
 
+import com.luoruiyong.caa.Config;
+
 /**
  * Author: luoruiyong
  * Date: 2019/4/3/003
@@ -9,29 +11,29 @@ public class MessageData {
     private int uid;
     private String avatarUrl;
     private String nickname;
-    private long publishTime;
+    private String publishTime;
 
     private int type;
     private String content;
 
-    private long srcId;
-    private String srcCoverUrl;
-    private String srcTitle;
-    private String srcContent;
+    private int targetId;
+    private String targetCoverUrl;
+    private String targetTitle;
+    private String targetContent;
 
     public MessageData(int i) {
         uid = 1000;
         avatarUrl = "https://www.baidu.com/1.jpg";
         nickname = "linstick" + i;
-        publishTime = System.currentTimeMillis();
+        publishTime = Config.DEFAULT_TIME_STAMP;
 
         type = (int) (Math.random() * 7);
         content = "This is the content of message " + i;
 
-        srcId = 1000 + i;
-        srcCoverUrl = "https://www.baidu.com/2.jpg";
-        srcTitle = "This is the title of src note " + i;
-        srcContent = "This is the content of src note, long long long long sentence " + i;
+        targetId = 1000 + i;
+        targetCoverUrl = "https://www.baidu.com/2.jpg";
+        targetTitle = "This is the title of src note " + i;
+        targetContent = "This is the content of src note, long long long long sentence " + i;
     }
 
     public int getUid() {
@@ -58,11 +60,11 @@ public class MessageData {
         this.nickname = nickname;
     }
 
-    public long getPublishTime() {
+    public String getPublishTime() {
         return publishTime;
     }
 
-    public void setPublishTime(long publishTime) {
+    public void setPublishTime(String publishTime) {
         this.publishTime = publishTime;
     }
 
@@ -82,35 +84,35 @@ public class MessageData {
         this.content = content;
     }
 
-    public long getSrcId() {
-        return srcId;
+    public int getTargetId() {
+        return targetId;
     }
 
-    public void setSrcId(long srcId) {
-        this.srcId = srcId;
+    public void setTargetId(int targetId) {
+        this.targetId = targetId;
     }
 
-    public String getSrcCoverUrl() {
-        return srcCoverUrl;
+    public String getTargetCoverUrl() {
+        return targetCoverUrl;
     }
 
-    public void setSrcCoverUrl(String srcCoverUrl) {
-        this.srcCoverUrl = srcCoverUrl;
+    public void setTargetCoverUrl(String targetCoverUrl) {
+        this.targetCoverUrl = targetCoverUrl;
     }
 
-    public String getSrcTitle() {
-        return srcTitle;
+    public String getTargetTitle() {
+        return targetTitle;
     }
 
-    public void setSrcTitle(String srcTitle) {
-        this.srcTitle = srcTitle;
+    public void setTargetTitle(String targetTitle) {
+        this.targetTitle = targetTitle;
     }
 
-    public String getSrcContent() {
-        return srcContent;
+    public String getTargetContent() {
+        return targetContent;
     }
 
-    public void setSrcContent(String srcContent) {
-        this.srcContent = srcContent;
+    public void setTargetContent(String targetContent) {
+        this.targetContent = targetContent;
     }
 }

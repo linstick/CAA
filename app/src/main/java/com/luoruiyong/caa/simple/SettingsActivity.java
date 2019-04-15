@@ -8,13 +8,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.luoruiyong.caa.Enviroment;
+import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.bean.Function;
+import com.luoruiyong.caa.eventbus.LoginStateChangedEvent;
+import com.luoruiyong.caa.model.bean.GlobalSource;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.user.ModifyPasswordActivity;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.widget.UniversalFunctionContainer;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,11 +91,10 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void doLogout() {
-        // do logout
-        Toast.makeText(this, "do logout", Toast.LENGTH_SHORT).show();
-
-        // for test
         Enviroment.clearCurUser();
+        EventBus.getDefault().postSticky(LoginStateChangedEvent.LOGOUT_SUCCESS);
+        Toast.makeText(MyApplication.getAppContext(), getString(R.string.settings_str_has_logout), Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     @Override

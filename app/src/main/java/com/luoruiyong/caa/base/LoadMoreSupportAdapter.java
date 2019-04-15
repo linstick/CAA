@@ -9,17 +9,35 @@ import android.widget.TextView;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.common.viewholder.LoadMoreViewHolder;
+import com.luoruiyong.caa.utils.ListUtils;
+
+import java.util.List;
 
 /**
  * Author: luoruiyong
  * Date: 2019/4/10/010
  * Description:
  **/
-public abstract class LoadMoreSupportAdapter extends RecyclerView.Adapter {
+public class LoadMoreSupportAdapter<Item> extends RecyclerView.Adapter{
+
     public static final int ITEM_TYPE_LOAD_MORE_TIP = 0;
     public static final int ITEM_TYPE_NORMAL = 1;
+
+    private List<Item> mList;
     private String mLoadMoreTip;
-    private View.OnClickListener mLoadMoreTipClickListener;
+    private View.OnClickListener mListener;
+
+    public LoadMoreSupportAdapter(List<Item> mList) {
+        this.mList = mList;
+    }
+
+    public void setLoadMoreTip(String text) {
+        mLoadMoreTip = text;
+    }
+
+    public void setLoadMoreTipClickListener(View.OnClickListener listener) {
+        mListener = listener;
+    }
 
     @NonNull
     @Override
@@ -34,16 +52,22 @@ public abstract class LoadMoreSupportAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof LoadMoreViewHolder) {
-            holder.itemView.setOnClickListener(mLoadMoreTipClickListener);
+            holder.itemView.setOnClickListener(mListener);
             ((TextView) holder.itemView).setText(mLoadMoreTip);
         }
     }
 
-    public void setLoadMoreTip(String text) {
-        mLoadMoreTip = text;
+    @Override
+    public int getItemCount() {
+        int count = ListUtils.getSize(mList);
+        return count == 0 ? 0 : count + 1;
     }
 
-    public void setOnLoadMoreClickListener(View.OnClickListener listener) {
-        mLoadMoreTipClickListener = listener;
+    @Override
+    public int getItemViewType(int position) {
+        if (ListUtils.getSize(mList) == position) {
+            return ITEM_TYPE_LOAD_MORE_TIP;
+        }
+        return ITEM_TYPE_NORMAL;
     }
 }

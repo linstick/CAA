@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ public class CommonDialog extends Dialog implements View.OnClickListener, Adapte
     public final static int TYPE_NORMAL = 1;
     public final static int TYPE_INPUT = 2;
     public final static int TYPE_LIST = 3;
+    public final static int TYPE_LOADING = 4;
 
     private TextView mTitleTv;
     private TextView mMessageTv;
@@ -37,6 +39,8 @@ public class CommonDialog extends Dialog implements View.OnClickListener, Adapte
     private EditText mInputEt;
     private View mInputBottomLineView;
     private ListView mListView;
+    private View mLoadingLayout;
+    private TextView mLoadingTv;
 
     private Builder mBuilder;
 
@@ -67,6 +71,8 @@ public class CommonDialog extends Dialog implements View.OnClickListener, Adapte
         mInputEt = findViewById(R.id.et_input);
         mInputBottomLineView = findViewById(R.id.view_input_bottom_line);
         mListView = findViewById(R.id.lv_list_view);
+        mLoadingLayout = findViewById(R.id.ll_loading_layout);
+        mLoadingTv = findViewById(R.id.tv_loading_tip);
 
         if (mBuilder == null) {
             return;
@@ -92,6 +98,10 @@ public class CommonDialog extends Dialog implements View.OnClickListener, Adapte
             mNegativeTv.setText(mBuilder.mNegative);
             mNegativeTv.setVisibility(View.VISIBLE);
             mNegativeTv.setOnClickListener(this);
+        }
+
+        if (!TextUtils.isEmpty(mBuilder.mLoadingTip)) {
+            mLoadingTv.setText(mBuilder.mLoadingTip);
         }
 
         if (mBuilder.mHasTitleColorSet) {
@@ -127,6 +137,12 @@ public class CommonDialog extends Dialog implements View.OnClickListener, Adapte
             mListView.setVisibility(View.VISIBLE);
         }
 
+        if (mBuilder.mType == TYPE_LOADING) {
+            mLoadingLayout.setVisibility(View.VISIBLE);
+        }
+
+        setCanceledOnTouchOutside(mBuilder.mCancelTouchOutside);
+        setCancelable(mBuilder.mCancelable);
         setOnDismissListener(mBuilder.mDismissListener);
     }
 
@@ -205,6 +221,8 @@ public class CommonDialog extends Dialog implements View.OnClickListener, Adapte
 
         private Context mContext;
         private int mType;
+        private boolean mCancelTouchOutside = true;
+        private boolean mCancelable = true;
 
         private String mTitle;
         private String mNegative;
@@ -228,6 +246,7 @@ public class CommonDialog extends Dialog implements View.OnClickListener, Adapte
         private String mPreInputText;
         private int mInputType;
         private List<String> mItems;
+        private String mLoadingTip;
 
         private OnClickListener mNegativeListener;
         private OnClickListener mPositiveListener;
@@ -267,6 +286,11 @@ public class CommonDialog extends Dialog implements View.OnClickListener, Adapte
 
         public Builder preInputText(String text) {
             this.mPreInputText = text;
+            return this;
+        }
+
+        public Builder loadingTip(String text) {
+            this.mLoadingTip = text;
             return this;
         }
 
@@ -331,6 +355,16 @@ public class CommonDialog extends Dialog implements View.OnClickListener, Adapte
 
         public Builder autoDismiss(boolean autoDismiss) {
             this.mAutoDismiss = autoDismiss;
+            return this;
+        }
+
+        public Builder cancelable(boolean cancelable) {
+            this.mCancelable = cancelable;
+            return this;
+        }
+
+        public Builder cancelTouchOutside(boolean cancelable) {
+            this.mCancelTouchOutside = cancelable;
             return this;
         }
 

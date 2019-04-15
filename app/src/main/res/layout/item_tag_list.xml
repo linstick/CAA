@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/ll_item_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -13,12 +14,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <ImageView
+        <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/iv_tag_cover"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/bg_setting_header" />
+            app:actualImageScaleType="centerCrop"
+            app:placeholderImageScaleType="centerCrop"
+            app:roundedCornerRadius="@dimen/common_corner_radius_size"
+            app:placeholderImage="@drawable/bg_default_image_placeholder" />
 
 
         <TextView

@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
@@ -19,19 +20,12 @@ import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.fragment.SwipeActivityFragment;
 import com.luoruiyong.caa.common.fragment.SwipeDiscoverFragment;
 import com.luoruiyong.caa.common.fragment.SwipeTopicFragment;
-import com.luoruiyong.caa.puller.ActivityPuller;
-import com.luoruiyong.caa.puller.DiscoverPuller;
-import com.luoruiyong.caa.puller.TopicPuller;
+import com.luoruiyong.caa.model.CommonFetcher;
 import com.luoruiyong.caa.simple.SettingsActivity;
 import com.luoruiyong.caa.utils.PageUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.luoruiyong.caa.puller.ActivityPuller.TYPE_OTHER_USER;
-import static com.luoruiyong.caa.puller.ActivityPuller.TYPE_SELF;
-import static com.luoruiyong.caa.puller.ActivityPuller.TYPE_SELF_COLLECT;
-
 
 /**
  * Author: luoruiyong
@@ -55,6 +49,7 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
 
     private int mUid;
     private User mUser;
+    private boolean mIsSelf;
     private List<String> mTabTitleList;
     private List<Fragment> mFragmentList;
     private ViewPagerAdapter mAdapter;
@@ -69,6 +64,15 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
         handleIntent();
 
         initFragment();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // 退出登录操作
+        if (mIsSelf && Enviroment.getCurUid() != mUid) {
+            finish();
+        }
     }
 
     private void initView() {
@@ -101,46 +105,37 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
             return;
         }
         if (Enviroment.isSelf(mUid)) {
+            mIsSelf = true;
             mUser = Enviroment.getCurUser();
-            bindData();
+            bindUserData();
         } else {
             // 网络获取用户数据
             showLoadingView();
-
-            // 模拟
-            mUserAvatarIv.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    hideTipView();
-                    mUser = new User();
-                    bindData();
-
-                }
-            }, 2000);
+            CommonFetcher.doFetchOtherUserDetail(mUid);
         }
     }
 
-    private void bindData() {
+    private void bindUserData() {
         if (mUser == null) {
             return;
         }
 //        mUserAvatarIv.setImageUrl(mUser.getAvatar());
         mUserIdTv.setText(String.format(getString(R.string.profile_str_id), mUser.getId()));
-        mNicknameTv.setText(String.format(getString(R.string.profile_str_nickname), mUser.getNickName()));
+        mNicknameTv.setText(String.format(getString(R.string.profile_str_nickname), mUser.getNickname()));
 
         StringBuilder builder = new StringBuilder();
-        builder.append(TextUtils.isEmpty(mUser.getGender()) ? "" : mUser.getGender() + "\n");
-        builder.append(mUser.getAge() == 0 ? "" : mUser.getAge() + "\n");
-        builder.append(TextUtils.isEmpty(mUser.getEmail()) ? "" : mUser.getEmail());
+        builder.append(TextUtils.isEmpty(mUser.getGender()) ? "" : mUser.getGender());
+        builder.append(mUser.getAge() == 0 ? "" : "\n" + mUser.getAge());
+        builder.append(TextUtils.isEmpty(mUser.getEmail()) ? "" :  "\n" +mUser.getEmail());
         mBaseInfoTv.setText(builder.toString());
 
         User.CollegeInfo collegeInfo = mUser.getCollegeInfo();
         if (collegeInfo != null) {
             builder = new StringBuilder();
-            builder.append(TextUtils.isEmpty(collegeInfo.getName()) ? "" : collegeInfo.getName() + "\n");
-            builder.append(TextUtils.isEmpty(collegeInfo.getDepartment()) ? "" : collegeInfo.getDepartment() + "\n");
-            builder.append(TextUtils.isEmpty(collegeInfo.getMajor()) ? "" : collegeInfo.getMajor() + "\n");
-            builder.append(TextUtils.isEmpty(collegeInfo.getKlass()) ? "" : collegeInfo.getKlass());
+            builder.append(TextUtils.isEmpty(collegeInfo.getName()) ? "" : collegeInfo.getName());
+            builder.append(TextUtils.isEmpty(collegeInfo.getDepartment()) ? "" :  "\n" +collegeInfo.getDepartment());
+            builder.append(TextUtils.isEmpty(collegeInfo.getMajor()) ? "" :  "\n" +collegeInfo.getMajor());
+            builder.append(TextUtils.isEmpty(collegeInfo.getKlass()) ? "" :  "\n" +collegeInfo.getKlass());
             mCollegeInfoTv.setText(builder.toString());
         }
 
@@ -157,14 +152,14 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
     private void initFragment() {
         mFragmentList = new ArrayList<>();
         if (Enviroment.isSelf(mUid)) {
-            mFragmentList.add(SwipeActivityFragment.newInstance(ActivityPuller.TYPE_SELF));
-            mFragmentList.add(SwipeTopicFragment.newInstance(TopicPuller.TYPE_SELF));
-            mFragmentList.add(SwipeDiscoverFragment.newInstance(DiscoverPuller.TYPE_SELF));
-            mFragmentList.add(SwipeActivityFragment.newInstance(ActivityPuller.TYPE_SELF_COLLECT));
+            mFragmentList.add(SwipeActivityFragment.newInstance(Config.PAGE_ID_ACTIVITY_SELF));
+            mFragmentList.add(SwipeTopicFragment.newInstance(Config.PAGE_ID_TOPIC_SELF));
+            mFragmentList.add(SwipeDiscoverFragment.newInstance(Config.PAGE_ID_DISCOVER_SELF));
+            mFragmentList.add(SwipeActivityFragment.newInstance(Config.PAGE_ID_ACTIVITY_SELF_COLLECT));
         } else {
-            mFragmentList.add(SwipeActivityFragment.newInstance(ActivityPuller.TYPE_OTHER_USER, mUid));
-            mFragmentList.add(SwipeTopicFragment.newInstance(TopicPuller.TYPE_OTHER_USER, mUid));
-            mFragmentList.add(SwipeDiscoverFragment.newInstance(DiscoverPuller.TYPE_SELF));
+            mFragmentList.add(SwipeActivityFragment.newInstance(Config.PAGE_ID_ACTIVITY_OTHER_USER, mUid));
+            mFragmentList.add(SwipeTopicFragment.newInstance(Config.PAGE_ID_TOPIC_OTHER_USER, mUid));
+            mFragmentList.add(SwipeDiscoverFragment.newInstance(Config.PAGE_ID_DISCOVER_OTHER_USER, mUid));
         }
 
         mTabTitleList = new ArrayList<>();

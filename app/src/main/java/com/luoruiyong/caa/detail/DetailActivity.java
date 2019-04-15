@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
-import com.luoruiyong.caa.bean.ActivitySimpleData;
+import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.bean.DiscoverData;
 
 import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_ACTIVITY_DATA;
@@ -61,17 +61,17 @@ public class DetailActivity extends BaseActivity implements View.OnClickListener
         switch (type) {
             case DETAIL_TYPE_ACTIVITY_ID:
                 title = getString(R.string.title_activity_detail);
-                fm = ActivityDetailFragment.newInstance(intent.getLongExtra(KEY_DETAIL_PAGE_ID, -1));
+                fm = ActivityDetailFragment.newInstance(intent.getIntExtra(KEY_DETAIL_PAGE_ID, -1));
                 break;
             case DETAIL_TYPE_ACTIVITY_DATA:
                 title = getString(R.string.title_activity_detail);
                 fm = ActivityDetailFragment.newInstance(
-                        (ActivitySimpleData)intent.getSerializableExtra(KEY_DETAIL_PAGE_DATA),
+                        (ActivityData)intent.getSerializableExtra(KEY_DETAIL_PAGE_DATA),
                         intent.getBooleanExtra(KEY_DETAIL_PAGE_BROWSE_COMMENT, false));
                 break;
             case DETAIL_TYPE_DISCOVER_ID:
                 title = getString(R.string.title_discover_detail);
-                fm = DiscoverDetailFragment.newInstance(intent.getLongExtra(KEY_DETAIL_PAGE_ID, -1));
+                fm = DiscoverDetailFragment.newInstance(intent.getIntExtra(KEY_DETAIL_PAGE_ID, -1));
                 break;
             case DETAIL_TYPE_DISCOVER_DATA:
                 title = getString(R.string.title_discover_detail);

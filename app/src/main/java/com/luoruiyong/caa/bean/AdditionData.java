@@ -1,5 +1,9 @@
 package com.luoruiyong.caa.bean;
 
+import com.luoruiyong.caa.Config;
+
+import java.util.Date;
+
 /**
  * Author: luoruiyong
  * Date: 2019/4/3/003
@@ -7,12 +11,12 @@ package com.luoruiyong.caa.bean;
 public class AdditionData {
     private int id;
     private String content;
-    private long publishTime;
+    private String publishTime;
 
     public AdditionData(int i) {
         id = 1000 + i;
         content = "This is the addition of activity " + i;
-        publishTime = System.currentTimeMillis();
+        publishTime = Config.DEFAULT_TIME_STAMP;
     }
 
     public int getId() {
@@ -31,11 +35,11 @@ public class AdditionData {
         this.content = content;
     }
 
-    public long getPublishTime() {
+    public String getPublishTime() {
         return publishTime;
     }
 
-    public void setPublishTime(long publishTime) {
+    public void setPublishTime(String publishTime) {
         this.publishTime = publishTime;
     }
 }

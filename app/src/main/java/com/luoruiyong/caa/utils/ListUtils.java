@@ -1,5 +1,6 @@
 package com.luoruiyong.caa.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,5 +27,21 @@ public class ListUtils {
                 list.clear();
             }
         }
+    }
+
+    public static List insertFirst(List src, List data) {
+        if (src == null) {
+            src = new ArrayList<>();
+        }
+        src.add(0, data);
+        return src;
+    }
+
+    public static List appendLast(List src, List data) {
+        if (src == null) {
+            src = new ArrayList<>();
+        }
+        src.add(data);
+        return src;
     }
 }

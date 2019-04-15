@@ -1,56 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/ll_item_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp"
+    android:orientation="vertical"
     android:background="@drawable/selector_list_item">
 
-    <ImageView
-        android:id="@+id/iv_user_avatar"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/bg_setting_header" />
-
-    <TextView
-        android:id="@+id/tv_nickname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/iv_user_avatar"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:text="linstick"
-        android:textColor="#444444"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/tv_publish_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignBaseline="@id/tv_nickname"
-        android:layout_marginTop="2dp"
-        android:text="2 hours ago"
-        android:textColor="#AAAAAA"
-        android:textSize="13sp" />
-
-    <TextView
-        android:id="@+id/tv_content"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/tv_nickname"
-        android:layout_alignStart="@id/tv_nickname"
-        android:layout_below="@id/tv_nickname"
-        android:layout_marginTop="3dp"
-        android:ellipsize="end"
-        android:maxLines="3"
-        android:text="This is the title of activity"
-        android:textColor="#888888"
-        android:textSize="17sp" />
+        android:padding="12dp">
 
-</RelativeLayout>
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/iv_user_avatar"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/bg_setting_header"
+            app:actualImageScaleType="centerCrop"
+            app:roundAsCircle="true"
+            app:placeholderImage="@drawable/ic_user_default_avatar_light_gray_60"/>
+
+        <TextView
+            android:id="@+id/tv_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/iv_user_avatar"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="linstick"
+            android:textColor="#444444"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_publish_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignBaseline="@id/tv_nickname"
+            android:layout_marginTop="2dp"
+            android:text="2 hours ago"
+            android:textColor="#AAAAAA"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/tv_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tv_nickname"
+            android:layout_alignStart="@id/tv_nickname"
+            android:layout_below="@id/tv_nickname"
+            android:layout_marginTop="3dp"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:text="This is the title of activity"
+            android:textColor="#888888"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD"/>
+
+
+</LinearLayout>

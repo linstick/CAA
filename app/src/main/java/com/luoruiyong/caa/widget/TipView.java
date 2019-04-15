@@ -5,22 +5,23 @@ import android.content.res.TypedArray;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.utils.ResourcesUtils;
 
 /**
  * Author: luoruiyong
  * Date: 2019/4/9/009
  * Description:
  **/
-public class TipView extends FrameLayout implements View.OnClickListener{
+public class TipView extends NestedScrollView implements View.OnClickListener{
 
     private View mRootView;
     private ImageView mErrorImageIv;
@@ -71,7 +72,7 @@ public class TipView extends FrameLayout implements View.OnClickListener{
     }
 
     public void setErrorImage(@DrawableRes int resId) {
-        mErrorImageIv.setImageResource(resId);
+        mErrorImageIv.setImageDrawable(ResourcesUtils.getDrawable(resId));
     }
 
     public void setErrorImage(String url) {
@@ -106,6 +107,14 @@ public class TipView extends FrameLayout implements View.OnClickListener{
         setErrorInfo(info);
         showError();
     }
+
+    public void showError(int resId, String info, String refreshText) {
+        setErrorImage(resId);
+        setErrorInfo(info);
+        setRefreshText(refreshText);
+        showError();
+    }
+
 
     public void showProgressBar() {
         setViewStatus(mProgressBar, VISIBLE);

@@ -19,7 +19,7 @@ import com.luoruiyong.caa.R;
 public class SignFragment extends Fragment implements View.OnClickListener{
 
     private ImageView mUserAvatarIv;
-    private EditText mCellNumberEt;
+    private EditText mAccountEt;
     private EditText mNicknameEt;
     private EditText mPasswordEt;
     private EditText mConfirmPasswordEt;
@@ -46,7 +46,7 @@ public class SignFragment extends Fragment implements View.OnClickListener{
 
     private void initView(View rootView) {
         mUserAvatarIv = rootView.findViewById(R.id.iv_user_avatar);
-        mCellNumberEt = rootView.findViewById(R.id.et_cell_phone_number);
+        mAccountEt = rootView.findViewById(R.id.et_account);
         mNicknameEt = rootView.findViewById(R.id.et_nick_name);
         mPasswordEt = rootView.findViewById(R.id.et_password);
         mConfirmPasswordEt = rootView.findViewById(R.id.et_confirm_password);
@@ -59,12 +59,12 @@ public class SignFragment extends Fragment implements View.OnClickListener{
     }
 
     private void checkAndSignUp() {
-        String cellNumber = mCellNumberEt.getText().toString().trim();
+        String account = mAccountEt.getText().toString().trim();
         String nickname = mNicknameEt.getText().toString().trim();
         String password = mPasswordEt.getText().toString().trim();
         String confirmPassword = mConfirmPasswordEt.getText().toString().trim();
-        if (TextUtils.isEmpty(cellNumber)) {
-            Toast.makeText(getContext(), getString(R.string.fm_sign_tip_empty_cell_number), Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(account)) {
+            Toast.makeText(getContext(), getString(R.string.fm_sign_tip_sign_up_success), Toast.LENGTH_SHORT).show();
             return;
         }
         if (TextUtils.isEmpty(nickname)) {
@@ -84,7 +84,7 @@ public class SignFragment extends Fragment implements View.OnClickListener{
             return;
         }
         if (mCallBack != null) {
-            mCallBack.doSignUp(cellNumber, nickname, password);
+            mCallBack.doSignUp(account, nickname, password);
         }
     }
 

@@ -71,41 +71,41 @@ public class SearchActivity extends BaseActivity implements
         mBackIv.setOnClickListener(this);
         mSearchTv.setOnClickListener(this);
 
-        mInputEt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+//        mInputEt.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                String text = s.toString().trim();
+//                if (!TextUtils.isEmpty(text)) {
+//                    doSearchQuietly(text);
+//                }
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//            }
+//        });
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String text = s.toString().trim();
-                if (!TextUtils.isEmpty(text)) {
-                    doSearchQuietly(text);
-                }
-            }
+//        mInputEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                if (hasFocus) {
+//                    fetchSearchTips();
+//                }
+//            }
+//        });
 
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
-
-        mInputEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    fetchSearchTips();
-                }
-            }
-        });
-
-        mTipsList = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
-            mTipsList.add("春风十里不如你" + (i + 1));
-        }
-        mTipsAdapter = new SearchTipsAdapter(mTipsList);
-        mTipsAdapter.setOnItemClickListener(this);
-        mSearchTipsRv.setAdapter(mTipsAdapter);
-        mSearchTipsRv.setLayoutManager(new LinearLayoutManager(this));
+//        mTipsList = new ArrayList<>();
+//        for (int i = 0; i < 6; i++) {
+//            mTipsList.add("春风十里不如你" + (i + 1));
+//        }
+//        mTipsAdapter = new SearchTipsAdapter(mTipsList);
+//        mTipsAdapter.setOnItemClickListener(this);
+//        mSearchTipsRv.setAdapter(mTipsAdapter);
+//        mSearchTipsRv.setLayoutManager(new LinearLayoutManager(this));
 
         mInputEt.requestFocus();
     }
@@ -196,6 +196,8 @@ public class SearchActivity extends BaseActivity implements
         }
         if (mActivityFragment == null) {
             mActivityFragment = SwipeActivityFragment.newInstance(keyword);
+        } else {
+            mActivityFragment.setKeyword(keyword);
         }
         mFragmentManager.beginTransaction()
                 .addToBackStack(TAB_COMPOSITE)

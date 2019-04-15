@@ -62,4 +62,8 @@ public class ActivityFragment extends Fragment{
         mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         mViewPager.setOffscreenPageLimit(1);
     }
+
+    public void forceToAllTab() {
+        mViewPager.setCurrentItem(0);
+    }
 }

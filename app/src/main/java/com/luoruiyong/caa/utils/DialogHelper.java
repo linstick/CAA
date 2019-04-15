@@ -1,8 +1,10 @@
 package com.luoruiyong.caa.utils;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.text.InputType;
 
+import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView;
@@ -98,4 +100,23 @@ public class DialogHelper {
                 .show();
     }
 
+    public static void showLoadingDialog(Context context, String tip) {
+        showLoadingDialog(context, tip, true);
+    }
+
+    public static Dialog showLoadingDialog(Context context, String tip, boolean cancelable) {
+        return showLoadingDialog(context, tip, cancelable, null);
+    }
+
+    public static Dialog showLoadingDialog(Context context, String tip, boolean cancelable, CommonDialog.Builder.OnClickListener cancelCallback) {
+        Dialog dialog = new CommonDialog.Builder(context)
+                .type(CommonDialog.TYPE_LOADING)
+                .loadingTip(tip)
+                .cancelable(cancelable)
+                .negative(cancelCallback == null ? null : ResourcesUtils.getString(R.string.common_str_cancel))
+                .onNegative(cancelCallback)
+                .build();
+        dialog.show();
+        return dialog;
+    }
 }

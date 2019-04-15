@@ -11,9 +11,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
-import com.luoruiyong.caa.bean.TopicSimpleData;
+import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.PageUtils;
 
@@ -24,7 +25,7 @@ import java.util.List;
  * Date: 2019/4/8/008
  * Description:
  **/
-public class TopicSearchResultFragment extends BaseSwipeFragment<TopicSimpleData> {
+public class TopicSearchResultFragment extends BaseSwipeFragment<TopicData> {
 
     private TopicSearchActivity mActivity;
 
@@ -39,11 +40,7 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TopicSimpleData
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // for test
-//        for (int i = 0; i < 30; i++) {
-//            mList.add(new TopicSimpleData(i));
-//        }
+        mPageId = Config.PAGE_ID_RELATED_TOPIC_SEARCH;
     }
 
     public void searchQuietly(String text) {
@@ -63,7 +60,7 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TopicSimpleData
             public void run() {
                 mRefreshLayout.setRefreshing(false);
                 for (int i = 0; i < 30; i++) {
-                    mList.add(new TopicSimpleData(i));
+                    mList.add(new TopicData(i));
                 }
                 ((ListAdapter) mAdapter).mShowCreateTopic = true;
                 mAdapter.notifyDataSetChanged();
@@ -72,7 +69,7 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TopicSimpleData
     }
 
     @Override
-    protected RecyclerView.Adapter getListAdapter(List list) {
+    protected RecyclerView.Adapter getListAdapter(List<TopicData> list) {
         return new ListAdapter(list);
     }
 
@@ -92,10 +89,10 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TopicSimpleData
         private final static int TYPE_SEARCH_TOPIC = 1;
         private final static int TYPE_CREATE_TOPIC = 2;
 
-        private List<TopicSimpleData> mList;
+        private List<TopicData> mList;
         private boolean mShowCreateTopic = true;
 
-        public ListAdapter(List<TopicSimpleData> list) {
+        public ListAdapter(List<TopicData> list) {
             this.mList = list;
         }
 
@@ -134,7 +131,7 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TopicSimpleData
                 ((NoTopicViewHolder) holder).itemView.setOnClickListener(this);
             } else if (holder instanceof TopicViewHolder) {
                 int realPos = position - 1;
-                TopicSimpleData data = mList.get(realPos);
+                TopicData data = mList.get(realPos);
                 TopicViewHolder viewHolder = (TopicViewHolder) holder;
                 viewHolder.bindData(data);
                 viewHolder.itemView.setOnClickListener(this);
@@ -184,7 +181,7 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TopicSimpleData
                     break;
                 case R.id.tv_choose:
                     if (mActivity != null) {
-                        TopicSimpleData data = mList.get((int) v.getTag());
+                        TopicData data = mList.get((int) v.getTag());
                         mActivity.setSelectResultDataAndFinish(data);
                     }
                     break;
@@ -206,7 +203,7 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TopicSimpleData
                 mSelectTv = itemView.findViewById(R.id.tv_choose);
             }
 
-            public void bindData(TopicSimpleData data) {
+            public void bindData(TopicData data) {
                 mTopicTv.setText(String.format(getString(R.string.common_str_topic), data.getName()));
                 mLabelTv.setText(String.format(getString(R.string.common_str_join_count), data.getJoinCount()));
             }

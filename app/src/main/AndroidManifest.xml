@@ -44,7 +44,7 @@
         </activity>
 
         <activity android:name=".search.SearchActivity"/>
-        <activity android:name=".login.LoginActivity"/>
+        <activity android:name=".login.LoginActivity" />
         <activity android:name=".user.EditBasicInfoActivity"/>
         <activity android:name=".user.ModifyPasswordActivity"/>
         <activity android:name=".feedback.FeedbackActivity"/>
@@ -58,6 +58,7 @@
         <activity android:name=".detail.DetailActivity"/>
         <activity android:name=".topic.TopicSearchActivity"/>
         <activity android:name=".location.LocationActivity"/>
+        <activity android:name=".utils.MainActivity"/>
 
         <!--高德服务-->
         <service android:name="com.amap.api.location.APSService"></service>

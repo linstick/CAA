@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
-import com.luoruiyong.caa.bean.TopicSimpleData;
+import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.utils.KeyboardUtils;
 
 /**
@@ -116,7 +116,7 @@ public class TopicSearchActivity extends BaseActivity implements View.OnClickLis
         finish();
     }
 
-    public void setSelectResultDataAndFinish(TopicSimpleData data) {
+    public void setSelectResultDataAndFinish(TopicData data) {
         Intent intent = new Intent();
         intent.putExtra(KEY_RESULT_TYPE, RELATE_TOPIC_TYPE_CREATE);
         intent.putExtra(KEY_SELECTED_TOPIC_NAME, data.getName());

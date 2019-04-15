@@ -2,20 +2,27 @@ package com.luoruiyong.caa.widget.imageviewlayout;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.bean.ImageBean;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.layout.GridLayoutStrategy;
 import com.luoruiyong.caa.widget.imageviewlayout.layout.ILayoutStrategy;
 import com.luoruiyong.caa.widget.imageviewlayout.layout.SpecialLayoutStrategy;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,7 +38,7 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
     private final int DEFAULT_LAYOUT_STRATEGY = LayoutStrategy.SPECIAL;
 
     private int mMaxChildViewCount;
-    private List<String> mUrls;
+    private List<ImageBean> mList;
     private OnImageClickListener mClickListener;
     private OnImageLongClickListener mLongClickListener;
     private OnImageDeletedListener mDeleteListener;
@@ -65,21 +72,43 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
                 DEFAULT_SUPPORT_ALL_CHILD_DELETE_BESIDES_LAST);
         int urlsResId = typedArray.getResourceId(R.styleable.ImageViewLayout_imageUrls, -1);
         if (urlsResId != -1) {
-            mUrls = Arrays.asList(ResourcesUtils.getStringArray(urlsResId));
-            notifyChildViewChanged();
+            setPictureUrls(Arrays.asList(ResourcesUtils.getStringArray(urlsResId)));
         }
         int layoutStrategy = typedArray.getInt(R.styleable.ImageViewLayout_layoutStrategy, DEFAULT_LAYOUT_STRATEGY);
         setLayoutStrategy(layoutStrategy);
         typedArray.recycle();
     }
 
+    public void setPictureDataList(List<ImageBean> list) {
+        mList = list;
+        notifyChildViewChanged();
+    }
+
     public void setPictureUrls(List<String> list) {
-        mUrls = list;
+        mList = new ArrayList<>();
+        if (list != null) {
+            for (String url : list) {
+                mList.add(new ImageBean(url));
+            }
+        }
         notifyChildViewChanged();
     }
 
     public List<String> getPictureUrls() {
-        return mUrls;
+        List<String> result = new ArrayList<>();
+        for (int i = 0; i < ListUtils.getSize(mList); i++) {
+            ImageBean data = mList.get(i);
+            if (data.getType() == ImageBean.TYPE_RESOURCE_ID) {
+                result.add(String.valueOf(data.getResId()));
+            } else if (data.getType() == ImageBean.TYPE_LOCAL_FILE) {
+                result.add(data.getPath());
+            } else if (data.getType() == ImageBean.TYPE_REMOTE_FILE) {
+                result.add(data.getUrl());
+            } else {
+                result.add("");
+            }
+        }
+        return result;
     }
 
     public void setMaxChildViewCount(int count) {
@@ -132,22 +161,32 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
 
     public void notifyChildViewChanged() {
         removeAllViews();
-        if (ListUtils.isEmpty(mUrls)) {
+        if (ListUtils.isEmpty(mList)) {
             return;
         }
-        int count = Math.min(mUrls.size(), mMaxChildViewCount);
+        int count = Math.min(mList.size(), mMaxChildViewCount);
         LayoutInflater inflater = LayoutInflater.from(getContext());
         for (int i = 0; i < count; i++) {
             View view = inflater.inflate(R.layout.child_item_image, this, false);
-            ImageView imageView = view.findViewById(R.id.iv_picture);
+            SimpleDraweeView imageView = view.findViewById(R.id.iv_picture);
             imageView.setTag(i);
             imageView.setOnClickListener(this);
+
+            ImageBean data = mList.get(i);
+            if (data.getType() == ImageBean.TYPE_RESOURCE_ID) {
+                imageView.setImageResource(data.getResId());
+            } else if (data.getType() == ImageBean.TYPE_LOCAL_FILE) {
+                imageView.setImageURI(Uri.fromFile(new File(data.getPath())));
+            } else if (data.getType() == ImageBean.TYPE_REMOTE_FILE) {
+                imageView.setImageURI(Uri.parse(data.getUrl()));
+            }
+
             if (mLongClickListener != null) {
                 imageView.setOnLongClickListener(this);
             }
 
             // 删除功能
-            if (mSupportAllChildDelete || (mSupportAllChildDeleteBesidesLast && i + 1 != mUrls.size())) {
+            if (mSupportAllChildDelete || (mSupportAllChildDeleteBesidesLast && i + 1 != mList.size())) {
                 ImageView deleteIv = view.findViewById(R.id.iv_delete);
                 deleteIv.setVisibility(VISIBLE);
                 deleteIv.setTag(i);
@@ -155,9 +194,9 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
             }
 
             // 总数展示
-            if (mNeedShowTotalTip && i + 1 == count && count < mUrls.size()) {
+            if (mNeedShowTotalTip && i + 1 == count && count < mList.size()) {
                 TextView totalTipTv = view.findViewById(R.id.tv_total_tip);
-                totalTipTv.setText(String.format(ResourcesUtils.getString(R.string.common_str_total), mUrls.size()));
+                totalTipTv.setText(String.format(ResourcesUtils.getString(R.string.common_str_total), mList.size()));
                 totalTipTv.setVisibility(VISIBLE);
             }
             addView(view);
@@ -190,8 +229,8 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
                 }
                 break;
             case R.id.iv_delete:
-                if (ListUtils.isIndexBetween(mUrls, position)) {
-                    mUrls.remove(position);
+                if (ListUtils.isIndexBetween(mList, position)) {
+                    mList.remove(position);
                     notifyChildViewChanged();
                     if (mDeleteListener != null) {
                         mDeleteListener.onItemDeleted(this, position);

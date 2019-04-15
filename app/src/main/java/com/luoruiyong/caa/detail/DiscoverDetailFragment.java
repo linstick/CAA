@@ -11,18 +11,25 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseFragment;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.common.viewholder.DiscoverItemViewHolder;
+import com.luoruiyong.caa.eventbus.DetailFinishEvent;
+import com.luoruiyong.caa.model.CommonFetcher;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.KeyboardUtils;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,13 +56,14 @@ public class DiscoverDetailFragment extends BaseFragment implements
     private AppBarLayout mAppBarLayout;
 
     private DiscoverItemViewHolder mViewHolder;
+    private int mDiscoverId;
     private DiscoverData mData;
 
-    public static DiscoverDetailFragment newInstance(long id) {
+    public static DiscoverDetailFragment newInstance(int id) {
         DiscoverDetailFragment fm = new DiscoverDetailFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(KEY_DETAIL_PAGE_TYPE, DETAIL_TYPE_DISCOVER_ID);
-        bundle.putLong(KEY_DETAIL_PAGE_ID, id);
+        bundle.putInt(KEY_DETAIL_PAGE_ID, id);
         fm.setArguments(bundle);
         return fm;
     }
@@ -70,6 +78,18 @@ public class DiscoverDetailFragment extends BaseFragment implements
         return fm;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -78,8 +98,6 @@ public class DiscoverDetailFragment extends BaseFragment implements
         initView(view);
 
         handleArguments();
-
-        initFragment();
 
         return view;
     }
@@ -92,26 +110,22 @@ public class DiscoverDetailFragment extends BaseFragment implements
             return;
         }
         if (type == DETAIL_TYPE_DISCOVER_ID) {
-            // 联网拉数据，并展示加载UI
-
-            // 模拟
+            if ((mDiscoverId = bundle.getInt(KEY_DETAIL_PAGE_ID, -1)) == -1) {
+                getActivity().finish();
+                return;
+            }
             showLoadingView();
-            mCommentInputEt.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    hideTipView();
-                    mData = new DiscoverData(0);
-                    mViewHolder.bindData(mData);
-                }
-            }, 2000);
-
+            CommonFetcher.doFetchDiscoverDetail(mDiscoverId);
         } else {
-            mData = (DiscoverData) bundle.getSerializable(KEY_DETAIL_PAGE_DATA);
+            if ((mData = (DiscoverData) bundle.getSerializable(KEY_DETAIL_PAGE_DATA)) == null) {
+                getActivity().finish();
+                return;
+            }
             mViewHolder.bindData(mData);
+            initFragment();
             if (bundle.getBoolean(KEY_DETAIL_PAGE_BROWSE_COMMENT, false)) {
                 toggleCommentBar();
             }
-            // 联网拉取其他数据，但不需要展示加载UI
         }
     }
 
@@ -142,7 +156,7 @@ public class DiscoverDetailFragment extends BaseFragment implements
     }
 
     private void initFragment() {
-        CommentFragment fm = CommentFragment.newInstance(CommentFragment.TYPE_DISCOVER_COMMENT);
+        CommentFragment fm = CommentFragment.newInstance(Config.PAGE_ID_DISCOVER_COMMENT, mData.getId());
         getChildFragmentManager().beginTransaction().replace(R.id.fl_container, fm).commit();
     }
 
@@ -188,7 +202,7 @@ public class DiscoverDetailFragment extends BaseFragment implements
 
     @Override
     public void onImageClick(View parent, int position) {
-        PictureBrowseActivity.startAction(getActivity(), mData.getPictureList(), position, true);
+        PictureBrowseActivity.startAction(getActivity(), mData.getPictureList(), position, false);
     }
 
     private void toggleCommentBar() {
@@ -199,6 +213,20 @@ public class DiscoverDetailFragment extends BaseFragment implements
             mCommentBarLayout.setVisibility(View.VISIBLE);
             mCommentInputEt.requestFocus();
             KeyboardUtils.showKeyboard(mCommentInputEt);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDetailFinishEvent(DetailFinishEvent<DiscoverData> event) {
+        hideTipView();
+        if (event.getCode() == Config.CODE_OK) {
+            mData = event.getData();
+            mViewHolder.bindData(mData);
+            initFragment();
+        } else if (event.getCode() == Config.CODE_NO_DATA) {
+            showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_data));
+        } else if (event.getCode() == Config.CODE_NETWORK_ERROR) {
+            showErrorView(R.drawable.bg_no_network, getString(R.string.common_tip_no_network));
         }
     }
 }

@@ -1,12 +1,12 @@
 package com.luoruiyong.caa;
 
-import android.util.DebugUtils;
+import android.os.Environment;
 
 import com.luoruiyong.caa.bean.User;
-import com.luoruiyong.caa.login.LoginActivity;
 import com.luoruiyong.caa.utils.LogUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +23,8 @@ public class Enviroment {
     public final static int LOG_GRADE = LogUtils.DEBUG;
 
     public final static String AMAP_WEB_API_KEY = "c3bab68b9ed24b289631570eb02750fa";
+    public final static String CACHE_FOLDER = Environment.getExternalStorageDirectory().getPath() + "/CAA/";
+    public final static String IMAGE_SUFFIX = ".jpg";
 
     private static User sUser;
     //创建新帖子的弹框列表
@@ -64,11 +66,10 @@ public class Enviroment {
 
     public static void createVirtualUser() {
         sUser = new User();
-        sUser.setUid(1000);
+        sUser.setUid(10);
         sUser.setId("PSC52193");
         sUser.setAvatar("https://www.baidu.com/1.jpg");
-        sUser.setNickName("会飞的猪");
-        sUser.setRealName("罗瑞泳");
+        sUser.setNickname("会飞的猪");
         sUser.setGender("男");
         sUser.setAge(23);
         sUser.setCellNumber("15102032936");
@@ -76,7 +77,6 @@ public class Enviroment {
         sUser.setDescription("Android开发入门Coder");
 
         User.CollegeInfo info = new User.CollegeInfo();
-        info.setId(1);
         info.setName("Guangdong University Of Technology");
         info.setDepartment("Computer Department");
         info.setMajor("Software Project");
@@ -126,6 +126,14 @@ public class Enviroment {
                 sMessageTypeMap.put(i, items[i]);
             }
         }
+    }
+
+    public static String getCacheFolder() {
+        File dir = new File(CACHE_FOLDER);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        return CACHE_FOLDER;
     }
 
     public static Map<Integer, String> getMessageTypeMap() {
