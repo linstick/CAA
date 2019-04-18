@@ -84,7 +84,7 @@ public class SwipeTopicFragment extends BaseSwipeFragment<TopicData> {
         } else if (mPageId == Config.PAGE_ID_TOPIC_OTHER_USER) {
             mOtherUid = bundle.getInt(KEY_OTHER_UID, -1);
         }
-        if (mPageId != Config.PAGE_ID_TOPIC_ALL && mPageId != Config.PAGE_ID_TOPIC_SELF) {
+        if (mPageId != Config.PAGE_ID_TOPIC_ALL) {
             setCanPullRefresh(false);
         }
     }
@@ -148,7 +148,7 @@ public class SwipeTopicFragment extends BaseSwipeFragment<TopicData> {
                 TopicPuller.loadMoreOtherUser(mOtherUid, getLastItemTime());
                 break;
             case Config.PAGE_ID_TOPIC_SEARCH:
-                TopicPuller.loadMoreSearch(mKeyword,getLastItemTime());
+                TopicPuller.loadMoreSearch(mKeyword, ListUtils.getSize(mList));
                 break;
             default:
                 LogUtils.d(TAG, "load more unknow type");

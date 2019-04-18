@@ -43,8 +43,6 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
     private final static String KEY_URL_LIST = "key_url_list";
     private final static String KEY_CUR_POSITION = "key_cur_position";
     private final static String KEY_IS_LOCAL_FILE = "key_is_local_file";
-    private final static String KEY_SUPPORT_DOWNLOAD = "key_support_download";
-    private final static String KEY_SUPPORT_DELETE = "key_support_delete";
     public final static String KEY_DELETE_LIST = "key_delete_list";
 
     private ViewPager mViewPager;
@@ -247,12 +245,12 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
                 params.height = ViewGroup.LayoutParams.MATCH_PARENT;
                 imageView.setLayoutParams(params);
                 imageView.setId(R.id.iv_picture);
-                if (mIsLocalFile) {
-                    imageView.setImageURI(Uri.fromFile(new File(mUrls.get(position))));
-                } else {
-                    imageView.setImageURI(mUrls.get(position));
-                }
                 view = imageView;
+            }
+            if (mIsLocalFile) {
+                ((SimpleDraweeView)view).setImageURI(Uri.fromFile(new File(mUrls.get(position))));
+            } else {
+                ((SimpleDraweeView)view).setImageURI(mUrls.get(position));
             }
             view.setOnClickListener(PictureBrowseActivity.this);
             container.addView(view);
@@ -261,9 +259,10 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
 
         @Override
         public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-            View view = (View) object;
+            SimpleDraweeView view = (SimpleDraweeView) object;
             container.removeView(view);
             if (mViewCache.size() < MAX_CACHE_COUNT) {
+                view.setImageURI(Uri.EMPTY);
                 mViewCache.add(view);
             }
         }
@@ -280,7 +279,7 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
 
         @Override
         public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
-            return view.equals(object);
+            return view == object;
         }
     }
 }

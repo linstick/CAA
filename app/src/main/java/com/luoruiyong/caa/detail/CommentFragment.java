@@ -21,6 +21,7 @@ import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.LogUtils;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
+import com.luoruiyong.caa.utils.TimeUtils;
 
 import java.util.List;
 
@@ -189,7 +190,7 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
             public void bindData(CommentData data) {
                 mUserAvatarIv.setImageURI(data.getAvatarUrl());
                 mNicknameTv.setText(data.getNickname());
-                mPublishTimeTv.setText(data.getPublishTime());
+                mPublishTimeTv.setText(TimeUtils.format(data.getPublishTime()));
                 mContentTv.setText(data.getContent());
             }
         }

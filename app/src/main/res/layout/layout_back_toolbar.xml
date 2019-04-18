@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/action_bar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
@@ -30,12 +31,16 @@
         android:id="@+id/tv_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        android:layout_marginEnd="8dp"
-        android:textColor="#EEEEEE"
-        android:textSize="15sp"
+        android:paddingRight="10dp"
+        android:paddingEnd="10dp"
+        android:paddingLeft="10dp"
+        android:paddingStart="10dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
         android:text="@string/common_str_cancel"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/iv_right_operate"
@@ -44,6 +49,7 @@
         android:padding="10dp"
         android:src="@drawable/ic_settings_white"
         android:visibility="gone"
+        tools:visibility="visible"
         android:focusable="true"
         android:focusableInTouchMode="true"/>
 

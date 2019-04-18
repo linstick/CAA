@@ -85,14 +85,14 @@ public class ActivityPuller{
     public static void refreshSearch(String keyword) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_KEYWORD, keyword);
-        params.put(Config.PARAM_KEY_TIME_STAMP, Config.DEFAULT_TIME_STAMP);
+        params.put(Config.PARAM_KEY_OFFSET, String.valueOf(0));
         doPull(Config.PAGE_ID_ACTIVITY_SEARCH, Config.PULL_TYPE_REFRESH, params);
     }
 
-    public static void loadMoreSearch(String keyword, String lastItemTime) {
+    public static void loadMoreSearch(String keyword, int offset) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_KEYWORD, keyword);
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(lastItemTime));
+        params.put(Config.PARAM_KEY_OFFSET, String.valueOf(offset));
         doPull(Config.PAGE_ID_ACTIVITY_SEARCH, Config.PULL_TYPE_LOAD_MORE, params);
     }
 

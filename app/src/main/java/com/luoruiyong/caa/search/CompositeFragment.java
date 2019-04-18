@@ -13,20 +13,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseFragment;
 import com.luoruiyong.caa.bean.ActivityData;
+import com.luoruiyong.caa.bean.CompositeSearchData;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
+import com.luoruiyong.caa.eventbus.CommonEvent;
+import com.luoruiyong.caa.model.CommonFetcher;
 import com.luoruiyong.caa.search.adapter.CompositeListAdapter;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.DisplayUtils;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.PageUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -40,7 +48,6 @@ import java.util.List;
 public class CompositeFragment extends BaseFragment {
 
     private final int DEFAULT_ITEM_MARGIN_PX = DisplayUtils.dp2px(10);
-    public final static int MAX_ITEM_COUNT_OF_ONE_TYPE = 10;
 
     private SwipeRefreshLayout mRefreshLayout;
     private RecyclerView mRecyclerView;
@@ -71,6 +78,18 @@ public class CompositeFragment extends BaseFragment {
         initView(view);
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initView(View view) {
@@ -111,24 +130,21 @@ public class CompositeFragment extends BaseFragment {
 
     public void doSearch(String keyword) {
         mKeyword = keyword;
+        mRecyclerView.scrollToPosition(0);
         ListUtils.clear(mUserList, mActivityList, mDiscoverList, mTopicList);
-        mRefreshLayout.setRefreshing(true);
         mAdapter.notifyDataSetChanged();
+        mRefreshLayout.setRefreshing(true);
+        hideTipView();
+        // 请求综合搜索数据
+        CommonFetcher.doFetchCompositeSearchList(keyword, Config.COMPOSITE_SEARCH_REQUEST_COUNT);
+    }
 
-        // for test
-        mRefreshLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < MAX_ITEM_COUNT_OF_ONE_TYPE; i++) {
-                    mUserList.add(new User());
-                    mActivityList.add(new ActivityData(i, (int) (Math.random() * 6) + 1));
-                    mTopicList.add(new TopicData(i));
-                    mDiscoverList.add(new DiscoverData(i));
-                }
-                mAdapter.notifyDataSetChanged();
-                mRefreshLayout.setRefreshing(false);
-            }
-        }, 1000);
+    @Override
+    protected void onRefreshClick() {
+        mRefreshLayout.setRefreshing(true);
+        hideTipView();
+        // 请求综合搜索数据
+        CommonFetcher.doFetchCompositeSearchList(mKeyword, Config.COMPOSITE_SEARCH_REQUEST_COUNT);
     }
 
     protected void showMoreOperateDialog(final Serializable data) {
@@ -148,6 +164,27 @@ public class CompositeFragment extends BaseFragment {
             case 0:
                 // 举报
                 PageUtils.gotoFeedbackPage(getContext(), data);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommonEvent(CommonEvent<CompositeSearchData> event) {
+        switch (event.getType()) {
+            case FETCH_COMPOSITE_SEARCH_LIST:
+                mRefreshLayout.setRefreshing(false);
+                if (event.getCode() == Config.CODE_OK) {
+                    CompositeSearchData data = event.getData();
+                    mActivityList.addAll(data.getActivities());
+                    mUserList.addAll(data.getUsers());
+                    mDiscoverList.addAll(data.getDiscovers());
+                    mTopicList.addAll(data.getTopics());
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    showErrorView(R.drawable.bg_load_fail, event.getStatus());
+                }
                 break;
             default:
                 break;

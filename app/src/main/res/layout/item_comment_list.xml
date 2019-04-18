@@ -17,7 +17,7 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:scaleType="fitXY"
-            android:src="@drawable/bg_setting_header"
+            android:src="@drawable/test_image"
             app:actualImageScaleType="centerCrop"
             app:roundAsCircle="true"
             app:placeholderImage="@drawable/ic_user_default_avatar_light_gray_60"/>

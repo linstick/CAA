@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.bean.DiscoverData;
@@ -206,7 +207,7 @@ public class CompositeListAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public int getItemCount() {
         int discoverCount = ListUtils.getSize(mDiscoverList);
-        return getDiscoverOffset() + discoverCount + (discoverCount == CompositeFragment.MAX_ITEM_COUNT_OF_ONE_TYPE ? 1 : 0);
+        return getDiscoverOffset() + discoverCount + (discoverCount == Config.COMPOSITE_SEARCH_REQUEST_COUNT ? 1 : 0);
     }
 
     @Override
@@ -258,7 +259,7 @@ public class CompositeListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private int getUserOffset() {
         int activityCount = ListUtils.getSize(mActivityList);
-        return activityCount + (activityCount == CompositeFragment.MAX_ITEM_COUNT_OF_ONE_TYPE ? 1 : 0);
+        return activityCount + (activityCount == Config.COMPOSITE_SEARCH_REQUEST_COUNT ? 1 : 0);
     }
 
     private int getTopicOffset() {
@@ -267,8 +268,8 @@ public class CompositeListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private int getDiscoverOffset() {
         int topicCount = ListUtils.getSize(mTopicList);
-        return getTopicOffset() + topicCount +  (topicCount == CompositeFragment.MAX_ITEM_COUNT_OF_ONE_TYPE ? 1 : 0);
-    }
+        return getTopicOffset() + topicCount +  (topicCount == Config.COMPOSITE_SEARCH_REQUEST_COUNT ? 1 : 0);
+}
 
     @Override
     public void onClick(View v) {
@@ -327,7 +328,7 @@ public class CompositeListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 mAdapter = new UserListAdapter(users);
                 mUserListRv.setAdapter(mAdapter);
             }
-            if (ListUtils.getSize(mUserList) == CompositeFragment.MAX_ITEM_COUNT_OF_ONE_TYPE) {
+            if (ListUtils.getSize(mUserList) == Config.COMPOSITE_SEARCH_REQUEST_COUNT) {
                 mMoreTv.setVisibility(View.VISIBLE);
             }
         }

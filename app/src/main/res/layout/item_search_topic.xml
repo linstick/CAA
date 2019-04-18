@@ -24,17 +24,36 @@
             android:layout_weight="1"
             android:textSize="14sp"
             android:textColor="@color/colorTopic"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:text="#春风十里不如你#"/>
 
         <TextView
-            android:id="@+id/tv_label"
+            android:id="@+id/tv_join"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginStart="12dp"
             android:textColor="#AAAAAA"
             android:textSize="12sp"
             android:text="30参与"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="12dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@color/colorDDDDDD"/>
+
+        <TextView
+            android:id="@+id/tv_visit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#AAAAAA"
+            android:textSize="12sp"
+            android:text="30 浏览 "/>
 
         <TextView
             android:id="@+id/tv_choose"

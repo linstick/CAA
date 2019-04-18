@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +15,15 @@ import android.widget.Toast;
 
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.base.OnPermissionCallback;
 import com.luoruiyong.caa.bean.ImageBean;
 import com.luoruiyong.caa.edit.EditorActivity.OnActionBarClickListener;
 import com.luoruiyong.caa.location.LocationActivity;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicSearchActivity;
+import com.luoruiyong.caa.topic.TopicSearchResultFragment;
 import com.luoruiyong.caa.utils.ListUtils;
+import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.PictureUtils;
 import com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
@@ -48,9 +52,19 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
     private List<ImageBean> mPictureDataList;
     private List<ImageBean> mTopicCoverList;
 
-    private int mRelateTopicId;
+    private int mRelateTopicId = -1;
     private int mRelateTopicType = TopicSearchActivity.RELATE_TOPIC_TYPE_NONE;
     private int mChoosePictureRequestCode = -1;
+    private OnPermissionCallback mStoragePermissionCallback = new StoragePermissionCallback();
+
+    public static CreateDiscoverFragment newInstance(int topicId, String topicName) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(EditorActivity.KEY_TOPIC_ID, topicId);
+        bundle.putString(EditorActivity.KEY_TOPIC_NAME, topicName);
+        CreateDiscoverFragment fm = new CreateDiscoverFragment();
+        fm.setArguments(bundle);
+        return fm;
+    }
 
     @Nullable
     @Override
@@ -58,6 +72,8 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
         View view = LayoutInflater.from(container.getContext()).inflate(R.layout.fragment_create_discover, container, false);
 
         initView(view);
+
+        handleArgument();
 
         return view;
     }
@@ -85,6 +101,20 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
         mContentInputView.setPictureDataList(mPictureDataList);
     }
 
+    private void handleArgument() {
+        Bundle bundle = getArguments();
+        if (bundle == null) {
+            return;
+        }
+        int topicId = bundle.getInt(EditorActivity.KEY_TOPIC_ID, -1);
+        String topicName = bundle.getString(EditorActivity.KEY_TOPIC_NAME);
+        if (topicId != -1 && !TextUtils.isEmpty(topicName)) {
+            mRelateTopicType = TopicSearchActivity.RELATE_TOPIC_TYPE_SELECT;
+            mRelateTopicId = topicId;
+            mRelatedTopicInputView.setInputText(topicName);
+        }
+    }
+
     private void inflateRelateTopicExtras() {
         if (mRelateTopicExtrasContainer != null) {
             return;
@@ -97,7 +127,7 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
             @Override
             public void onImageClick(View parent, int position) {
                 mChoosePictureRequestCode = REQUEST_CHOOSE_COVER_CODE;
-                requestStoragePermission();
+                requestStoragePermission(mStoragePermissionCallback);
             }
         });
 
@@ -143,22 +173,6 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
     }
 
     @Override
-    protected void onStoragePermissionGranted() {
-        if (mChoosePictureRequestCode == -1) {
-            return;
-        }
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("image/*");
-        startActivityForResult(intent, mChoosePictureRequestCode);
-    }
-
-    @Override
-    protected void onLocationPermissionGranted() {
-        startActivityForResult(new Intent(getContext(), LocationActivity.class), EditorActivity.CHOOSE_LOCATION_REQUEST_CODE);
-    }
-
-    @Override
     public void onBackClick() {
         boolean hasData = false;
         for (DynamicInputView view : mCheckEmptyList) {
@@ -194,7 +208,16 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
                 break;
             case R.id.input_view_topic_cover:
                 mChoosePictureRequestCode = REQUEST_CHOOSE_COVER_CODE;
-                requestStoragePermission();
+                requestStoragePermission(new OnPermissionCallback() {
+                    @Override
+                    public void onGranted() {
+                        startActivityForResult(new Intent(getContext(), LocationActivity.class), EditorActivity.CHOOSE_LOCATION_REQUEST_CODE);
+                    }
+
+                    @Override
+                    public void onDenied() {
+                    }
+                });
                 break;
             default:
                 break;
@@ -206,7 +229,7 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
         if (position + 1 == mPictureDataList.size()) {
             // 添加图片
             mChoosePictureRequestCode = REQUEST_CHOOSE_PICTURE_CODE;
-            requestStoragePermission();
+            requestStoragePermission(mStoragePermissionCallback);
         } else {
             // 查看图片
             List<String> list = ImageBean.toStringList(mPictureDataList);
@@ -255,6 +278,18 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
                 default:
                     break;
             }
+        }
+    }
+
+    class StoragePermissionCallback implements OnPermissionCallback {
+        @Override
+        public void onGranted() {
+            PageUtils.gotoSystemAlbum(CreateDiscoverFragment.this, mChoosePictureRequestCode);
+        }
+
+        @Override
+        public void onDenied() {
+
         }
     }
 }

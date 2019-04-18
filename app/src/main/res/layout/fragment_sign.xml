@@ -157,6 +157,8 @@
             android:id="@+id/tv_has_account"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:padding="2dp"
             android:textSize="13sp"
             android:textColor="#AAAAAA"

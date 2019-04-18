@@ -53,6 +53,7 @@ public class TopicSearchActivity extends BaseActivity implements View.OnClickLis
         mInputEt = findViewById(R.id.et_search_input);
         mSearchTv = findViewById(R.id.tv_search);
 
+        mSearchTv.setText(getString(R.string.common_str_search_more));
         mBackIv.setImageResource(R.drawable.ic_clear_white);
         mInputEt.setHint(getString(R.string.topic_relate_str_search_topic));
 
@@ -66,9 +67,7 @@ public class TopicSearchActivity extends BaseActivity implements View.OnClickLis
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String text = s.toString().trim();
-                if (!TextUtils.isEmpty(text)) {
-                    mFragment.searchQuietly(text);
-                }
+                mFragment.searchQuietly(text);
             }
 
             @Override
@@ -108,10 +107,10 @@ public class TopicSearchActivity extends BaseActivity implements View.OnClickLis
         finish();
     }
 
-    public void setCreateResultDataAndFinish() {
+    public void setCreateResultDataAndFinish(String keyword) {
         Intent intent = new Intent();
         intent.putExtra(KEY_RESULT_TYPE, RELATE_TOPIC_TYPE_SELECT);
-        intent.putExtra(KEY_CREATE_TOPIC_NAME, getInputText());
+        intent.putExtra(KEY_CREATE_TOPIC_NAME, keyword);
         setResult(RESULT_OK, intent);
         finish();
     }

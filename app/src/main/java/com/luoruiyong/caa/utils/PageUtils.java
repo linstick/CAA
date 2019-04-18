@@ -1,7 +1,9 @@
 package com.luoruiyong.caa.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 
 import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.bean.TopicData;
@@ -129,5 +131,19 @@ public class PageUtils {
         Intent intent = new Intent(context, FeedbackActivity.class);
         intent.putExtra(KEY_FEEDBACK_PAGE_DATA, data);
         context.startActivity(intent);
+    }
+
+    public static void gotoSystemAlbum(Fragment fragment, int requestCode) {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        fragment.startActivityForResult(intent, requestCode);
+    }
+
+    public static void gotoSystemAlbum(Activity activity, int requestCode) {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        activity.startActivityForResult(intent, requestCode);
     }
 }

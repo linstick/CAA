@@ -72,8 +72,8 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         bundle.putInt(KEY_TYPE, type);
         if (type == Config.PAGE_ID_DISCOVER_OTHER_USER) {
             bundle.putInt(KEY_OTHER_UID, data);
-        } else if (type == Config.PAGE_ID_ACTIVITY_TOPIC
-                || type == Config.PAGE_ID_DISCOVER_TOPIC) {
+        } else if (type == Config.PAGE_ID_DISCOVER_TOPIC_HOT
+                || type == Config.PAGE_ID_DISCOVER_TOPIC_LASTED) {
             bundle.putInt(KEY_TOPIC_ID, data);
         }
         fm.setArguments(bundle);
@@ -106,8 +106,8 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         Bundle bundle = getArguments();
         if (bundle != null) {
             mPageId = bundle.getInt(KEY_TYPE, Config.PAGE_ID_DISCOVER_ALL);
-            if (mPageId == Config.PAGE_ID_ACTIVITY_TOPIC
-                    || mPageId == Config.PAGE_ID_DISCOVER_TOPIC) {
+            if (mPageId == Config.PAGE_ID_DISCOVER_TOPIC_HOT
+                    || mPageId == Config.PAGE_ID_DISCOVER_TOPIC_LASTED) {
                 mTopicId = bundle.getInt(KEY_TOPIC_ID);
                 mPosition = bundle.getInt(KEY_ITEM_POSITION);
             } else if (mPageId == Config.PAGE_ID_DISCOVER_SEARCH) {
@@ -115,7 +115,7 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
             } else if (mPageId == Config.PAGE_ID_DISCOVER_OTHER_USER) {
                 mOtherUid = bundle.getInt(KEY_OTHER_UID, -1);
             }
-            if (mPageId != Config.PAGE_ID_DISCOVER_ALL && mPageId != Config.PAGE_ID_DISCOVER_SELF) {
+            if (mPageId != Config.PAGE_ID_DISCOVER_ALL) {
                 setCanPullRefresh(false);
             }
         }
@@ -157,10 +157,10 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
             case Config.PAGE_ID_DISCOVER_SEARCH:
                 DiscoverPuller.refreshSearch(mKeyword);
                 break;
-            case Config.PAGE_ID_ACTIVITY_TOPIC:
-                DiscoverPuller.refreshTopicHot(mTopicId, getFirstItemTime());
+            case Config.PAGE_ID_DISCOVER_TOPIC_HOT:
+                DiscoverPuller.refreshTopicHot(mTopicId);
                 break;
-            case Config.PAGE_ID_DISCOVER_TOPIC:
+            case Config.PAGE_ID_DISCOVER_TOPIC_LASTED:
                 DiscoverPuller.refreshTopicLasted(mTopicId,getFirstItemTime());
                 break;
             default:
@@ -186,12 +186,12 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
                 DiscoverPuller.loadMoreOtherUser(mOtherUid, getLastItemTime());
                 break;
             case Config.PAGE_ID_DISCOVER_SEARCH:
-                DiscoverPuller.loadMoreSearch(mKeyword,getLastItemTime());
+                DiscoverPuller.loadMoreSearch(mKeyword, ListUtils.getSize(mList));
                 break;
-            case Config.PAGE_ID_ACTIVITY_TOPIC:
-                DiscoverPuller.loadMoreTopicHot(mTopicId, getLastItemTime());
+            case Config.PAGE_ID_DISCOVER_TOPIC_HOT:
+                DiscoverPuller.loadMoreTopicHot(mTopicId, ListUtils.getSize(mList));
                 break;
-            case Config.PAGE_ID_DISCOVER_TOPIC:
+            case Config.PAGE_ID_DISCOVER_TOPIC_LASTED:
                 DiscoverPuller.loadMoreTopicLasted(mTopicId,getLastItemTime());
                 break;
             default:
@@ -290,7 +290,7 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
     public void onPullFinishEvent(PullFinishEvent event) {
         super.onPullFinishEvent(event);
         if (mPosition < 1
-                || event.getTargetPage() != Config.PAGE_ID_DISCOVER_TOPIC
+                || event.getTargetPage() != Config.PAGE_ID_DISCOVER_TOPIC_LASTED
                 || event.getPullType() != Config.PULL_TYPE_REFRESH
                 || event.getCode() != Config.CODE_OK) {
             return;

@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.luoruiyong.caa.R;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -291,6 +292,11 @@ public class CommonDialog extends Dialog implements View.OnClickListener, Adapte
 
         public Builder loadingTip(String text) {
             this.mLoadingTip = text;
+            return this;
+        }
+
+        public Builder items(String[] items) {
+            this.mItems = Arrays.asList(items);
             return this;
         }
 

@@ -6,6 +6,7 @@ import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.bean.AdditionData;
 import com.luoruiyong.caa.bean.CommentData;
 import com.luoruiyong.caa.bean.MessageData;
+import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.eventbus.PullFinishEvent;
 import com.luoruiyong.caa.model.http.HttpsUtils;
 import com.luoruiyong.caa.utils.LogUtils;
@@ -87,6 +88,22 @@ public class CommonPuller {
         params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(lastTime));
         doPull(Config.PAGE_ID_DISCOVER_COMMENT, Config.PULL_TYPE_LOAD_MORE, Config.URL_COMMENT_FETCH,
                 params, new TypeToken<PullFinishEvent<CommentData>>(){}.getType());
+    }
+
+    public static void refreshUserSearch(String keyword) {
+        Map<String, String> params = new HashMap<>();
+        params.put(Config.PARAM_KEY_KEYWORD, keyword);
+        params.put(Config.PARAM_KEY_OFFSET, String.valueOf(0));
+        doPull(Config.PAGE_ID_USER_SEARCH, Config.PULL_TYPE_REFRESH, Config.URL_USER_PULL,
+                params, new TypeToken<PullFinishEvent<User>>(){}.getType());
+    }
+
+    public static void loadMoreUserSearch(String keyword, int offset) {
+        Map<String, String> params = new HashMap<>();
+        params.put(Config.PARAM_KEY_KEYWORD, keyword);
+        params.put(Config.PARAM_KEY_OFFSET, String.valueOf(offset));
+        doPull(Config.PAGE_ID_USER_SEARCH, Config.PULL_TYPE_LOAD_MORE, Config.URL_USER_PULL,
+                params, new TypeToken<PullFinishEvent<User>>(){}.getType());
     }
 
     public static void doPull(int pageId, int pullType, String url, Map<String, String> params, Type type) {

@@ -15,6 +15,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -31,6 +32,8 @@ import okhttp3.Response;
  **/
 public class HttpsUtils {
     private static final String TAG = "HttpsUtils";
+    private final static int CONNECT_TIME_OUT = 5;
+    private final static int READ_TIME_OUT = 8;
 
     private static OkHttpClient sClient;
 
@@ -38,7 +41,10 @@ public class HttpsUtils {
         if (sClient == null) {
             synchronized (HttpsUtils.class) {
                 if (sClient == null) {
-                    sClient = new OkHttpClient();
+                    sClient = new OkHttpClient.Builder()
+                            .connectTimeout(CONNECT_TIME_OUT, TimeUnit.SECONDS)
+                            .readTimeout(READ_TIME_OUT, TimeUnit.SECONDS)
+                            .build();
                 }
             }
         }
@@ -72,53 +78,6 @@ public class HttpsUtils {
         });
     }
 
-    public static void sendUserRequest(int type, Request request) {
-        Log.d(TAG, "sendUserRequest: " + request);
-        HttpsUtils.getClient().newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                ResponseUtils.handleUserFinishEvent(type, Config.CODE_REQUEST_ERROR, ResourcesUtils.getString(R.string.common_tip_request_error));
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful() && response.body() != null) {
-                    String data = response.body().string();
-                    UserFinishEvent event = new Gson().fromJson(data, UserFinishEvent.class);
-                    EventBus.getDefault().post(event);
-                } else {
-                    ResponseUtils.handleUserFinishEvent(type, Config.CODE_SERVER_ERROR, ResourcesUtils.getString(R.string.common_tip_server_error));
-                }
-            }
-        });
-    }
-
-    /**
-     * 拉取详情数据请求
-     * @param request
-     * @param type
-     */
-    public static void sendCommonFetchRequest(Request request, Type type) {
-        Log.d(TAG, "sendCommonFetchRequest: " + request);
-        HttpsUtils.getClient().newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                ResponseUtils.handleCommonFetchFailEvent(Config.CODE_REQUEST_ERROR, ResourcesUtils.getString(R.string.common_tip_request_error));
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful() && response.body() != null) {
-                    String data = response.body().string();
-                    CommonEvent event = new Gson().fromJson(data, type);
-                    EventBus.getDefault().post(event);
-                } else {
-                    ResponseUtils.handleCommonFetchFailEvent(Config.CODE_SERVER_ERROR, ResourcesUtils.getString(R.string.common_tip_server_error));
-                }
-            }
-        });
-    }
-
     /**
      * 拉取列表数据请求
      * @param targetPage
@@ -131,7 +90,7 @@ public class HttpsUtils {
         HttpsUtils.getClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                ResponseUtils.handlePullFailEvent( Config.CODE_REQUEST_ERROR, targetPage, pullType);
+                ResponseUtils.handlePullFailEvent(targetPage, pullType, Config.CODE_REQUEST_ERROR, ResourcesUtils.getString(R.string.common_tip_request_error));
             }
 
             @Override
@@ -139,9 +98,9 @@ public class HttpsUtils {
                 if (response.isSuccessful() && response.body() != null) {
                     String data = response.body().string();
                     PullFinishEvent event = new Gson().fromJson(data, typeToken);
-                    ResponseUtils.handlePullSuccessEvent(event, targetPage, pullType);
+                    ResponseUtils.handlePullSuccessEvent(targetPage, pullType, event);
                 } else {
-                    ResponseUtils.handlePullFailEvent(Config.CODE_SERVER_ERROR, targetPage, pullType);
+                    ResponseUtils.handlePullFailEvent(targetPage, pullType, Config.CODE_SERVER_ERROR, ResourcesUtils.getString(R.string.common_tip_server_error));
                 }
             }
         });

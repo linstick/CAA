@@ -19,17 +19,12 @@ public class User implements Serializable{
     private String description;
     private CollegeInfo collegeInfo;
 
+    private String activityCount;
+    private String topicCount;
+    private String discoverCount;
+    private String collectCount;
+
     public User() {
-//        uid = 1000;
-//        id = "PSC52193";
-//        avatar = "https://www.baidu.com/1.jpg";
-//        nickname = "会飞的猪" + ((int) (Math.random() * 10));
-//        gender = "男";
-//        age = 23;
-//        cellNumber = "15102032936";
-//        email = "linstick@163.com";
-//        description = "这是用户的个性签名，我是一个Android开发入门Coder";
-//        collegeInfo = new CollegeInfo();
     }
 
     public int getUid() {
@@ -112,6 +107,38 @@ public class User implements Serializable{
         this.collegeInfo = collegeInfo;
     }
 
+    public String getActivityCount() {
+        return activityCount;
+    }
+
+    public void setActivityCount(String activityCount) {
+        this.activityCount = activityCount;
+    }
+
+    public String getTopicCount() {
+        return topicCount;
+    }
+
+    public void setTopicCount(String topicCount) {
+        this.topicCount = topicCount;
+    }
+
+    public String getDiscoverCount() {
+        return discoverCount;
+    }
+
+    public void setDiscoverCount(String discoverCount) {
+        this.discoverCount = discoverCount;
+    }
+
+    public String getCollectCount() {
+        return collectCount;
+    }
+
+    public void setCollectCount(String collectCount) {
+        this.collectCount = collectCount;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -127,17 +154,13 @@ public class User implements Serializable{
                 '}';
     }
 
-    public static class CollegeInfo {
+    public static class CollegeInfo implements Serializable {
         private String name;
         private String department;
         private String major;
         private String klass;
 
         public CollegeInfo() {
-//            name = "广东工业大学";
-//            department  = "计算机学院";
-//            major = "软件工程";
-//            klass = "15级";
         }
 
         public String getName() {

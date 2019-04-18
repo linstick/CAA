@@ -108,6 +108,7 @@
     <string name="common_str_cancel">取消</string>
     <string name="common_str_edit">编辑</string>
     <string name="common_str_search">搜索</string>
+    <string name="common_str_search_more">搜索更多</string>
     <string name="common_str_finish">完成</string>
     <string name="common_str_ok">好的</string>
     <string name="common_str_submit">提交</string>
@@ -117,6 +118,7 @@
     <string name="common_str_delete_success">删除成功</string>
 
     <string name="common_str_avatar">头像</string>
+    <string name="common_str_id">ID</string>
     <string name="common_str_nickname">昵称</string>
     <string name="common_str_collect">收藏</string>
     <string name="common_str_comment">评论</string>
@@ -131,6 +133,7 @@
     <string name="common_str_refresh_success_tip">更新%d条数据</string>
     <string name="common_str_loading_more">正在加载数据...</string>
     <string name="common_str_load_fail">数据加载失败</string>
+    <string name="common_str_no_more">没有更多数据了</string>
     <string name="common_str_load_finish">加载完成</string>
 
     <string name="common_str_relate_topic">关联话题</string>
@@ -216,6 +219,7 @@
     <string name="fm_sign_str_password">密码</string>
     <string name="fm_sign_str_confirm_password">确认密码</string>
     <string name="fm_sign_str_sign_up">注册</string>
+    <string name="fm_sign_tip_account_exist">账号已被占用，请重新修改</string>
     <string name="fm_login_str_on_sign_up">正在注册，请稍后...</string>
     <string name="fm_sign_str_has_account">已有账号，直接登录</string>
     <string name="fm_sign_tip_empty_account">账号不能为空，请重新输入。</string>
@@ -240,6 +244,8 @@
     <string name="modify_password_str_new_password">新密码</string>
     <string name="modify_password_str_confirm_new_password">确认密码</string>
     <string name="modify_password_str_confirm_modify">确认修改</string>
+    <string name="modify_password_str_on_modify">正在请求，请稍后</string>
+    <string name="modify_password_tip_modify_success">密码修改成功</string>
     <string name="modify_password_tip_empty_original_pass">原密码不能为空，请重新输入。</string>
     <string name="modify_password_tip_empty_new_pass">新密码不能为空，请重新输入。</string>
     <string name="modify_password_tip_empty_confirm_new_pass">确认密码不能为空，请重新输入。</string>
@@ -256,7 +262,13 @@
 
     <!--搜索页面相关文案-->
     <string name="search_tip_empty_search_input">请输入搜索内容</string>
-    <string name="search_str_search_hint">搜索用户/活动/话题/动态</string>
+    <string name="search_str_search_for_hint">搜索%s</string>
+    <string name="search_str_search_default_hint">搜索用户/活动/话题/动态</string>
+    <string name="search_str_search_type_all">综合</string>
+    <string name="search_str_search_type_user">用户</string>
+    <string name="search_str_search_type_activity">活动</string>
+    <string name="search_str_search_type_topic">话题</string>
+    <string name="search_str_search_type_discover">动态</string>
     <string name="search_str_related_user">相关用户</string>
     <string name="search_str_see_more">查看更多</string>
     <string name="search_str_more_user">查看更多相关用户</string>
@@ -290,6 +302,10 @@
     <!--个人页相关文案-->
     <string name="profile_str_id">ID:%s</string>
     <string name="profile_str_nickname">昵称:%s</string>
+    <string name="profile_str_activity_count">活动&#160;%s</string>
+    <string name="profile_str_topic_count">话题&#160;%s</string>
+    <string name="profile_str_discover_count">动态&#160;%s</string>
+    <string name="profile_str_collect_count">收藏&#160;%s</string>
     <string name="profile_str_basic_info">基本信息</string>
     <string name="profile_str_college_info">学校信息</string>
     <string name="profile_str_description">个性签名</string>
@@ -323,15 +339,16 @@
 
 
     <!--话题列表页相关文案-->
-    <string name="fm_topic_str_joined">参与</string>
-    <string name="fm_topic_str_visited">浏览</string>
+    <string name="fm_topic_str_joined">%d&#160;参与</string>
+    <string name="fm_topic_str_visited">%d&#160;浏览</string>
+    <string name="fm_topic_str_introduction">导语:%s</string>
 
     <!--话题详情页面相关文案-->
     <string name="topic_detail_str_joined">参与:</string>
     <string name="topic_detail_str_visited">浏览:</string>
     <string name="topic_detail_str_introduction">导语:</string>
-    <string name="topic_detail_str_activity">相关活动</string>
-    <string name="topic_detail_str_discover">相关动态</string>
+    <string name="topic_detail_str_hot">热门</string>
+    <string name="topic_detail_str_lasted">最新</string>
 
     <!--活动详情页相关文案-->
     <string name="activity_detail_str_comment">评论(%1d)</string>
@@ -351,6 +368,7 @@
     <!--创建话题页相关文案-->
     <string name="fm_create_topic_str_choose_cover">选择封面</string>
     <string name="fm_create_topic_str_selected_cover">已选封面</string>
+    <string name="fm_create_topic_tip_topic_name_exists">话题已存在</string>
 
 
     <!--创建动态页相关文案-->
@@ -374,6 +392,12 @@
     <string name="fm_impeach_str_impeach_eroticism">低俗或色情</string>
     <string name="fm_impeach_str_impeach_violence">暴力</string>
     <string name="fm_impeach_str_impeach_discriminate">歧视</string>
+
+    <!--时间格式化相关文案-->
+    <string name="time_just_now">刚刚</string>
+    <string name="time_minutes_ago">%d分钟前</string>
+    <string name="time_yesterday">昨天&#160;%s</string>
+    <string name="time_the_day_before_yesterday">前天&#160;%s</string>
 
     <!--创建活动/话题/动态的列表-->
     <string-array name="str_array_create_new">
@@ -431,6 +455,14 @@
         <item>@string/fm_impeach_str_impeach_violence</item>
         <item>@string/fm_impeach_str_impeach_discriminate</item>
         <item>@string/common_str_other</item>
+    </string-array>
+
+    <string-array name="str_array_search_type">
+        <item>@string/search_str_search_type_all</item>
+        <item>@string/search_str_search_type_activity</item>
+        <item>@string/search_str_search_type_user</item>
+        <item>@string/search_str_search_type_topic</item>
+        <item>@string/search_str_search_type_discover</item>
     </string-array>
 
 </resources>

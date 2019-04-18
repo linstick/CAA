@@ -25,6 +25,7 @@ import com.luoruiyong.caa.eventbus.LoginStateChangedEvent;
 import com.luoruiyong.caa.eventbus.UserFinishEvent;
 import com.luoruiyong.caa.model.CommonPoster;
 import com.luoruiyong.caa.utils.DialogHelper;
+import com.luoruiyong.caa.utils.KeyboardUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -169,6 +170,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_back:
+                KeyboardUtils.hideKeyboard(mBackIv);
                 onBackPressed();
                 break;
             case R.id.tv_cancel:

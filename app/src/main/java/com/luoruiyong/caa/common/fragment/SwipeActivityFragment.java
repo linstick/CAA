@@ -87,7 +87,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivityData> {
         } else if (mPageId == Config.PAGE_ID_ACTIVITY_OTHER_USER) {
             mOtherUid = bundle.getInt(KEY_OTHER_UID, -1);
         }
-        if (mPageId >= Config.MAX_GLOBAL_CACHE_ID) {
+        if (mPageId > Config.PAGE_ID_ACTIVITY_ONE_KIND) {
             setCanPullRefresh(false);
         }
     }
@@ -150,7 +150,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivityData> {
         } else if (mPageId == Config.PAGE_ID_ACTIVITY_SELF_COLLECT) {
             ActivityPuller.loadMoreSelfCollect(getLastItemTime());
         } else if (mPageId == Config.PAGE_ID_ACTIVITY_SEARCH) {
-            ActivityPuller.loadMoreSearch(mKeyword, getLastItemTime());
+            ActivityPuller.loadMoreSearch(mKeyword, ListUtils.getSize(mList));
         } else {
             mRefreshLayout.setRefreshing(false);
             LogUtils.d(TAG, "Unknow type");

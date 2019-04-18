@@ -25,6 +25,7 @@ import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
+import com.luoruiyong.caa.eventbus.CommonEvent;
 import com.luoruiyong.caa.eventbus.DetailFinishEvent;
 import com.luoruiyong.caa.model.CommonFetcher;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
@@ -307,17 +308,23 @@ public class ActivityDetailFragment extends BaseFragment implements
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onDetailFinishEvent(DetailFinishEvent<ActivityData> event) {
+    public void onComonEvent(CommonEvent<ActivityData> event) {
         hideTipView();
-        if (event.getCode() == Config.CODE_OK) {
-            mData = event.getData();
-            mViewHolder.bindData(mData);
-            bindExtrasInfo();
-            initFragment();
-        } else if (event.getCode() == Config.CODE_NO_DATA) {
-            showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_data));
-        } else if (event.getCode() == Config.CODE_NETWORK_ERROR) {
-            showErrorView(R.drawable.bg_no_network, getString(R.string.common_tip_no_network));
+        switch (event.getType()) {
+            case FETCH_ACTIVITY_DETAIL:
+                if (event.getCode() == Config.CODE_OK) {
+                    mData = event.getData();
+                    mViewHolder.bindData(mData);
+                    bindExtrasInfo();
+                    initFragment();
+                } else if (event.getCode() == Config.CODE_NO_DATA) {
+                    showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_data));
+                } else if (event.getCode() == Config.CODE_NETWORK_ERROR) {
+                    showErrorView(R.drawable.bg_no_network, getString(R.string.common_tip_no_network));
+                }
+                break;
+            default:
+                break;
         }
     }
 }

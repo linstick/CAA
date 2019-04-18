@@ -68,13 +68,11 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
     // 首次进入是否自动刷新
     private boolean mAutoRefreshForEmpty = true;
     // 页面不可见时是否隐藏错误提示框
-    private boolean mAutoHideError = true;
+    private boolean mAutoHideError = false;
     // 是否支持下拉更新
     private boolean mSupportRefresh = true;
     // 是否支持自动加载更多
     protected boolean mAutoLoadMore = true;
-    // 拉取数据成功之后是否更新到全局数据列表中
-    protected boolean mNeedUpdateGlobal = false;
     // 自动预加载更多的阈值
     private int mLoadMoreThreshold = DEFAULT_LOAD_MORE_THRESHOLD;
 
@@ -84,14 +82,23 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
     private boolean mNeedSetCanRefresh = false;
     // 是否正在加载更多
     protected boolean mIsLoadingMore = false;
-    // 是否已经加载更多失败
-    protected boolean mCanLoadMore = true;
+    // 是否可以有更多的数据可加载
+    // 允许条件(OR)：
+    // 1. 首次刷新完成并且刷新的列表数量等于请求数量
+    // 2. 上拉自动加载更多完成时拉取到的列表数量等于请求数量
+    private boolean mHasMore = false;
+    // 是否可以加载更多，
+    // 当数据加载更多失败是会置为false，网络原因或者服务器异常
+    // 需要用户手动点击才会重新获取数据
+    private boolean mCanLoadMore = true;
+
+    // 页面是否对用户可见
     protected boolean mHasVisible;
     protected boolean mHasResume;
 
     private List<String> mItemMoreStringArray;
     // 当前活动的类型，具体定义在其子类
-    protected int mPageId;
+    protected int mPageId = Config.PAGE_ID_NONE;
     protected int mOtherUid;
     protected String mKeyword;
 
@@ -167,7 +174,7 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (mAutoLoadMore && mCanLoadMore && !mIsLoadingMore) {
+                if (mHasMore && mCanLoadMore && mAutoLoadMore && !mIsLoadingMore) {
                     int position = mLayoutManager.findLastVisibleItemPosition();
                     if (position + mLoadMoreThreshold > mList.size()) {
                         mIsLoadingMore = true;
@@ -185,7 +192,7 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
         return mHasVisible && mHasResume;
     }
 
-    private void checkRefreshIfNeed() {
+    protected void checkRefreshIfNeed() {
         if (ListUtils.isEmpty(mList)) {
             if (mAdapter != null) {
                 // 全局数据已清空，需要清理Adapter
@@ -193,12 +200,12 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
                 mAdapter.notifyDataSetChanged();
                 mAdapter = null;
             }
-            if (mPageId <= Config.MAX_GLOBAL_CACHE_ID) {
+            if (mPageId > Config.PAGE_ID_NONE && mPageId <= Config.MAX_GLOBAL_CACHE_ID) {
                 // 获取全局数据
                 mList = GlobalSource.getData(mPageId);
             }
             initAdapterIfNeed();
-            if (mAutoRefreshForEmpty && mList == null && !mRefreshLayout.isRefreshing()) {
+            if (mCanLoadMore && mAutoRefreshForEmpty && mList == null && !mRefreshLayout.isRefreshing()) {
                 doRefresh();
             }
         }
@@ -223,15 +230,6 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
         } else {
             mNeedSetCanRefresh = true;
         }
-    }
-
-    /**
-     * 加载更多失败时需要将值设置为false，默认为true
-     * @param autoLoadMore
-     */
-    public void setCanLoadMore(boolean autoLoadMore) {
-        this.mCanLoadMore = autoLoadMore;
-
     }
 
     /**
@@ -396,14 +394,14 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
                 if (event.getCode() == Config.CODE_OK) {
                     onRefreshSuccess((List<Item>) event.getData());
                 } else {
-                    onRefreshFail(event.getStatus());
+                    onRefreshFail(event);
                 }
                 break;
             case Config.PULL_TYPE_LOAD_MORE:
                 if (event.getCode() == Config.CODE_OK) {
                     onLoadMoreSuccess((List<Item>) event.getData());
                 } else {
-                    onLoadMoreFail(event.getStatus());
+                    onLoadMoreFail(event);
                 }
                 break;
             default:
@@ -436,15 +434,12 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
 
     }
 
-
     /**
      * 点击加载更多提示时回调
      */
     protected void onLoadMoreTipClick() {
-        if (!mIsLoadingMore) {
-            if (mAdapter instanceof LoadMoreSupportAdapter) {
-                ((LoadMoreSupportAdapter) mAdapter).setLoadMoreTip(getString(R.string.common_str_loading_more));
-            }
+        if (!mIsLoadingMore && mHasMore) {
+            mCanLoadMore = true;
             mIsLoadingMore = true;
             doLoadMore();
         }
@@ -454,22 +449,15 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
 
     /**
      * 刷新失败回调
-     * @param error
+     * @param event
      */
-    protected void onRefreshFail(String error) {
+    protected void onRefreshFail(PullFinishEvent event) {
         mRefreshLayout.setRefreshing(false);
-        if (TextUtils.equals(error, ResourcesUtils.getString(R.string.common_tip_no_network))) {
-            if (ListUtils.isEmpty(mList)) {
-                showErrorView(R.drawable.bg_no_network, error);
-            } else {
-                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
-            }
+        String error = event.getStatus();
+        if (ListUtils.isEmpty(mList)) {
+            showErrorView(R.drawable.bg_load_fail, error);
         } else {
-            if (ListUtils.isEmpty(mList)) {
-                showErrorView(R.drawable.bg_load_fail, error);
-            } else {
-                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
         }
         LogUtils.d(TAG, "onRefreshFail: " + error);
     }
@@ -481,7 +469,6 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
     protected void onRefreshSuccess(List<Item> result) {
         mRefreshLayout.setRefreshing(false);
         // 某些数据全局缓存
-
         if (mList == null) {
             // 首次拉取数据成功，设置到列表中
             mList = result;
@@ -489,6 +476,15 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
             if (mPageId <= Config.MAX_GLOBAL_CACHE_ID) {
                 // 添加并关联全局数据
                 GlobalSource.appendData(mPageId, result);
+            }
+            if (mList.size() == Config.DEFAULT_REQUEST_COUNT) {
+                // 第一次刷新完成时的更新数量等于请求数量，说明还有可能有数据可以加载
+                mHasMore = true;
+            } else {
+                // 没有更多的数据了
+                if (mAdapter instanceof  LoadMoreSupportAdapter) {
+                    ((LoadMoreSupportAdapter) mAdapter).setLoadMoreTip(getString(R.string.common_str_no_more));
+                }
             }
         } else {
             // 非首次根据条件是否展示更新成功提示
@@ -509,16 +505,23 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
 
     /**
      * 加载更多失败回调
-     * @param error
+     * @param event
      */
-    protected void onLoadMoreFail(String error) {
+    protected void onLoadMoreFail(PullFinishEvent event) {
         mIsLoadingMore = false;
-        mCanLoadMore = false;
-        if (mAdapter instanceof LoadMoreSupportAdapter) {
-            ((LoadMoreSupportAdapter) mAdapter).setLoadMoreTip(getString(R.string.common_str_load_fail));
+        if (event.getCode() == Config.CODE_OK_BUT_EMPTY) {
+            mHasMore = false;
+            if (mAdapter instanceof LoadMoreSupportAdapter) {
+                ((LoadMoreSupportAdapter) mAdapter).setLoadMoreTip(getString(R.string.common_str_no_more));
+            }
+        } else {
+            mCanLoadMore = false;
+            if (mAdapter instanceof LoadMoreSupportAdapter) {
+                ((LoadMoreSupportAdapter) mAdapter).setLoadMoreTip(getString(R.string.common_str_load_fail));
+            }
         }
         mAdapter.notifyDataSetChanged();
-        LogUtils.d(TAG, "load more fail: " + error);
+        LogUtils.d(TAG, "load more fail: " + event);
     }
 
     /**
@@ -528,22 +531,18 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
     protected void onLoadMoreSuccess(List<Item> result) {
         mIsLoadingMore = false;
         mCanLoadMore = true;
-        if (mList == null) {
-            mList = result;
-            initAdapterIfNeed();
-            if (mPageId <= Config.MAX_GLOBAL_CACHE_ID) {
-                GlobalSource.appendData(mPageId, result);
+        mList.addAll(result);
+        if (result.size() < Config.DEFAULT_REQUEST_COUNT) {
+            mHasMore = false;
+            if (mAdapter instanceof LoadMoreSupportAdapter) {
+                ((LoadMoreSupportAdapter) mAdapter).setLoadMoreTip(getString(R.string.common_str_no_more));
             }
         } else {
-            mList.addAll(result);
-        }
-        if (mAdapter instanceof LoadMoreSupportAdapter) {
-            ((LoadMoreSupportAdapter) mAdapter).setLoadMoreTip(getString(R.string.common_str_load_finish));
+            if (mAdapter instanceof LoadMoreSupportAdapter) {
+                ((LoadMoreSupportAdapter) mAdapter).setLoadMoreTip(getString(R.string.common_str_load_finish));
+            }
         }
         mAdapter.notifyDataSetChanged();
         LogUtils.d(TAG, "load more success: " + result);
     }
-
-
-
 }

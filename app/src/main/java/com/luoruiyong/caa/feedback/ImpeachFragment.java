@@ -1,6 +1,8 @@
 package com.luoruiyong.caa.feedback;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,14 +13,20 @@ import android.widget.Toast;
 
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.base.OnPermissionCallback;
 import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.bean.CommentData;
 import com.luoruiyong.caa.bean.DiscoverData;
+import com.luoruiyong.caa.bean.ImageBean;
 import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.edit.BaseCreateFragment;
+import com.luoruiyong.caa.edit.CreateActivityFragment;
 import com.luoruiyong.caa.edit.EditorActivity;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
+import com.luoruiyong.caa.utils.ListUtils;
+import com.luoruiyong.caa.utils.PageUtils;
+import com.luoruiyong.caa.utils.PictureUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
@@ -61,9 +69,12 @@ public class ImpeachFragment extends BaseCreateFragment implements
     private DiscoverData mTargetDiscover;
     private User mTargetUser;
     private CommentData mTargetComment;
-    private List<String> mPictureUrls;
+
+    private List<ImageBean> mPictureDataList;
 
     private FeedbackActivity mActivity;
+
+    private StoragePermissionCallback mStoragePermissionCallback = new StoragePermissionCallback();
 
     public static ImpeachFragment newInstance(int type) {
         return newInstance(type, null);
@@ -118,9 +129,12 @@ public class ImpeachFragment extends BaseCreateFragment implements
         mCheckEmptyList.add(mContentInputView);
         mCheckEmptyList.add(mPictureInputView);
 
-        mPictureUrls = new ArrayList<>();
-        mPictureUrls.add("https://www.baidu.com/1.jpg");
-        mPictureInputView.setPictureUrls(mPictureUrls);
+        mPictureDataList = new ArrayList<>();
+        ImageBean imageBean = new ImageBean();
+        imageBean.setType(ImageBean.TYPE_RESOURCE_ID);
+        imageBean.setResId(R.drawable.bg_add_picture);
+        mPictureDataList.add(imageBean);
+        mPictureInputView.setPictureDataList(mPictureDataList);
     }
 
     private void handleArguments() {
@@ -209,14 +223,7 @@ public class ImpeachFragment extends BaseCreateFragment implements
         switch (v.getId()) {
             case R.id.input_view_picture:
                 if (mPictureInputView.isImageEmpty()) {
-                    // 第一次点击，响应选择图片
-
-                    if (Enviroment.VAR_DEBUG) {
-                        // for test
-                        // 成功添加的一张图片
-                        mPictureUrls.add("htpps://www.baidu.com/1.jpg");
-                        mPictureInputView.notifyInputDataChanged();
-                    }
+                    requestStoragePermission(mStoragePermissionCallback);
                 }
                 break;
             default:
@@ -226,22 +233,45 @@ public class ImpeachFragment extends BaseCreateFragment implements
 
     @Override
     public void onImageClick(View parent, int position) {
-        if (position + 1 == mPictureUrls.size()) {
+        if (position + 1 == mPictureDataList.size()) {
             // 添加图片
-            // for test
-            if (Enviroment.VAR_DEBUG) {
-                Toast.makeText(getContext(), "选择图片添加", Toast.LENGTH_SHORT).show();
-                mPictureUrls.add(mPictureUrls.size() - 1, "https://www.baidu.com/1.jpg");
-                mPictureInputView.notifyInputDataChanged();
-            }
+            requestStoragePermission(mStoragePermissionCallback);
         } else {
             // 查看图片
-            List list = new ArrayList();
+            List<String> list = ImageBean.toStringList(mPictureDataList);
             // 需要移除最后的那一张添加
-            for (int i = 0; i < mPictureUrls.size() - 1; i++) {
-                list.add(mPictureUrls.get(i));
+            if (ListUtils.getSize(list) > 1) {
+                list.remove(list.size() - 1);
             }
             PictureBrowseActivity.startAction(this, list, position, true, EditorActivity.BROWSE_PICTURE_REQUEST_CODE);
+        }
+    }
+
+    class StoragePermissionCallback implements OnPermissionCallback {
+        @Override
+        public void onGranted() {
+            PageUtils.gotoSystemAlbum(ImpeachFragment.this, BaseCreateFragment.REQUEST_CHOOSE_PICTURE_CODE);
+        }
+
+        @Override
+        public void onDenied() {
+
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            switch (requestCode) {
+                case REQUEST_CHOOSE_PICTURE_CODE:
+                    String path = PictureUtils.getPath(getContext(), data.getData());
+                    ImageBean imageBean = new ImageBean();
+                    imageBean.setType(ImageBean.TYPE_LOCAL_FILE);
+                    imageBean.setPath(path);
+                    mPictureDataList.add(mPictureDataList.size() - 1, imageBean);
+                    mPictureInputView.notifyInputDataChanged();
+                    break;
+            }
         }
     }
 }

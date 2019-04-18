@@ -6,18 +6,28 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.base.OnPermissionCallback;
 import com.luoruiyong.caa.bean.ImageBean;
+import com.luoruiyong.caa.eventbus.CommonEvent;
+import com.luoruiyong.caa.model.CommonChecker;
+import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.PictureUtils;
 import com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +37,8 @@ import java.util.List;
  * Date: 2019/3/14/014
  **/
 public class CreateTopicFragment extends BaseCreateFragment implements
-        DynamicInputView.OnFocusLostOrTextChangeListener,
+        DynamicInputView.OnFocusChangedListener,
+        DynamicInputView.OnTextChangedListener,
         EditorActivity.OnActionBarClickListener,
         DynamicInputView.OnContentViewClickListener,
         ImageViewLayout.OnImageClickListener {
@@ -38,6 +49,12 @@ public class CreateTopicFragment extends BaseCreateFragment implements
 
     private List<DynamicInputView> mCheckEmptyList;
     private List<ImageBean> mTopicCoverList;
+    private String mLastTopicName;
+
+    private boolean mHasCheckName;
+    private boolean mIsNameExists;
+
+    private OnPermissionCallback mStoragePermissionCallback = new StoragePermissionCallback();
 
     @Nullable
     @Override
@@ -49,12 +66,25 @@ public class CreateTopicFragment extends BaseCreateFragment implements
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
     private void initView(View rootView) {
         mNameInputView = rootView.findViewById(R.id.input_view_topic_name);
         mIntroduceInputView = rootView.findViewById(R.id.input_view_topic_introduce);
         mCoverInputView = rootView.findViewById(R.id.input_view_topic_cover);
 
-        mNameInputView.setOnFocusLostOrTextChangeListener(this);
+        mNameInputView.setOnFocusChangedListener(this);
+        mNameInputView.setOnTextChangedListener(this);
         mCoverInputView.setOnImageClickListener(this);
         mCoverInputView.setOnContentViewClickListener(this);
 
@@ -70,16 +100,29 @@ public class CreateTopicFragment extends BaseCreateFragment implements
     }
 
     @Override
-    protected void onStoragePermissionGranted() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("image/*");
-        startActivityForResult(intent, REQUEST_CHOOSE_COVER_CODE);
+    public void onFocusChanged(boolean hasFocus) {
+        if (!hasFocus) {
+            String text = mNameInputView.getInputText();
+            if (!TextUtils.isEmpty(text)) {
+                checkTopicName(text);
+            }
+        }
     }
 
     @Override
-    public void onFocusLostOrTextChanged(String text) {
-        Toast.makeText(getContext(), "onFocusLostOrTextChanged", Toast.LENGTH_SHORT).show();
+    public void onTextChanged(String text) {
+        if (mHasCheckName && !TextUtils.equals(text, mLastTopicName)) {
+            mHasCheckName = false;
+            mNameInputView.setErrorText(getString(R.string.common_tip_no_empty), false);
+        }
+    }
+
+    private void checkTopicName(String name) {
+        if (TextUtils.equals(name, mLastTopicName)) {
+            return;
+        }
+        mLastTopicName = name;
+        CommonChecker.doCheckTopicName(name);
     }
 
     @Override
@@ -110,12 +153,12 @@ public class CreateTopicFragment extends BaseCreateFragment implements
     @Override
     public void onImageClick(View parent, int position) {
         // 选择封面图片
-        requestStoragePermission();
+        requestStoragePermission(mStoragePermissionCallback);
     }
 
     @Override
     public void onContentViewClick(View v) {
-        requestStoragePermission();
+        requestStoragePermission(mStoragePermissionCallback);
     }
 
     @Override
@@ -135,6 +178,38 @@ public class CreateTopicFragment extends BaseCreateFragment implements
                 default:
                     break;
             }
+        }
+    }
+
+    class StoragePermissionCallback implements OnPermissionCallback {
+        @Override
+        public void onGranted() {
+            PageUtils.gotoSystemAlbum(CreateTopicFragment.this, REQUEST_CHOOSE_COVER_CODE);
+        }
+
+        @Override
+        public void onDenied() {
+
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommonEvent(CommonEvent<Boolean> event) {
+        switch (event.getType()) {
+            case CHECK_TOPIC_NAME:
+                String text = mNameInputView.getInputText();
+                if (TextUtils.equals(mLastTopicName, text)) {
+                    if (event.getCode() == Config.CODE_OK) {
+                        mHasCheckName = true;
+                        mIsNameExists = event.getData();
+                        if (mIsNameExists) {
+                            mNameInputView.setErrorText(getString(R.string.fm_create_topic_tip_topic_name_exists), true);
+                        }
+                    }
+                }
+                break;
+            default:
+                break;
         }
     }
 }

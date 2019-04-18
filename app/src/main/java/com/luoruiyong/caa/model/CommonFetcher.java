@@ -4,12 +4,14 @@ import com.google.gson.reflect.TypeToken;
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.bean.ActivityData;
+import com.luoruiyong.caa.bean.CompositeSearchData;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.eventbus.CommonEvent;
 import com.luoruiyong.caa.model.http.HttpsUtils;
 import com.luoruiyong.caa.model.http.RequestType;
+import com.luoruiyong.caa.topic.TopicSearchResultFragment;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -32,7 +34,7 @@ public class CommonFetcher {
     public static void doFetchActivityDetail(int activity_id) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_ACTIVITY_ID, String.valueOf(activity_id));
-        doAcquire(Config.URL_ACTIVITY_DETAIL, params, new TypeToken<CommonEvent<ActivityData>>(){}.getType());
+        doFetch(RequestType.FETCH_ACTIVITY_DETAIL, Config.URL_ACTIVITY_DETAIL, params, new TypeToken<CommonEvent<ActivityData>>(){}.getType());
     }
 
     /**
@@ -42,8 +44,7 @@ public class CommonFetcher {
     public static void doFetchDiscoverDetail(int discover_id) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_DISCOVER_ID, String.valueOf(discover_id));
-        doAcquire(Config.URL_DISCOVER_DETAIL, params, new TypeToken<CommonEvent<DiscoverData>>(){}.getType());
-
+        doFetch(RequestType.FETCH_DISCOVER_DETAIL, Config.URL_DISCOVER_DETAIL, params, new TypeToken<CommonEvent<DiscoverData>>(){}.getType());
     }
 
     /**
@@ -53,8 +54,7 @@ public class CommonFetcher {
     public static void doFetchTopicDetail(int topic_id) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_TOPIC_ID, String.valueOf(topic_id));
-        doAcquire(Config.URL_TOPIC_DETAIL, params, new TypeToken<CommonEvent<TopicData>>(){}.getType());
-
+        doFetch(RequestType.FETCH_TOPIC_DETAIL, Config.URL_TOPIC_DETAIL, params, new TypeToken<CommonEvent<TopicData>>(){}.getType());
     }
 
     /**
@@ -64,7 +64,7 @@ public class CommonFetcher {
     public static void doFetchOtherUserDetail(int uid) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_OTHER_UID, String.valueOf(uid));
-        doAcquire(Config.URL_TOPIC_DETAIL, params, new TypeToken<CommonEvent<User>>(){}.getType());
+        doFetch(RequestType.FETCH_USER_DETAIL, Config.URL_USER_DETAIL, params, new TypeToken<CommonEvent<User>>(){}.getType());
     }
 
     /**
@@ -81,18 +81,38 @@ public class CommonFetcher {
      * 根据关键字动态获取相关话题列表，用于关联话题选择页
      * @param keyword
      */
-    public static void doFetchSimpleTopicList(String keyword) {
+    public static void doFetchSimpleTopicList(String keyword, int requestCount) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_KEYWORD, keyword);
-        doAcquire(Config.URL_TOPIC_SIMPLE_LIST, params, new TypeToken<CommonEvent<List<TopicData>>>(){}.getType());
+        params.put(Config.PARAM_KEY_REQUEST_COUNT, String.valueOf(requestCount));
+        doFetch(RequestType.FETCH_SIMPLE_TOPIC_LIST, Config.URL_TOPIC_SIMPLE_LIST, params, new TypeToken<CommonEvent<List<TopicData>>>(){}.getType());
     }
 
+    public static void doFetchHotSimpleTopicList(int requestCount) {
+        Map<String, String> params = new HashMap<>();
+        params.put(Config.PARAM_KEY_REQUEST_COUNT, String.valueOf(requestCount));
+        doFetch(RequestType.FETCH_HOT_SIMPLE_TOPIC_LIST, Config.URL_TOPIC_HOT_SIMPLE_LIST, params, new TypeToken<CommonEvent<List<TopicData>>>(){}.getType());
+    }
 
-
-    public static void doAcquire(String url, Map<String, String> params, Type type) {
+    public static void doFetchCompositeSearchList(String keyword, int requestCount) {
+        Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_UID, String.valueOf(Enviroment.getCurUid()));
-        Request request = HttpsUtils.buildGetRequestWithParams(url, params);
-        HttpsUtils.sendCommonFetchRequest(request, type);
+        params.put(Config.PARAM_KEY_KEYWORD, keyword);
+        params.put(Config.PARAM_KEY_REQUEST_COUNT, String.valueOf(requestCount));
+        doFetch(RequestType.FETCH_COMPOSITE_SEARCH_LIST, Config.URL_SEARCH_COMPOSITE, params, new TypeToken<CommonEvent<CompositeSearchData>>(){}.getType());
+    }
+
+    public static void doFetchCompositeSearchSimpleList(String keyword, int requestCount) {
+        Map<String, String> params = new HashMap<>();
+        params.put(Config.PARAM_KEY_KEYWORD, keyword);
+        params.put(Config.PARAM_KEY_REQUEST_COUNT, String.valueOf(requestCount));
+        doFetch(RequestType.FETCH_COMPOSITE_SEARCH_SIMPLE_TIP, Config.URL_SEARCH_COMPOSITE_SIMPLE, params, new TypeToken<CommonEvent<CompositeSearchData>>(){}.getType());
+    }
+
+    public static void doFetchCompositeHotList(int requestCount) {
+        Map<String, String> params = new HashMap<>();
+        params.put(Config.PARAM_KEY_REQUEST_COUNT, String.valueOf(requestCount));
+        doFetch(RequestType.FETCH_COMPOSITE_SEARCH_HOT_TIP, Config.URL_SEARCH_COMPOSITE_HOT, params, new TypeToken<CommonEvent<CompositeSearchData>>(){}.getType());
     }
 
     public static void doFetch(RequestType requestType, String url, Map<String, String> params, Type reflectType) {

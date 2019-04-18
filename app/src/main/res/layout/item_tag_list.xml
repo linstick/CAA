@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ll_item_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -16,13 +17,11 @@
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/iv_tag_cover"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             app:actualImageScaleType="centerCrop"
-            app:placeholderImageScaleType="centerCrop"
             app:roundedCornerRadius="@dimen/common_corner_radius_size"
             app:placeholderImage="@drawable/bg_default_image_placeholder" />
-
 
         <TextView
             android:id="@+id/tv_tag_name"
@@ -32,10 +31,30 @@
             android:layout_marginTop="2dp"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginEnd="30dp"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:text="#Miss#"
             android:textColor="@color/colorTopic"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_introduction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_tag_name"
+            android:layout_alignLeft="@id/tv_tag_name"
+            android:layout_alignStart="@id/tv_tag_name"
+            android:layout_marginRight="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginTop="3dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textColor="#888888"
+            android:textSize="13sp"
+            tools:text="这是话题的导语部分，它可能是很长很长的一段句子"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,53 +62,48 @@
             android:orientation="horizontal"
             android:layout_alignLeft="@+id/tv_tag_name"
             android:layout_alignStart="@+id/tv_tag_name"
-            android:layout_below="@+id/tv_tag_name"
-            android:layout_marginTop="7dp"
+            android:layout_alignBottom="@id/iv_tag_cover"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/tv_join_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="20"
+                tools:text="20"
                 android:textColor="#999999"
-                android:textSize="13sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="6dp"
-                android:layout_marginStart="6dp"
-                android:text="@string/fm_topic_str_joined"
-                android:textColor="#999999"
-                android:textSize="13sp" />
+                android:textSize="12sp" />
 
             <View
                 android:layout_width="1dp"
                 android:layout_height="12dp"
                 android:background="#DDDDDD"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"/>
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"/>
 
             <TextView
                 android:id="@+id/tv_visit_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:text="39"
+                tools:text="39"
                 android:textColor="#999999"
-                android:textSize="13sp" />
+                android:textSize="12sp" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_publish_time"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="6dp"
-                android:layout_marginStart="6dp"
-                android:text="@string/fm_topic_str_visited"
+                android:layout_weight="1"
+                android:layout_alignBaseline="@id/tv_join_count"
                 android:textColor="#999999"
-                android:textSize="13sp" />
-
+                android:textSize="12sp"
+                tools:text="2小时前"
+                android:gravity="right|end"
+                />
         </LinearLayout>
 
         <ImageView

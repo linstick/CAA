@@ -109,7 +109,14 @@ public class DynamicInputView extends LinearLayout implements
     }
 
     public void setErrorText(String text) {
+        setErrorText(text, false);
+    }
+
+    public void setErrorText(String text, boolean show) {
         mErrorTv.setText(text);
+        if (show) {
+            setViewVisibleStatus(mErrorTv, VISIBLE);
+        }
     }
 
     public void setNullable(boolean nullable) {

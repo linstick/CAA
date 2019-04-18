@@ -21,19 +21,7 @@ public class MessageData {
     private String targetTitle;
     private String targetContent;
 
-    public MessageData(int i) {
-        uid = 1000;
-        avatarUrl = "https://www.baidu.com/1.jpg";
-        nickname = "linstick" + i;
-        publishTime = Config.DEFAULT_TIME_STAMP;
-
-        type = (int) (Math.random() * 7);
-        content = "This is the content of message " + i;
-
-        targetId = 1000 + i;
-        targetCoverUrl = "https://www.baidu.com/2.jpg";
-        targetTitle = "This is the title of src note " + i;
-        targetContent = "This is the content of src note, long long long long sentence " + i;
+    public MessageData() {
     }
 
     public int getUid() {

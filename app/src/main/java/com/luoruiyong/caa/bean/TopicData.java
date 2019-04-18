@@ -25,22 +25,6 @@ public class TopicData implements Serializable{
 
     private List<DiscoverData> discoverList;
 
-    public TopicData(int i) {
-        uid = 1000 + i;
-        id = 1000 + i;
-        publishTime = Config.DEFAULT_TIME_STAMP;
-        name = "#Topic" + (i + 1) + "#";
-        coverUrl = "https:www.baidu.com/1.jpg";
-        visitCount = (int)(Math.random() * 100);
-        joinCount = (int)(Math.random() * 100);
-
-        discoverList = new ArrayList<>();
-        int count = (int) (Math.random() * 9);
-        for (int j = 0; j < count; j++) {
-            discoverList.add(new DiscoverData(i));
-        }
-    }
-
     public TopicData() {
     }
 

@@ -13,10 +13,7 @@ public class AdditionData {
     private String content;
     private String publishTime;
 
-    public AdditionData(int i) {
-        id = 1000 + i;
-        content = "This is the addition of activity " + i;
-        publishTime = Config.DEFAULT_TIME_STAMP;
+    public AdditionData() {
     }
 
     public int getId() {

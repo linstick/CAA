@@ -25,6 +25,7 @@ import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.LogUtils;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
+import com.luoruiyong.caa.utils.TimeUtils;
 
 
 import java.util.List;
@@ -203,7 +204,7 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
                 mUserAvatarIv.setImageURI(data.getAvatarUrl());
                 mNicknameTv.setText(data.getNickname());
                 mMessageTypeTv.setText(Enviroment.getMessageTypeNameById(data.getType()));
-                mPublishTimeTv.setText(data.getPublishTime());
+                mPublishTimeTv.setText(TimeUtils.format(data.getPublishTime()));
                 if (!TextUtils.isEmpty(data.getContent())) {
                     mContentTv.setVisibility(View.VISIBLE);
                     mContentTv.setText(data.getContent());

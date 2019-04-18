@@ -13,6 +13,7 @@ import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.edit.EditorActivity;
 
 import static com.luoruiyong.caa.utils.PageUtils.FEEDBACK_TYPE_SUGGESTION_OR_PROBLEM;
+import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_DATA;
 import static com.luoruiyong.caa.utils.PageUtils.KEY_FEEDBACK_PAGE_DATA;
 
 public class FeedbackActivity extends BaseActivity implements View.OnClickListener{
@@ -49,7 +50,7 @@ public class FeedbackActivity extends BaseActivity implements View.OnClickListen
         Intent intent = getIntent();
         ImpeachFragment fm;
 
-        if (intent == null) {
+        if (intent == null || intent.getSerializableExtra(KEY_FEEDBACK_PAGE_DATA) == null) {
             fm = ImpeachFragment.newInstance(FEEDBACK_TYPE_SUGGESTION_OR_PROBLEM);
         } else {
             fm  = ImpeachFragment.newInstance(intent.getSerializableExtra(KEY_FEEDBACK_PAGE_DATA));

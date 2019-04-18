@@ -11,18 +11,26 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
+import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.common.fragment.SwipeActivityFragment;
 import com.luoruiyong.caa.common.fragment.SwipeDiscoverFragment;
 import com.luoruiyong.caa.common.fragment.SwipeTopicFragment;
+import com.luoruiyong.caa.eventbus.CommonEvent;
 import com.luoruiyong.caa.model.CommonFetcher;
 import com.luoruiyong.caa.simple.SettingsActivity;
+import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.PageUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,14 +43,18 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
 
     private ImageView mBackIv;
     private TextView mTitleTv;
-    private ImageView mSettingsIv;
-    private ImageView mUserAvatarIv;
+    private ImageView mRightOperateTv;
+    private SimpleDraweeView mUserAvatarIv;
     private TextView mUserIdTv;
     private TextView mNicknameTv;
     private ImageView mEditIv;
     private TextView mBaseInfoTv;
     private TextView mCollegeInfoTv;
     private TextView mDescriptionTv;
+    private TextView mActivityCountTv;
+    private TextView mTopicCountTv;
+    private TextView mDiscoverCountTv;
+    private TextView mCollectCountTv;
 
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
@@ -67,6 +79,18 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         // 退出登录操作
@@ -78,7 +102,7 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
     private void initView() {
         mBackIv = findViewById(R.id.iv_back);
         mTitleTv = findViewById(R.id.tv_title);
-        mSettingsIv = findViewById(R.id.iv_right_operate);
+        mRightOperateTv = findViewById(R.id.iv_right_operate);
         mUserAvatarIv = findViewById(R.id.iv_user_avatar);
         mUserIdTv = findViewById(R.id.tv_id);
         mNicknameTv = findViewById(R.id.tv_nickname);
@@ -86,13 +110,17 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
         mBaseInfoTv = findViewById(R.id.tv_basic_info);
         mCollegeInfoTv = findViewById(R.id.tv_college_info);
         mDescriptionTv = findViewById(R.id.tv_description);
+        mActivityCountTv = findViewById(R.id.tv_activity_count);
+        mTopicCountTv = findViewById(R.id.tv_topic_count);
+        mDiscoverCountTv = findViewById(R.id.tv_discover_count);
+        mCollectCountTv = findViewById(R.id.tv_collect_count);
         mTabLayout = findViewById(R.id.tab_layout);
         mViewPager = findViewById(R.id.view_pager);
 
         mTitleTv.setText(R.string.title_user_profile);
 
         mBackIv.setOnClickListener(this);
-        mSettingsIv.setOnClickListener(this);
+        mRightOperateTv.setOnClickListener(this);
         mEditIv.setOnClickListener(this);
 
         setUpErrorViewStub(findViewById(R.id.vs_error_view));
@@ -119,9 +147,12 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
         if (mUser == null) {
             return;
         }
-//        mUserAvatarIv.setImageUrl(mUser.getAvatar());
+        mUserAvatarIv.setImageURI(mUser.getAvatar());
         mUserIdTv.setText(String.format(getString(R.string.profile_str_id), mUser.getId()));
         mNicknameTv.setText(String.format(getString(R.string.profile_str_nickname), mUser.getNickname()));
+        mActivityCountTv.setText(String.format(getString(R.string.profile_str_activity_count), String.valueOf(mUser.getActivityCount())));
+        mTopicCountTv.setText(String.format(getString(R.string.profile_str_topic_count), String.valueOf(mUser.getTopicCount())));
+        mDiscoverCountTv.setText(String.format(getString(R.string.profile_str_discover_count),String.valueOf(mUser.getDiscoverCount())));
 
         StringBuilder builder = new StringBuilder();
         builder.append(TextUtils.isEmpty(mUser.getGender()) ? "" : mUser.getGender());
@@ -143,9 +174,15 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
             mDescriptionTv.setText(mUser.getDescription());
         }
 
-        if (Enviroment.isSelf(mUser.getUid())) {
+        if (mIsSelf) {
             mEditIv.setVisibility(View.VISIBLE);
-            mSettingsIv.setVisibility(View.VISIBLE);
+            mRightOperateTv.setVisibility(View.VISIBLE);
+            mRightOperateTv.setImageResource(R.drawable.ic_settings_white);
+            mCollectCountTv.setVisibility(View.VISIBLE);
+            mCollectCountTv.setText(String.format(getString(R.string.profile_str_collect_count),String.valueOf(mUser.getCollectCount())));
+        } else {
+            mRightOperateTv.setVisibility(View.VISIBLE);
+            mRightOperateTv.setImageResource(R.drawable.ic_more_white);
         }
     }
 
@@ -183,10 +220,36 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
                 finish();
                 break;
             case R.id.iv_right_operate:
-                startActivity(new Intent(this, SettingsActivity.class));
+                if (mIsSelf) {
+                    startActivity(new Intent(this, SettingsActivity.class));
+                } else {
+                    DialogHelper.showListDialog(this, getString(R.string.common_str_impeach), new CommonDialog.Builder.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(int position) {
+                            PageUtils.gotoFeedbackPage(UserProfileActivity.this, mUser);
+                        }
+                    });
+                }
                 break;
             case R.id.iv_edit_profile:
                 startActivity(new Intent(this, EditBasicInfoActivity.class));
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommonEvent(CommonEvent<User> event) {
+        switch (event.getType()) {
+            case FETCH_USER_DETAIL:
+                if (event.getCode() == Config.CODE_OK) {
+                    hideTipView();
+                    mUser = event.getData();
+                    bindUserData();
+                } else {
+                    showErrorView(R.drawable.bg_load_fail, event.getStatus());
+                }
                 break;
             default:
                 break;

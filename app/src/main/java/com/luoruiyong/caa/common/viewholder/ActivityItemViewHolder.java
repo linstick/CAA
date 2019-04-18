@@ -12,7 +12,10 @@ import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.utils.ResourcesUtils;
+import com.luoruiyong.caa.utils.TimeUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
+
+import java.sql.Time;
 
 public class ActivityItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -54,7 +57,7 @@ public class ActivityItemViewHolder extends RecyclerView.ViewHolder {
     public void bindData(ActivityData data, int type) {
         mUserAvatarIv.setImageURI(data.getAvatarUrl());
         mNicknameTv.setText(data.getNickname());
-        mPublishTimeTv.setText(data.getPublishTime());
+        mPublishTimeTv.setText(TimeUtils.format(data.getPublishTime()));
 
         if (data.getType() != type) {
             mActivityTypeTv.setText(Enviroment.getActivityTypeNameById(data.getType()));

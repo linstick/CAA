@@ -10,15 +10,21 @@ import com.facebook.common.executors.CallerThreadExecutor;
 import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.controller.AbstractDraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.core.ImagePipeline;
 import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
+import com.facebook.imagepipeline.postprocessors.IterativeBoxBlurPostProcessor;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.bean.ImageBean;
 import com.luoruiyong.caa.utils.PictureUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
+
+import java.io.File;
 
 /**
  * Author: luoruiyong
@@ -58,6 +64,41 @@ public class ImageLoader {
                 }
             }
         }, CallerThreadExecutor.getInstance());
+    }
+
+    public static void showUrlBlur(SimpleDraweeView draweeView, String url, int iterations, int blurRadius) {
+        try {
+            Uri uri = Uri.parse(url);
+            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
+                    .setPostprocessor(new IterativeBoxBlurPostProcessor(6, blurRadius))
+                    .build();
+            AbstractDraweeController controller = Fresco.newDraweeControllerBuilder()
+                    .setOldController(draweeView.getController())
+                    .setImageRequest(request)
+                    .build();
+            draweeView.setController(controller);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setImageSource(SimpleDraweeView draweeView, ImageBean bean) {
+        if (draweeView == null || bean == null) {
+            return;
+        }
+        switch (bean.getType()) {
+            case ImageBean.TYPE_RESOURCE_ID:
+                draweeView.setActualImageResource(bean.getResId());
+                break;
+            case ImageBean.TYPE_LOCAL_FILE:
+                draweeView.setImageURI(Uri.fromFile(new File(bean.getPath())));
+                break;
+            case ImageBean.TYPE_REMOTE_FILE:
+                draweeView.setImageURI(bean.getUrl());
+                break;
+            default:
+                break;
+        }
     }
 
     public interface OnLoadAndSaveCallback {

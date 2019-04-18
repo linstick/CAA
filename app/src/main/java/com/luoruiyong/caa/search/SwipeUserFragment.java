@@ -11,9 +11,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.User;
+import com.luoruiyong.caa.common.fragment.SwipeActivityFragment;
+import com.luoruiyong.caa.model.CommonFetcher;
+import com.luoruiyong.caa.model.puller.CommonPuller;
 import com.luoruiyong.caa.utils.DisplayUtils;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.PageUtils;
@@ -27,13 +32,26 @@ import java.util.List;
  **/
 public class SwipeUserFragment extends BaseSwipeFragment<User> {
 
+
+    public static SwipeUserFragment newInstance(String keyword) {
+        SwipeUserFragment fm = new SwipeUserFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_KEYWORD, keyword);
+        fm.setArguments(bundle);
+        return fm;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mPageId = Config.PAGE_ID_USER_SEARCH;
+        setCanPullRefresh(false);
+        handleArguments();
+    }
 
-//        for (int i = 0; i < 30; i++) {
-//            mList.add(new User());
-//        }
+    public void handleArguments() {
+        Bundle bundle = getArguments();
+        mKeyword = bundle.getString(KEY_KEYWORD);
     }
 
     @Override
@@ -51,6 +69,17 @@ public class SwipeUserFragment extends BaseSwipeFragment<User> {
                 }
             }
         });
+    }
+
+    @Override
+    protected void doRefresh() {
+        mRefreshLayout.setRefreshing(true);
+        CommonPuller.refreshUserSearch(mKeyword);
+    }
+
+    @Override
+    protected void doLoadMore() {
+        CommonPuller.loadMoreUserSearch(mKeyword, ListUtils.getSize(mList));
     }
 
     private class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> implements View.OnClickListener{
@@ -74,7 +103,6 @@ public class SwipeUserFragment extends BaseSwipeFragment<User> {
             holder.bindData(data);
             holder.itemView.setOnClickListener(this);
             holder.itemView.setTag(data.getUid());
-
         }
 
         @Override
@@ -89,20 +117,19 @@ public class SwipeUserFragment extends BaseSwipeFragment<User> {
 
         class ViewHolder extends RecyclerView.ViewHolder {
 
-            private ImageView mUserAvatarIv;
+            private SimpleDraweeView mUserAvatarIv;
             private TextView mNicknameTv;
             private TextView mIntroduceTv;
 
             public ViewHolder(View itemView) {
                 super(itemView);
-
                 mUserAvatarIv = itemView.findViewById(R.id.iv_user_avatar);
                 mNicknameTv = itemView.findViewById(R.id.tv_nickname);
                 mIntroduceTv = itemView.findViewById(R.id.tv_introduction);
             }
 
             public void bindData(User user) {
-//            mUserAvatarIv.setImageUrl(user.getAvatar());
+                mUserAvatarIv.setImageURI(user.getAvatar());
                 mNicknameTv.setText(user.getNickname());
                 mIntroduceTv.setText(user.getDescription());
             }

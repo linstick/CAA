@@ -21,6 +21,7 @@ import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.eventbus.CommonEvent;
 import com.luoruiyong.caa.model.CommonFetcher;
+import com.luoruiyong.caa.utils.KeyboardUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -140,11 +141,13 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.tv_no_account:
                 if (mCallBack != null) {
+                    mNoAccountTv.requestFocus();
                     mCallBack.updateFragment(LoginActivity.SIGN_TAB);
                 }
                 break;
             case R.id.tv_forget_password:
                 if (mCallBack != null) {
+                    mNoAccountTv.requestFocus();
                     mCallBack.updateFragment(LoginActivity.FIND_PASSWORD_TAB);
                 }
                 break;
@@ -158,7 +161,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         switch (event.getType()) {
             case FETCH_AVATAR:
                 if (event.getCode() == Config.CODE_OK) {
-                    if (TextUtils.equals(mLastCheckAccount, mAccountEt.getText().toString().trim())) {
+                    String text = mAccountEt.getText().toString().trim();
+                    if (TextUtils.equals(mLastCheckAccount, text)) {
                         // 头像请求完成之后并且账号信息没改变，更新头像
                         String url = event.getData();
                         mUserAvatarIv.setImageURI(url);

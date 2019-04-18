@@ -8,8 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.bean.User;
+import com.luoruiyong.caa.model.ImageLoader;
 import com.luoruiyong.caa.utils.ListUtils;
 
 import java.util.List;
@@ -61,8 +63,8 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserIt
 
     class UserItemViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView mBackgroundIv;
-        private ImageView mUserAvatarIv;
+        private SimpleDraweeView mBackgroundIv;
+        private SimpleDraweeView mUserAvatarIv;
         private TextView mNicknameTv;
         private TextView mIntroduceTv;
 
@@ -75,8 +77,8 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserIt
         }
 
         public void bindData(User user) {
-//            mBackgroundIv.setImageUrl(user.getAvatar());
-//            mUserAvatarIv.setImageUrl(user.getAvatar());
+            ImageLoader.showUrlBlur(mBackgroundIv, user.getAvatar(), 5, 10);
+            mUserAvatarIv.setImageURI(user.getAvatar());
             mNicknameTv.setText(user.getNickname());
             mIntroduceTv.setText(user.getDescription());
         }

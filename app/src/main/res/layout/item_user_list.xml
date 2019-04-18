@@ -1,32 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="150dp"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="140dp"
     android:layout_height="200dp"
-    android:background="#AFCAECEA">
+    android:background="@drawable/bg_border_card">
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/iv_background"
         android:layout_width="match_parent"
-        android:layout_height="90dp"
-        android:background="@drawable/bg_setting_header"
-        android:scaleType="fitCenter"/>
+        android:layout_height="70dp"
+        fresco:actualImageScaleType="centerCrop"
+        fresco:roundedCornerRadius="@dimen/common_corner_radius_size"
+        fresco:roundBottomLeft="false"
+        fresco:roundBottomStart="false"
+        fresco:roundBottomRight="false"
+        fresco:roundBottomEnd="false"
+        fresco:placeholderImage="@drawable/bg_default_image_placeholder" />
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/iv_user_avatar"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="@drawable/bg_setting_header"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:scaleType="fitCenter"
-        android:layout_marginTop="60dp"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_marginTop="30dp"
+        android:layout_gravity="center_horizontal"
+        fresco:actualImageScaleType="centerCrop"
+        fresco:roundAsCircle="true"
+        fresco:roundingBorderColor="@color/white"
+        fresco:roundingBorderWidth="5dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_gravity="bottom"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="110dp"
         android:gravity="center"
         android:paddingLeft="10dp"
         android:paddingStart="10dp"

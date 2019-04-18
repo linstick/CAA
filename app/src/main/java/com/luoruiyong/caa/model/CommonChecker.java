@@ -1,5 +1,6 @@
 package com.luoruiyong.caa.model;
 
+import com.google.gson.reflect.TypeToken;
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.eventbus.CommonEvent;
 import com.luoruiyong.caa.model.http.HttpsUtils;
@@ -24,8 +25,14 @@ public class CommonChecker {
         doCheck(RequestType.CHECK_ACCOUNT, Config.URL_USER_CHECK_ACCOUNT, params);
     }
 
+    public static void doCheckTopicName(String name) {
+        Map<String, String> params = new HashMap<>();
+        params.put(Config.PARAM_KEY_TOPIC_NAME, name);
+        doCheck(RequestType.CHECK_TOPIC_NAME, Config.URL_TOPIC_CHECK_NAME, params);
+    }
+
     public static void doCheck(RequestType requestType, String url, Map<String, String> params) {
-        doCheck(requestType, url, params, CommonEvent.class);
+        doCheck(requestType, url, params, new TypeToken<CommonEvent<Boolean>>(){}.getType());
     }
 
     public static void doCheck(RequestType requestType, String url, Map<String, String> params, Type reflectType) {

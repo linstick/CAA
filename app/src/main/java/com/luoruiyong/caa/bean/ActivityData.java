@@ -36,30 +36,6 @@ public class ActivityData implements Serializable{
     public ActivityData() {
     }
 
-    // for text
-    public ActivityData(int i, int type) {
-        // for test
-        uid = 1000 + i;
-        avatarUrl = "https://www.baidu.com/1.jpg";
-        nickname = "昵称" + i;
-        publishTime = Config.DEFAULT_TIME_STAMP;
-        id = 10000 + i;
-        this.type = type;
-        title = "This is the title of activity " + i;
-        content = "This is the content of activity, long long long long long long long long long sentence!!! " + i;
-        location = Math.random() > 0.5 ? "广东·广州" + i : null;
-        topic = Math.random() > 0.5 ? "#话题" + i + "#" : null;
-        topicId = 10000 + i;
-        collectCount = (int) (Math.random() * 100);
-        commentCount = (int) (Math.random() * 100);
-        additionCount = (int) (Math.random() * 100);
-        pictureList = new ArrayList<>();
-        int pictureCount = (int) (Math.random() * 9);
-        for (int j = 0; j < pictureCount; j++) {
-            pictureList.add("https://www.baidu.com/" + (j + 1) + ".jpg");
-        }
-    }
-
     public int getUid() {
         return uid;
     }

@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.Toast;
 
-import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.base.OnPermissionCallback;
 import com.luoruiyong.caa.bean.ImageBean;
 import com.luoruiyong.caa.location.LocationActivity;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
@@ -59,6 +59,8 @@ public class CreateActivityFragment extends BaseCreateFragment implements
     private List<DynamicInputView> mCheckNonNullList;
     private List<DynamicInputView> mCheckEmptyList;
     private int mChoosePictureRequestCode = -1;
+
+    private OnPermissionCallback mStoragePermissionCallback = new StoragePermissionCallback();
 
     @Nullable
     @Override
@@ -123,7 +125,7 @@ public class CreateActivityFragment extends BaseCreateFragment implements
             @Override
             public void onImageClick(View parent, int position) {
                 mChoosePictureRequestCode = REQUEST_CHOOSE_COVER_CODE;
-                requestStoragePermission();
+                requestStoragePermission(mStoragePermissionCallback);
             }
         });
         mTopicCoverList = new ArrayList<>();
@@ -171,7 +173,7 @@ public class CreateActivityFragment extends BaseCreateFragment implements
     public void onImageClick(View parent, int position) {
         if (position + 1 == mPictureDataList.size()) {
             mChoosePictureRequestCode = REQUEST_CHOOSE_PICTURE_CODE;
-            requestStoragePermission();
+            requestStoragePermission(mStoragePermissionCallback);
         } else {
             // 查看图片
             List<String> list = ImageBean.toStringList(mPictureDataList);
@@ -212,41 +214,33 @@ public class CreateActivityFragment extends BaseCreateFragment implements
         }
     }
 
-
-
-    protected  void onStoragePermissionGranted() {
-        if (mChoosePictureRequestCode == -1) {
-            return;
-        }
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("image/*");
-        startActivityForResult(intent, mChoosePictureRequestCode);
-    }
-
-    @Override
-    protected void onLocationPermissionGranted() {
-        startActivityForResult(new Intent(getContext(), LocationActivity.class), EditorActivity.CHOOSE_LOCATION_REQUEST_CODE);
-    }
-
     @Override
     public void onContentViewClick(View v) {
        switch (v.getId()) {
            case R.id.input_view_picture:
                if (mPictureInputView.isImageEmpty()) {
                    mChoosePictureRequestCode = REQUEST_CHOOSE_PICTURE_CODE;
-                   requestStoragePermission();
+                   requestStoragePermission(mStoragePermissionCallback);
                }
                break;
            case R.id.input_view_related_topic:
                startActivityForResult(new Intent(getContext(), TopicSearchActivity.class), EditorActivity.RELATE_TOPIC_REQUEST_CODE);
                break;
            case R.id.input_view_location:
-               requestLocationPermission();
+               requestLocationPermission(new OnPermissionCallback() {
+                   @Override
+                   public void onGranted() {
+                       startActivityForResult(new Intent(getContext(), LocationActivity.class), EditorActivity.CHOOSE_LOCATION_REQUEST_CODE);
+                   }
+
+                   @Override
+                   public void onDenied() {
+                   }
+               });
                break;
            case R.id.input_view_topic_cover:
                mChoosePictureRequestCode = REQUEST_CHOOSE_COVER_CODE;
-               requestStoragePermission();
+               requestStoragePermission(mStoragePermissionCallback);
                break;
            default:
                break;
@@ -291,6 +285,18 @@ public class CreateActivityFragment extends BaseCreateFragment implements
                 default:
                     break;
             }
+        }
+    }
+
+    class StoragePermissionCallback implements OnPermissionCallback {
+        @Override
+        public void onGranted() {
+            PageUtils.gotoSystemAlbum(CreateActivityFragment.this, mChoosePictureRequestCode);
+        }
+
+        @Override
+        public void onDenied() {
+
         }
     }
 }

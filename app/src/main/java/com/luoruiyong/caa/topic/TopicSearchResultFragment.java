@@ -4,7 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +16,23 @@ import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.base.BaseFragment;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.TopicData;
+import com.luoruiyong.caa.eventbus.CommonEvent;
+import com.luoruiyong.caa.model.CommonChecker;
+import com.luoruiyong.caa.model.CommonFetcher;
+import com.luoruiyong.caa.model.http.ResponseUtils;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.PageUtils;
+import com.luoruiyong.caa.utils.ResourcesUtils;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -25,9 +40,17 @@ import java.util.List;
  * Date: 2019/4/8/008
  * Description:
  **/
-public class TopicSearchResultFragment extends BaseSwipeFragment<TopicData> {
+public class TopicSearchResultFragment extends BaseFragment {
 
     private TopicSearchActivity mActivity;
+
+    private List<TopicData> mList;
+    private ListAdapter mAdapter;
+    private RecyclerView mRecyclerView;
+    private SwipeRefreshLayout mRefreshLayout;
+
+    private String mLastKeyword;   // 字符增加导致的加载
+    private String mSearchKeyword; // 点击搜索按钮导致的加载,优先
 
     @Override
     public void onAttach(Context context) {
@@ -40,47 +63,127 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TopicData> {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPageId = Config.PAGE_ID_RELATED_TOPIC_SEARCH;
+        mList = new ArrayList<>();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view =  inflater.inflate(R.layout.fragment_search_topic, container, false);
+
+        mRecyclerView = view.findViewById(R.id.rv_recycler_view);
+        mRefreshLayout = view.findViewById(R.id.refresh_layout);
+        setUpErrorViewStub(view.findViewById(R.id.vs_error_view));
+
+        mAdapter = new ListAdapter(mList);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        mRefreshLayout.setEnabled(false);
+        searchQuietly(null);
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     public void searchQuietly(String text) {
-        Toast.makeText(getContext(), "do search quietly", Toast.LENGTH_SHORT).show();
+        if ((!TextUtils.isEmpty(text) && TextUtils.equals(mLastKeyword, text)) || mRefreshLayout.isRefreshing()) {
+            return;
+        }
+        hideTipView();
+        mAdapter.setShowCreateTopic(false);
+        mAdapter.notifyDataSetChanged();
+        mSearchKeyword = null;
+        if (TextUtils.isEmpty(text)) {
+            mLastKeyword = null;
+            CommonFetcher.doFetchHotSimpleTopicList(Config.DEFAULT_TOPIC_SEARCH_TIP_REQUEST_COUNT);
+        } else {
+            mLastKeyword = text;
+            CommonFetcher.doFetchSimpleTopicList(text, Config.DEFAULT_TOPIC_SEARCH_TIP_REQUEST_COUNT);
+        }
     }
 
     public void doSearch(String text) {
+        if (mRefreshLayout.isRefreshing()) {
+            return;
+        }
         mRefreshLayout.setRefreshing(true);
-        ((ListAdapter) mAdapter).mShowCreateTopic = false;
         mList.clear();
+        mAdapter.setShowCreateTopic(false);
+        mAdapter.setShowNotRelatedTopic(false);
         mAdapter.notifyDataSetChanged();
-        Toast.makeText(getContext(), "do search", Toast.LENGTH_SHORT).show();
+        mSearchKeyword = text;
+        CommonFetcher.doFetchSimpleTopicList(text, Config.DEFAULT_TOPIC_SEARCH_REQUEST_COUNT);
+    }
 
-        // for test
-        mRefreshLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mRefreshLayout.setRefreshing(false);
-                for (int i = 0; i < 30; i++) {
-                    mList.add(new TopicData(i));
+
+    @Override
+    protected void onRefreshClick() {
+        if (mActivity != null) {
+            mActivity.setCreateResultDataAndFinish(mSearchKeyword != null ? mSearchKeyword : mLastKeyword);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommonEvent(CommonEvent event) {
+        switch (event.getType()) {
+            case FETCH_HOT_SIMPLE_TOPIC_LIST:
+                if (TextUtils.isEmpty(mActivity.getInputText()) && TextUtils.isEmpty(mLastKeyword) && TextUtils.isEmpty(mSearchKeyword)) {
+                    mList.clear();
+                    if (event.getCode() == Config.CODE_OK) {
+                        mList.addAll((Collection<? extends TopicData>) event.getData());
+                    }
+                    mAdapter.notifyDataSetChanged();
                 }
-                ((ListAdapter) mAdapter).mShowCreateTopic = true;
-                mAdapter.notifyDataSetChanged();
-            }
-        }, 2000);
-    }
-
-    @Override
-    protected RecyclerView.Adapter getListAdapter(List<TopicData> list) {
-        return new ListAdapter(list);
-    }
-
-    @Override
-    protected void setupRecyclerViewDivider() {
-        // do nothing
-    }
-
-    @Override
-    protected void doLoadMore() {
-
+                break;
+            case FETCH_SIMPLE_TOPIC_LIST:
+                if (!TextUtils.isEmpty(mSearchKeyword)) {
+                    // 点击搜索结果或搜索之后下滑回调
+                    mRefreshLayout.setRefreshing(false);
+                    if (Config.CODE_OK == event.getCode()) {
+                        List<TopicData> list = (List<TopicData>)event.getData();
+                        if (!TextUtils.equals(list.get(0).getName(), mSearchKeyword)) {
+                            mAdapter.setShowCreateTopic(true);
+                        }
+                        mList.addAll((List<TopicData>) event.getData());
+                        mAdapter.setShowNotRelatedTopic(true);
+                        mAdapter.notifyDataSetChanged();
+                    } else if (Config.CODE_OK_BUT_EMPTY == event.getCode()) {
+                        if (ListUtils.isEmpty(mList)) {
+                            showErrorView(R.drawable.bg_load_fail, event.getStatus(), String.format(getString(R.string.topic_relate_str_create_topic), mSearchKeyword));
+                        }
+                    }
+                } else {
+                    // 输入删除结果回调
+                    if (TextUtils.equals(mLastKeyword, mActivity.getInputText())) {
+                        mList.clear();
+                        if (Config.CODE_OK == event.getCode()) {
+                            List<TopicData> list = (List<TopicData>)event.getData();
+                            if (!TextUtils.equals(list.get(0).getName(), mLastKeyword)) {
+                                mAdapter.setShowCreateTopic(true);
+                            }
+                            mList.addAll((List<TopicData>) event.getData());
+                        } else if (Config.CODE_OK_BUT_EMPTY == event.getCode()) {
+                            mAdapter.setShowCreateTopic(true);
+                        }
+                        mAdapter.setShowNotRelatedTopic(true);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     private class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener{
@@ -90,7 +193,8 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TopicData> {
         private final static int TYPE_CREATE_TOPIC = 2;
 
         private List<TopicData> mList;
-        private boolean mShowCreateTopic = true;
+        private boolean mShowCreateTopic = false;
+        private boolean mShowNotRelatedTopic = true;
 
         public ListAdapter(List<TopicData> list) {
             this.mList = list;
@@ -98,7 +202,10 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TopicData> {
 
         public void setShowCreateTopic(boolean show) {
             mShowCreateTopic = show;
-            notifyDataSetChanged();
+        }
+
+        public void setShowNotRelatedTopic(boolean show) {
+            mShowNotRelatedTopic = show;
         }
 
         @NonNull
@@ -147,7 +254,7 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TopicData> {
 
         @Override
         public int getItemCount() {
-            return 1 + (mShowCreateTopic ? ListUtils.getSize(mList) + 1 : ListUtils.getSize(mList));
+            return ListUtils.getSize(mList) + (mShowNotRelatedTopic ? 1 : 0) + (mShowCreateTopic ? 1 : 0);
         }
 
         @Override
@@ -171,7 +278,7 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TopicData> {
                     break;
                 case R.id.ll_create_topic_item_layout:
                     if (mActivity != null) {
-                        mActivity.setCreateResultDataAndFinish();
+                        mActivity.setCreateResultDataAndFinish(mSearchKeyword != null ? mSearchKeyword : mLastKeyword);
                     }
                     break;
                 case R.id.ll_not_relate_topic_item_layout:
@@ -193,19 +300,22 @@ public class TopicSearchResultFragment extends BaseSwipeFragment<TopicData> {
         class TopicViewHolder extends RecyclerView.ViewHolder {
 
             private TextView mTopicTv;
-            private TextView mLabelTv;
+            private TextView mJoinTv;
+            private TextView mVisitTv;
             private TextView mSelectTv;
 
             public TopicViewHolder(View itemView) {
                 super(itemView);
                 mTopicTv = itemView.findViewById(R.id.tv_topic);
-                mLabelTv = itemView.findViewById(R.id.tv_label);
+                mJoinTv = itemView.findViewById(R.id.tv_join);
+                mVisitTv = itemView.findViewById(R.id.tv_visit);
                 mSelectTv = itemView.findViewById(R.id.tv_choose);
             }
 
             public void bindData(TopicData data) {
                 mTopicTv.setText(String.format(getString(R.string.common_str_topic), data.getName()));
-                mLabelTv.setText(String.format(getString(R.string.common_str_join_count), data.getJoinCount()));
+                mJoinTv.setText(String.format(getString(R.string.common_str_join_count), data.getJoinCount()));
+                mVisitTv.setText(String.format(getString(R.string.common_str_visit_count), data.getVisitedCount()));
             }
         }
 

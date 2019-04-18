@@ -33,6 +33,12 @@ public class CommonPoster {
         doPost(RequestType.LOGIN, Config.URL_USER_LOGIN, params, new TypeToken<CommonEvent<User>>(){}.getType());
     }
 
+    /**
+     * 用户注册
+     * @param account
+     * @param nickname
+     * @param password
+     */
     public static void doSignUp(String account, String nickname, String password) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_ACCOUNT, account);
@@ -41,15 +47,20 @@ public class CommonPoster {
         doPost(RequestType.SIGN_UP, Config.URL_USER_SIGN_UP, params, new TypeToken<CommonEvent<User>>(){}.getType());
     }
 
+    /**
+     * 注销用户，主要是用于用户在等待注册时点击了取消
+     * 最后如果成功创建了用户账号，需要将其注销
+     * @param uid
+     */
     public static void doSignOut(int uid) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_UID, String.valueOf(uid));
         doPost(RequestType.NONE, Config.URL_USER_SIGN_OUT, params);
     }
 
-    public static void doModifyPassword(String uid, String password, String newPassword) {
+    public static void doModifyPassword(int uid, String password, String newPassword) {
         Map<String, String> params = new HashMap<>();
-        params.put(Config.PARAM_KEY_UID, uid);
+        params.put(Config.PARAM_KEY_UID, String.valueOf(uid));
         params.put(Config.PARAM_KEY_PASSWORD, password);
         params.put(Config.PARAM_KEY_NEW_PASSWORD, newPassword);
         doPost(RequestType.MODIFY_PASSWORD, Config.URL_USER_MODIFY_PASSWORD, params);
@@ -60,7 +71,7 @@ public class CommonPoster {
     }
 
     public static void doPost(RequestType requestType, String url, Map<String, String> params, Type reflectType) {
-        Request request = HttpsUtils.buildGetRequestWithParams(url, params);
+        Request request = HttpsUtils.buildPostRequestWithParams(url, params);
         HttpsUtils.sendCommonRequest(requestType, request, reflectType);
     }
 

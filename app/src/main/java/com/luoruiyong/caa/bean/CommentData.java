@@ -17,13 +17,7 @@ public class CommentData implements Serializable{
     private String publishTime;
     private String content;
 
-    public CommentData(int i) {
-        id = 1000 + i;
-        uid = 1000 + i;
-        avatarUrl = "https://www.baidu.com/1.jpg";
-        nickname = "昵称" + i;
-        publishTime = Config.DEFAULT_TIME_STAMP;
-        content = "This is the content of comment " + i;
+    public CommentData() {
     }
 
     public int getId() {

@@ -21,7 +21,8 @@ import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.fragment.SwipeDiscoverFragment;
-import com.luoruiyong.caa.eventbus.DetailFinishEvent;
+import com.luoruiyong.caa.edit.EditorActivity;
+import com.luoruiyong.caa.eventbus.CommonEvent;
 import com.luoruiyong.caa.model.CommonFetcher;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
@@ -51,6 +52,7 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
     private ViewPager mViewPager;
     private View mTabLayoutContainer;
     private View mDividerView;
+    private TextView mJoinInTv;
 
     private SimpleDraweeView mUserAvatarIv;
     private TextView mNicknameTv;
@@ -105,11 +107,13 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
         mTagCoverIv = findViewById(R.id.iv_tag_cover);
         mCenterDivider = findViewById(R.id.view_center_divider);
         mIntroductionLayout = findViewById(R.id.ll_introduce_layout);
+        mJoinInTv = findViewById(R.id.tv_join_in);
 
         mBackIv.setOnClickListener(this);
         findViewById(R.id.iv_header_back).setOnClickListener(this);
         mUserAvatarIv.setOnClickListener(this);
         mNicknameTv.setOnClickListener(this);
+        mJoinInTv.setOnClickListener(this);
 
         mAppBarLayout = findViewById(R.id.app_bar_layout);
         mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
@@ -169,7 +173,11 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
             return;
         }
         mUserAvatarIv.setImageURI(mData.getAvatarUrl());
-        mTagCoverIv.setImageURI(mData.getCoverUrl());
+        if (!TextUtils.isEmpty(mData.getCoverUrl())) {
+            mTagCoverIv.setImageURI(mData.getCoverUrl());
+        } else {
+            mTagCoverIv.setActualImageResource(R.drawable.test_image);
+        }
         mNicknameTv.setText(mData.getNickname());
         mTagNameTv.setText(String.format(getString(R.string.common_str_topic), mData.getName()));
         mVisitedCountTv.setText(String.format(getString(R.string.common_str_visit_count), mData.getVisitedCount()));
@@ -185,8 +193,11 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
         mTitleList = new ArrayList<>();
         mFragmentList = new ArrayList<>();
 
-        mTitleList.add(getString(R.string.topic_detail_str_discover));
-        mFragmentList.add(SwipeDiscoverFragment.newInstance(Config.PAGE_ID_DISCOVER_TOPIC, mData.getId(), mPosition));
+        mTitleList.add(getString(R.string.topic_detail_str_hot));
+        mFragmentList.add(SwipeDiscoverFragment.newInstance(Config.PAGE_ID_DISCOVER_TOPIC_HOT, mData.getId(), mPosition));
+
+        mTitleList.add(getString(R.string.topic_detail_str_lasted));
+        mFragmentList.add(SwipeDiscoverFragment.newInstance(Config.PAGE_ID_DISCOVER_TOPIC_LASTED, mData.getId()));
 
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         mTabLayout.setupWithViewPager(mViewPager);
@@ -223,22 +234,31 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
             case R.id.tv_nickname:
                 PageUtils.gotoUserProfilePage(this, mData.getUid());
                 break;
+            case R.id.tv_join_in:
+                EditorActivity.startAction(this, mData.getId(), mData.getName());
+                break;
             default:
                 break;
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onDetailFinishEvent(DetailFinishEvent<TopicData> event) {
+    public void onCommonEvent(CommonEvent<TopicData> event) {
         hideTipView();
-        if (event.getCode() == Config.CODE_OK) {
-            mData = event.getData();
-            bindBasicData();
-            initFragment();
-        } else if (event.getCode() == Config.CODE_NO_DATA) {
-            showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_data));
-        } else if (event.getCode() == Config.CODE_NETWORK_ERROR) {
-            showErrorView(R.drawable.bg_no_network, getString(R.string.common_tip_no_network));
+        switch (event.getType()) {
+            case FETCH_TOPIC_DETAIL:
+                if (event.getCode() == Config.CODE_OK) {
+                    mData = event.getData();
+                    bindBasicData();
+                    initFragment();
+                } else if (event.getCode() == Config.CODE_NO_DATA) {
+                    showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_data));
+                } else if (event.getCode() == Config.CODE_NETWORK_ERROR) {
+                    showErrorView(R.drawable.bg_no_network, getString(R.string.common_tip_no_network));
+                }
+                break;
+            default:
+                break;
         }
     }
 

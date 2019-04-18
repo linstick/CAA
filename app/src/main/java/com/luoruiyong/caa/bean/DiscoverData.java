@@ -28,25 +28,7 @@ public class DiscoverData implements Serializable{
     private List<String> pictureList;
 
 
-    public DiscoverData(int i) {
-        // for test
-        uid = 1000 + i;
-        id = 10000 + i;
-        avatarUrl = "https://www.baidu.com/1.jpg";
-        nickname = "nickname " + i;
-        publishTime = Config.DEFAULT_TIME_STAMP;
-        content = "This is the content of activity, long long long long long long long long long sentence!!! " + i;
-        college = Math.random() > 0.5 ? "Guangdong University Of Technology " + i : null;
-        location = Math.random() > 0.5 ? "Guangdong·Guangzhou " + i : null;
-        topic = Math.random() > 0.5 ? "#Topic" + i + "#" : null;
-        topicId = 10000 + i;
-        likeCount = (int) (Math.random() * 100);
-        commentCount = (int) (Math.random() * 100);
-        pictureList = new ArrayList<>();
-        int pictureCount = (int) (Math.random() * 9);
-        for (int j = 0; j < pictureCount; j++) {
-            pictureList.add("https://www.baidu.com/" + (j + 1) + ".jpg");
-        }
+    public DiscoverData() {
     }
 
     public int getId() {

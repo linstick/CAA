@@ -18,6 +18,8 @@
         android:layout_marginStart="10dp"
         app:roundAsCircle="true"
         app:actualImageScaleType="centerCrop"
+        app:roundingBorderColor="@color/white"
+        app:roundingBorderWidth="2dp"
         app:placeholderImage="@drawable/ic_user_default_avatar_white" />
 
     <TextView

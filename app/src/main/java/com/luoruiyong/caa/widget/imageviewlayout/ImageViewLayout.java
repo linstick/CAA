@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.bean.ImageBean;
+import com.luoruiyong.caa.model.ImageLoader;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.layout.GridLayoutStrategy;
@@ -171,15 +172,7 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
             SimpleDraweeView imageView = view.findViewById(R.id.iv_picture);
             imageView.setTag(i);
             imageView.setOnClickListener(this);
-
-            ImageBean data = mList.get(i);
-            if (data.getType() == ImageBean.TYPE_RESOURCE_ID) {
-                imageView.setImageResource(data.getResId());
-            } else if (data.getType() == ImageBean.TYPE_LOCAL_FILE) {
-                imageView.setImageURI(Uri.fromFile(new File(data.getPath())));
-            } else if (data.getType() == ImageBean.TYPE_REMOTE_FILE) {
-                imageView.setImageURI(Uri.parse(data.getUrl()));
-            }
+            ImageLoader.setImageSource(imageView, mList.get(i));
 
             if (mLongClickListener != null) {
                 imageView.setOnLongClickListener(this);

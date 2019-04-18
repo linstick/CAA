@@ -10,6 +10,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.utils.ResourcesUtils;
+import com.luoruiyong.caa.utils.TimeUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
 public class DiscoverItemViewHolder extends RecyclerView.ViewHolder {
@@ -48,7 +49,7 @@ public class DiscoverItemViewHolder extends RecyclerView.ViewHolder {
     public void bindData(DiscoverData data) {
         mUserAvatarIv.setImageURI(data.getAvatarUrl());
         mNicknameTv.setText(data.getNickname());
-        mPublishTimeTv.setText(data.getPublishTime());
+        mPublishTimeTv.setText(TimeUtils.format(data.getPublishTime()));
 
         if (!TextUtils.isEmpty(data.getTopic())) {
             mTopicTv.setVisibility(View.VISIBLE);

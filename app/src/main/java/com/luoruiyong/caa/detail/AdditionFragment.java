@@ -18,6 +18,7 @@ import com.luoruiyong.caa.model.puller.CommonPuller;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.LogUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
+import com.luoruiyong.caa.utils.TimeUtils;
 
 import java.util.List;
 
@@ -149,7 +150,7 @@ public class AdditionFragment extends BaseSwipeFragment<AdditionData> {
             }
 
             public void bindData(AdditionData data) {
-//                mPublishTimeTv.setText(data.getPublishTime() + "");
+                mPublishTimeTv.setText(TimeUtils.format(data.getPublishTime()));
                 mContentTv.setText(data.getContent());
             }
         }

@@ -7,7 +7,7 @@ package com.luoruiyong.caa.bean;
 public class UserBasicMap {
 
     private String label;
-    private String value;
+    private Object value;
 
     public UserBasicMap() {
     }
@@ -20,11 +20,11 @@ public class UserBasicMap {
         this.label = label;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 
