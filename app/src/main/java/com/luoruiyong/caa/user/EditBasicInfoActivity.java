@@ -1,7 +1,9 @@
 package com.luoruiyong.caa.user;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,18 +17,32 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.core.ImagePipeline;
+import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
+import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.bean.ImageBean;
 import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.bean.UserBasicMap;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
+import com.luoruiyong.caa.edit.EditorActivity;
+import com.luoruiyong.caa.eventbus.CommonEvent;
+import com.luoruiyong.caa.model.CommonPoster;
 import com.luoruiyong.caa.model.ImageLoader;
+import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.PictureUtils;
+import com.luoruiyong.caa.utils.ResourcesUtils;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +59,10 @@ public class EditBasicInfoActivity extends BaseActivity implements View.OnClickL
     private List<UserBasicMap> mList;
     private ListAdapter mAdapter;
 
+    private String mNewAvatar;
+
+    private Dialog mLoadingDialog;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +73,18 @@ public class EditBasicInfoActivity extends BaseActivity implements View.OnClickL
         initUserBasicMap();
 
         initRecyclerView();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initView() {
@@ -136,7 +168,9 @@ public class EditBasicInfoActivity extends BaseActivity implements View.OnClickL
     private void handleItemClick(int position) {
         mLastClickPosition = position;
         if (position == 0) {
-            PageUtils.gotoSystemAlbum(this, CHOOSE_PICTURE_REQUEST_CODE);
+            showChoosePictureTypeDialog();
+        } else if (position == 1) {
+            Toast.makeText(this, R.string.modify_profile_tip_can_no_modify_id, Toast.LENGTH_SHORT).show();
         } else {
             UserBasicMap data = mList.get(position);
             CommonDialog dialog = new CommonDialog.Builder(this)
@@ -157,6 +191,44 @@ public class EditBasicInfoActivity extends BaseActivity implements View.OnClickL
         }
     }
 
+    private void showChoosePictureTypeDialog() {
+        DialogHelper.showListDialog(this, ResourcesUtils.getStringArray(R.array.str_arr_choose_picture), new CommonDialog.Builder.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                switch (position) {
+                    case 0:
+                        PageUtils.gotoSystemCamera(EditBasicInfoActivity.this, PageUtils.REQUEST_CODE_USE_CAMERA);
+                        break;
+                    case 1:
+                        PageUtils.gotoSystemAlbum(EditBasicInfoActivity.this, PageUtils.REQUEST_CODE_USE_SYSTEM_ALBUM);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+    }
+
+    private void doModifyProfile() {
+        mLoadingDialog = DialogHelper.showLoadingDialog(this, getString(R.string.modify_profile_on_modify), false);
+        User user = new User();
+        user.setUid(mCurUser.getUid());
+
+        user.setNickname((String) mList.get(2).getValue());
+        user.setGender((String) mList.get(3).getValue());
+        user.setAge(Integer.valueOf((String) mList.get(4).getValue()));
+
+        User.CollegeInfo info = new User.CollegeInfo();
+        info.setName((String) mList.get(5).getValue());
+        info.setDepartment((String) mList.get(6).getValue());
+        info.setMajor((String) mList.get(7).getValue());
+        info.setKlass((String) mList.get(8).getValue());
+        user.setCollegeInfo(info);
+
+        user.setDescription((String) mList.get(9).getValue());
+        CommonPoster.doModifyProfile(user, mNewAvatar);
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -164,7 +236,7 @@ public class EditBasicInfoActivity extends BaseActivity implements View.OnClickL
                 finish();
                 break;
             case R.id.tv_cancel:
-                finish();
+                doModifyProfile();
                 break;
             default:
                 break;
@@ -173,18 +245,46 @@ public class EditBasicInfoActivity extends BaseActivity implements View.OnClickL
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK && data != null) {
+        if (resultCode == Activity.RESULT_OK) {
+            String path;
             switch (requestCode) {
-                case CHOOSE_PICTURE_REQUEST_CODE:
-                    String path = PictureUtils.getPath(this, data.getData());
+                case PageUtils.REQUEST_CODE_USE_CAMERA:
+                    PageUtils.gotoSystemCropForAvatar(this, Uri.fromFile(new File(Enviroment.getCacheFolder(), Enviroment.TEMP_FILE_NAME)), PageUtils.REQUEST_CODE_USE_SYSTEM_CROP);
+                    break;
+                case PageUtils.REQUEST_CODE_USE_SYSTEM_ALBUM:
+                    if (data != null) {
+                        path = PictureUtils.getPath(this, data.getData());
+                        PageUtils.gotoSystemCropForAvatar(this, Uri.fromFile(new File(path)), PageUtils.REQUEST_CODE_USE_SYSTEM_CROP);
+                    }
+                    break;
+                case PageUtils.REQUEST_CODE_USE_SYSTEM_CROP:
+                    mNewAvatar = Enviroment.getTempFilePath();
                     ImageBean imageBean = (ImageBean) mList.get(0).getValue();
-                    imageBean.setPath(path);
+                    imageBean.setPath(mNewAvatar);
                     imageBean.setType(ImageBean.TYPE_LOCAL_FILE);
                     mAdapter.notifyItemChanged(0);
                     break;
                 default:
                     break;
             }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommentEvent(CommonEvent<User> event) {
+        switch (event.getType()) {
+            case MODIFY_PROFILE:
+                if (mLoadingDialog != null && mLoadingDialog.isShowing()) {
+                    mLoadingDialog.dismiss();
+                }
+                if (event.getCode() == Config.CODE_OK) {
+                    Enviroment.setCurUser(event.getData());
+                    Toast.makeText(MyApplication.getAppContext(), R.string.modify_profile_tip_modify_success, Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(this, event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
     }
 
@@ -265,7 +365,7 @@ public class EditBasicInfoActivity extends BaseActivity implements View.OnClickL
 
             public void bindData(UserBasicMap data) {
                 mLabelTv.setText(data.getLabel());
-                ImageLoader.setImageSource(mAvatarIv, (ImageBean) data.getValue());
+                ImageLoader.setImageSourceWithoutCache(mAvatarIv, (ImageBean) data.getValue());
             }
         }
 

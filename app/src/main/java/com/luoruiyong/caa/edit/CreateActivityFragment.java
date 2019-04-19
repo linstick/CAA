@@ -12,10 +12,18 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.Toast;
 
+import com.luoruiyong.caa.Config;
+import com.luoruiyong.caa.Enviroment;
+import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.OnPermissionCallback;
+import com.luoruiyong.caa.bean.ActivityCreateResult;
+import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.bean.ImageBean;
+import com.luoruiyong.caa.bean.TopicData;
+import com.luoruiyong.caa.eventbus.CommonEvent;
 import com.luoruiyong.caa.location.LocationActivity;
+import com.luoruiyong.caa.model.CommonPoster;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicSearchActivity;
 import com.luoruiyong.caa.utils.ListUtils;
@@ -23,6 +31,10 @@ import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.PictureUtils;
 import com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +82,18 @@ public class CreateActivityFragment extends BaseCreateFragment implements
         initView(view);
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initView(View rootView) {
@@ -150,12 +174,12 @@ public class CreateActivityFragment extends BaseCreateFragment implements
     private void handleChooseRelateTopicResult(Intent data) {
         String topicName = null;
         mRelateTopicType = data.getIntExtra(TopicSearchActivity.KEY_RESULT_TYPE, -1);
-        if (mRelateTopicType == TopicSearchActivity.RELATE_TOPIC_TYPE_SELECT) {
+        if (mRelateTopicType == TopicSearchActivity.RELATE_TOPIC_TYPE_CREATE) {
             topicName = data.getStringExtra(TopicSearchActivity.KEY_CREATE_TOPIC_NAME);
             inflateRelateTopicExtras();
             resetRelateTopicExtras();
             mRelateTopicExtrasContainer.setVisibility(View.VISIBLE);
-        } else if (mRelateTopicType == TopicSearchActivity.RELATE_TOPIC_TYPE_CREATE) {
+        } else if (mRelateTopicType == TopicSearchActivity.RELATE_TOPIC_TYPE_SELECT) {
             mRelateTopicId = data.getIntExtra(TopicSearchActivity.KEY_SELECTED_TOPIC_ID, -1);
             topicName = data.getStringExtra(TopicSearchActivity.KEY_SELECTED_TOPIC_NAME);
             if (mRelateTopicExtrasContainer != null) {
@@ -207,11 +231,36 @@ public class CreateActivityFragment extends BaseCreateFragment implements
         for (DynamicInputView view : mCheckNonNullList) {
             canSend &= view.checkAndShowErrorTipIfNeed();
         }
-        if (canSend) {
-            Toast.makeText(getContext(), "can send", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getContext(), "can not send", Toast.LENGTH_SHORT).show();
+        if (!canSend) {
+            return;
         }
+
+        ActivityData activity = new ActivityData();
+        activity.setUid(Enviroment.getCurUid());
+        activity.setType(mTypeInputView.getSpinnerSelectedItem() + 1);
+        activity.setTitle(mTitleInputView.getInputText());
+        activity.setContent(mContentInputView.getInputText());
+        activity.setHost(mHostInputView.getInputText());
+        activity.setTime(mTimeInputView.getInputText());
+        activity.setAddress(mAddressInputView.getInputText());
+        activity.setLocation(mLocationInputView.getInputText());
+        activity.setRemark(mRemarkInputView.getInputText());
+        activity.setPictureList(mPictureInputView.getPictureUrls());
+        TopicData topic = null;
+        if (mRelateTopicType == TopicSearchActivity.RELATE_TOPIC_TYPE_CREATE) {
+            topic = new TopicData();
+            topic.setUid(Enviroment.getCurUid());
+            topic.setName(mRelatedTopicInputView.getInputText());
+            topic.setIntroduction(mIntroduceInputView.getInputText());
+            topic.setCover(ListUtils.getSize(mTopicCoverList) > 0 ? mTopicCoverList.get(0).toString() : null);
+        } else if (mRelateTopicType == TopicSearchActivity.RELATE_TOPIC_TYPE_SELECT) {
+            activity.setTopicId(mRelateTopicId);
+            activity.setTopic(mRelatedTopicInputView.getInputText());
+        }
+
+
+        showLoadingDialog(R.string.common_tip_on_publish);
+        CommonPoster.doCreateActivity(activity, topic);
     }
 
     @Override
@@ -285,6 +334,26 @@ public class CreateActivityFragment extends BaseCreateFragment implements
                 default:
                     break;
             }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommentEvent(CommonEvent<ActivityCreateResult> event) {
+        switch (event.getType()) {
+            case CREATE_ACTIVITY:
+                hideLoadingDialog();
+                if (event.getCode() == Config.CODE_OK) {
+                    ActivityData activity = event.getData().getActivity();
+                    TopicData topic = event.getData().getTopic();
+                    int resId = topic == null ? R.string.fm_create_activity_tip_publish_success : R.string.fm_create_activity_tip_publish_and_topic_success;
+                    Toast.makeText(MyApplication.getAppContext(), resId, Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(MyApplication.getAppContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
         }
     }
 

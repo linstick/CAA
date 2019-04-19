@@ -98,16 +98,7 @@ public class ImageViewLayout extends ViewGroup implements View.OnClickListener, 
     public List<String> getPictureUrls() {
         List<String> result = new ArrayList<>();
         for (int i = 0; i < ListUtils.getSize(mList); i++) {
-            ImageBean data = mList.get(i);
-            if (data.getType() == ImageBean.TYPE_RESOURCE_ID) {
-                result.add(String.valueOf(data.getResId()));
-            } else if (data.getType() == ImageBean.TYPE_LOCAL_FILE) {
-                result.add(data.getPath());
-            } else if (data.getType() == ImageBean.TYPE_REMOTE_FILE) {
-                result.add(data.getUrl());
-            } else {
-                result.add("");
-            }
+            result.add(mList.get(i).toString());
         }
         return result;
     }

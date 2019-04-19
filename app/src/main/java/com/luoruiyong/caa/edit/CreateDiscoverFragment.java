@@ -13,20 +13,30 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.Toast;
 
+import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
+import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.OnPermissionCallback;
+import com.luoruiyong.caa.bean.DiscoverCreateResult;
+import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.bean.ImageBean;
+import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.edit.EditorActivity.OnActionBarClickListener;
+import com.luoruiyong.caa.eventbus.CommonEvent;
 import com.luoruiyong.caa.location.LocationActivity;
+import com.luoruiyong.caa.model.CommonPoster;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicSearchActivity;
-import com.luoruiyong.caa.topic.TopicSearchResultFragment;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.PictureUtils;
 import com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +86,18 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
         handleArgument();
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initView(View rootView) {
@@ -153,12 +175,12 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
     private void handleChooseRelateTopicResult(Intent data) {
         String topicName = null;
         mRelateTopicType = data.getIntExtra(TopicSearchActivity.KEY_RESULT_TYPE, -1);
-        if (mRelateTopicType == TopicSearchActivity.RELATE_TOPIC_TYPE_SELECT) {
+        if (mRelateTopicType == TopicSearchActivity.RELATE_TOPIC_TYPE_CREATE) {
             topicName = data.getStringExtra(TopicSearchActivity.KEY_CREATE_TOPIC_NAME);
             inflateRelateTopicExtras();
             resetRelateTopicExtras();
             mRelateTopicExtrasContainer.setVisibility(View.VISIBLE);
-        } else if (mRelateTopicType == TopicSearchActivity.RELATE_TOPIC_TYPE_CREATE) {
+        } else if (mRelateTopicType == TopicSearchActivity.RELATE_TOPIC_TYPE_SELECT) {
             mRelateTopicId = data.getIntExtra(TopicSearchActivity.KEY_SELECTED_TOPIC_ID, -1);
             topicName = data.getStringExtra(TopicSearchActivity.KEY_SELECTED_TOPIC_NAME);
             if (mRelateTopicExtrasContainer != null) {
@@ -190,11 +212,28 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
 
     @Override
     public void onFinishClick() {
-        if (mContentInputView.checkAndShowErrorTipIfNeed()) {
-            Toast.makeText(getContext(), "can send", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getContext(), "can not send", Toast.LENGTH_SHORT).show();
+        if (!mContentInputView.checkAndShowErrorTipIfNeed()) {
+            return;
         }
+        DiscoverData discover = new DiscoverData();
+        discover.setUid(Enviroment.getCurUid());
+        discover.setContent(mContentInputView.getInputText());
+        discover.setPictureList(mContentInputView.getPictureUrls());
+        discover.setLocation(mLocationInputView.getInputText());
+        TopicData topic = null;
+        if (mRelateTopicType == TopicSearchActivity.RELATE_TOPIC_TYPE_SELECT) {
+            discover.setTopic(mRelatedTopicInputView.getInputText());
+            discover.setTopicId(mRelateTopicId);
+        } else if (mRelateTopicType == TopicSearchActivity.RELATE_TOPIC_TYPE_CREATE) {
+            topic = new TopicData();
+            topic.setUid(Enviroment.getCurUid());
+            topic.setName(mRelatedTopicInputView.getInputText());
+            topic.setIntroduction(mIntroduceInputView.getInputText());
+            topic.setCover(ListUtils.getSize(mTopicCoverList) > 0 ? mTopicCoverList.get(0).toString() : null);
+        }
+
+        showLoadingDialog(R.string.common_tip_on_publish);
+        CommonPoster.doCreateDiscover(discover, topic);
     }
 
     @Override
@@ -278,6 +317,26 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
                 default:
                     break;
             }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommentEvent(CommonEvent<DiscoverCreateResult> event) {
+        switch (event.getType()) {
+            case CREATE_DISCOVER:
+                hideLoadingDialog();
+                if (event.getCode() == Config.CODE_OK) {
+                    DiscoverData discover = event.getData().getDiscover();
+                    TopicData topic = event.getData().getTopic();
+                    int resId = topic == null ? R.string.fm_create_discover_tip_publish_success : R.string.fm_create_discover_tip_publish_and_topic_success;
+                    Toast.makeText(MyApplication.getAppContext(), resId, Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(MyApplication.getAppContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
         }
     }
 

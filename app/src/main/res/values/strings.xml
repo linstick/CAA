@@ -138,6 +138,8 @@
 
     <string name="common_str_relate_topic">关联话题</string>
     <string name="common_str_location">定位</string>
+    <string name="common_str_camera">相机</string>
+    <string name="common_str_album">相册</string>
     <string name="common_str_upload_picture">上传图片</string>
     <string name="common_str_selected_picture">已选图片</string>
     <string name="common_str_introduce">导语</string>
@@ -150,9 +152,16 @@
     <string name="common_tip_no_empty">此项不能为空哦</string>
     <string name="common_tip_no_save">当前页面的数据还未提交保存，确定要离开吗？</string>
     <string name="common_tip_no_network">网络异常，请检查</string>
-    <string name="common_tip_request_error">请求异常，请稍后再试</string>
+    <string name="common_tip_request_error">网络异常，请稍后再试</string>
     <string name="common_tip_server_error">服务器异常</string>
     <string name="common_tip_no_data">没有找到相关内容，可能已经被删除</string>
+    <string name="common_tip_no_related_content">无相关内容</string>
+    <string name="common_tip_comment_success">评论成功</string>
+    <string name="common_tip_addition_success">补充成功</string>
+
+
+    <string name="common_tip_on_publish">正在发布，请稍后...</string>
+    <string name="common_tip_on_submit">正在提交，请稍后...</string>
 
     <!--保存图片相关文案-->
     <string name="common_image_load_fail">图片下载失败</string>
@@ -209,6 +218,7 @@
     <string name="fm_login_str_forget_password">忘记密码？</string>
     <string name="fm_login_tip_empty_account">账号不能为空，请重新输入。</string>
     <string name="fm_login_tip_empty_password">密码不能为空，请重新输入。</string>
+    <string name="fm_login_tip_login_before">请先登录</string>
     <string name="fm_login_tip_login_success">登录成功</string>
     <string name="fm_login_tip_login_fail">登录失败，请重新检查您的账号和密码是否正确。</string>
 
@@ -257,7 +267,8 @@
     <string name="feedback_str_suggestion">意见或建议</string>
     <string name="feedback_str_problem">问题反馈</string>
     <string name="feedback_tip_hint">请留下您的宝贵意见或者问题反馈</string>
-    <string name="feedback_tip_result">我们已收到您的反馈，感谢您的使用！</string>
+    <string name="feedback_tip_feedback_success">反馈成功，感谢您的使用！</string>
+    <string name="feedback_tip_impeach_success">举报成功，我们会尽快审查处理，感谢您的使用！</string>
     <string name="feedback_tip_empty_content">反馈内容不能为空哦~</string>
 
     <!--搜索页面相关文案-->
@@ -311,6 +322,7 @@
     <string name="profile_str_description">个性签名</string>
 
     <!--编辑资料页相关文案-->
+    <string name="modify_profile_tip_can_no_modify_id">用户ID无法修改</string>
     <string name="modify_profile_str_gender">性别</string>
     <string name="modify_profile_str_age">年龄</string>
     <string name="modify_profile_str_college">学校</string>
@@ -318,6 +330,8 @@
     <string name="modify_profile_str_major">专业</string>
     <string name="modify_profile_str_klass">年级</string>
     <string name="modify_profile_str_description">介绍</string>
+    <string name="modify_profile_on_modify">正在修改，请稍后...</string>
+    <string name="modify_profile_tip_modify_success">修改成功</string>
 
     <!--活动页相关文案-->
     <string name="fm_activity_title_all">全部</string>
@@ -359,20 +373,25 @@
     <string name="activity_detail_str_remark">备注</string>
     <string name="activity_detail_str_comment_bar_hint">添加评论...</string>
     <string name="activity_detail_str_addition_bar_hint">补充内容...</string>
+    <string name="activity_detail_tip_empty_comment_input">评论内容不能为空哦</string>
 
     <!--创建活动页相关文案-->
     <string name="fm_create_activity_str_type">活动类型</string>
     <string name="fm_create_activity_str_title">活动标题</string>
     <string name="fm_create_activity_str_content">活动内容</string>
+    <string name="fm_create_activity_tip_publish_success">成功发布活动</string>
+    <string name="fm_create_activity_tip_publish_and_topic_success">成功发布活动和话题</string>
 
     <!--创建话题页相关文案-->
     <string name="fm_create_topic_str_choose_cover">选择封面</string>
     <string name="fm_create_topic_str_selected_cover">已选封面</string>
     <string name="fm_create_topic_tip_topic_name_exists">话题已存在</string>
-
+    <string name="fm_create_topic_tip_publish_success">成功发布话题</string>
 
     <!--创建动态页相关文案-->
     <string name="fm_create_discover_str_discover_content">动态内容</string>
+    <string name="fm_create_discover_tip_publish_success">成功发布动态</string>
+    <string name="fm_create_discover_tip_publish_and_topic_success">成功发布动态和话题</string>
 
     <!--关联话题页相关文案-->
     <string name="topic_relate_str_search_topic">搜索话题</string>
@@ -463,6 +482,11 @@
         <item>@string/search_str_search_type_user</item>
         <item>@string/search_str_search_type_topic</item>
         <item>@string/search_str_search_type_discover</item>
+    </string-array>
+
+    <string-array name="str_arr_choose_picture">
+        <item>@string/common_str_camera</item>
+        <item>@string/common_str_album</item>
     </string-array>
 
 </resources>

@@ -3,6 +3,7 @@ package com.luoruiyong.caa.model.http;
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.eventbus.CommonEvent;
+import com.luoruiyong.caa.eventbus.CommonOperateEvent;
 import com.luoruiyong.caa.eventbus.DetailFinishEvent;
 import com.luoruiyong.caa.eventbus.PullFinishEvent;
 import com.luoruiyong.caa.eventbus.UserFinishEvent;
@@ -16,6 +17,21 @@ import org.greenrobot.eventbus.EventBus;
  **/
 public class ResponseUtils {
 
+
+    public static void handleCommonOperateFailEvent(int targetId, RequestType type, int code, String status) {
+        CommonOperateEvent event = new CommonOperateEvent();
+        event.setCode(code);
+        event.setStatus(status);
+        event.setType(type);
+        event.setTargetId(targetId);
+        EventBus.getDefault().post(event);
+    }
+
+    public static void handleCommonOperateSuccessEvent(int targetId, RequestType type, CommonOperateEvent event) {
+        event.setType(type);
+        event.setTargetId(targetId);
+        EventBus.getDefault().post(event);
+    }
 
     public static void handleCommonFailEvent(RequestType type, int code, String status) {
         CommonEvent event = new CommonEvent();

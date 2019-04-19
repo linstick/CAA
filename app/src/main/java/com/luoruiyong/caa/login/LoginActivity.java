@@ -147,7 +147,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         CommonPoster.doLogin(account, password);
     }
 
-    public void doSignUp(String account, String nickname, String password) {
+    public void doSignUp(String account, String nickname, String password, String avatarPath) {
         mHasCancelSignUp = false;
         mLoadingDialog = DialogHelper.showLoadingDialog(this, getString(R.string.fm_login_str_on_sign_up), false, new CommonDialog.Builder.OnClickListener() {
             @Override
@@ -155,7 +155,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                 mHasCancelSignUp = true;
             }
         });
-        CommonPoster.doSignUp(account, nickname, password);
+        CommonPoster.doSignUp(account, nickname, password, avatarPath);
     }
 
     public void doRequestCode(String cellPhoneNumber) {

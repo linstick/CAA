@@ -64,19 +64,31 @@ public class Config {
 
     // 定义数据请求ULR
     public final static String URL_PREFIX = "http://112.74.13.186/CollegeAssistantServer/public/index/";
-
+    // 活动相关的接口
     public final static String URL_ACTIVITY_FETCH = URL_PREFIX + "activities/pull";
     public final static String URL_ACTIVITY_DETAIL = URL_PREFIX + "activities/fetchDetail";
-
+    public final static String URL_ACTIVITY_CREATE = URL_PREFIX + "activities/create";
+    public final static String URL_ACTIVITY_COLLECT = URL_PREFIX + "activities/collect";
+    public final static String URL_ACTIVITY_ADD_COMMENT = URL_PREFIX + "activities/addComment";
+    public final static String URL_ACTIVITY_DELETE_COMMENT = URL_PREFIX + "activities/deleteComment";
+    public final static String URL_ACTIVITY_ADD_ADDITION = URL_PREFIX + "activities/addAddition";
+    public final static String URL_ACTIVITY_DELETE_ADDITION = URL_PREFIX + "activities/deleteAddition";
+    // 话题相关的接口
     public final static String URL_TOPIC_FETCH = URL_PREFIX + "topics/pull";
     public final static String URL_TOPIC_DETAIL = URL_PREFIX + "topics/fetchDetail";
     public final static String URL_TOPIC_HOT_SIMPLE_LIST = URL_PREFIX + "topics/fetchHotSimpleList";
     public final static String URL_TOPIC_SIMPLE_LIST = URL_PREFIX + "topics/fetchSimpleList";
     public final static String URL_TOPIC_CHECK_NAME = URL_PREFIX + "topics/checkNameExist";
-
+    public final static String URL_TOPIC_CREATE = URL_PREFIX + "topics/create";
+    public final static String URL_TOPIC_VISIT = URL_PREFIX + "topics/visit";
+    // 动态相关的接口
     public final static String URL_DISCOVER_FETCH = URL_PREFIX + "discovers/pull";
     public final static String URL_DISCOVER_DETAIL = URL_PREFIX + "discovers/fetchDetail";
-
+    public final static String URL_DISCOVER_CREATE = URL_PREFIX + "discovers/create";
+    public final static String URL_DISCOVER_LIKE = URL_PREFIX + "discovers/like";
+    public final static String URL_DISCOVER_ADD_COMMENT = URL_PREFIX + "discovers/addComment";
+    public final static String URL_DISCOVER_DELETE_COMMENT = URL_PREFIX + "discovers/deleteComment";
+    // 用户相关的接口
     public final static String URL_USER_FETCH = URL_PREFIX + "users/pull";
     public final static String URL_USER_DETAIL = URL_PREFIX + "users/fetchDetail";
     public final static String URL_USER_LOGIN = URL_PREFIX + "users/login";
@@ -86,14 +98,18 @@ public class Config {
     public final static String URL_USER_CHECK_ACCOUNT = URL_PREFIX + "users/checkAccountExist";
     public final static String URL_USER_MODIFY_PASSWORD = URL_PREFIX + "users/modifyPassword";
     public final static String URL_USER_PULL = URL_PREFIX + "users/pull";
-
+    public final static String URL_USER_MODIFY_PROFILE = URL_PREFIX + "users/modifyProfile";
+    // 搜索相关的接口
+    public final static String URL_SEARCH_COMPOSITE = URL_PREFIX + "search/composite";
+    public final static String URL_SEARCH_COMPOSITE_SIMPLE = URL_PREFIX + "search/compositeSimple";
+    public final static String URL_SEARCH_COMPOSITE_HOT = URL_PREFIX + "search/compositeHot";
+    // 其他接口
     public final static String URL_MESSAGE_FETCH = URL_PREFIX + "messages/pull";
     public final static String URL_COMMENT_FETCH = URL_PREFIX + "comments/pull";
     public final static String URL_ADDITION_FETCH = URL_PREFIX + "additions/pull";
 
-    public final static String URL_SEARCH_COMPOSITE = URL_PREFIX + "search/composite";
-    public final static String URL_SEARCH_COMPOSITE_SIMPLE = URL_PREFIX + "search/compositeSimple";
-    public final static String URL_SEARCH_COMPOSITE_HOT = URL_PREFIX + "search/compositeHot";
+    public final static String URL_IMPROVE_FEEDBACK = URL_PREFIX + "improve/feedback";
+    public final static String URL_IMPROVE_IMPEACH = URL_PREFIX + "improve/impeach";
 
 
     // 请求参数字段定义
@@ -114,6 +130,17 @@ public class Config {
     public final static String PARAM_KEY_NICKNAME = "nickname";
     public final static String PARAM_KEY_PASSWORD = "password";
     public final static String PARAM_KEY_NEW_PASSWORD = "new_password";
+    public final static String PARAM_KEY_USER = "user";
+    public final static String PARAM_KEY_ACTIVITY = "activity";
+    public final static String PARAM_KEY_TOPIC = "topic";
+    public final static String PARAM_KEY_FEEDBACK = "feedback";
+    public final static String PARAM_KEY_IMPEACH = "impeach";
+    public final static String PARAM_KEY_DISCOVER = "discover";
+    public final static String PARAM_KEY_POSITIVE = "positive";
+    public final static String PARAM_KEY_COMMENT = "comment";
+    public final static String PARAM_KEY_COMMENT_ID = "comment_id";
+    public final static String PARAM_KEY_ADDITION = "addition";
+    public final static String PARAM_KEY_ADDITION_ID = "addition_id";
 
     // 默认列表更新请求时提供的时间
     public final static String DEFAULT_TIME_STAMP = "1970-1-1 00:00:00";
@@ -125,4 +152,9 @@ public class Config {
     public final static int DEFAULT_TOPIC_SEARCH_REQUEST_COUNT = 100;
     // 搜索页面中综合搜索每种类型的数据的请求数量
     public final static int COMPOSITE_SEARCH_REQUEST_COUNT = 10;
+
+    public final static String FILE_TYPE_IMAGE = "image/*";
+    public final static String UPLOAD_IMAGE_NAME = "image[]";
+    public final static String UPLOAD_ACTIVITY_IMAGE_NAME = "activity_image[]";
+    public final static String UPLOAD_TOPIC_IMAGE_NAME = "topic_image[]";
 }

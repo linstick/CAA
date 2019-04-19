@@ -89,7 +89,7 @@ public class ModifyPasswordActivity extends BaseActivity implements View.OnClick
             return;
         }
         DialogHelper.showLoadingDialog(this, getString(R.string.modify_password_str_on_modify), false);
-        CommonPoster.doModifyPassword(Enviroment.getCurUid(), originalPass, newPass);
+        CommonPoster.doModifyPassword(originalPass, newPass);
     }
 
     @Override

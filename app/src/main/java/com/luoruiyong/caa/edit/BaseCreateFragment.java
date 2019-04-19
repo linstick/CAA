@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
@@ -30,6 +31,27 @@ public class BaseCreateFragment extends BaseFragment {
 
     protected static final int REQUEST_CHOOSE_PICTURE_CODE = 6;
     protected static final int REQUEST_CHOOSE_COVER_CODE = 7;
+
+    private Dialog mLoadingDialog;
+
+    protected void showLoadingDialog(@StringRes int resId) {
+        showLoadingDialog(getString(resId));
+    }
+
+    protected void showLoadingDialog(String loadingTip) {
+        showLoadingDialog(loadingTip, false, null);
+    }
+
+    protected void showLoadingDialog(String loadingTip, boolean cancelable, CommonDialog.Builder.OnClickListener cancelListener) {
+        mLoadingDialog = DialogHelper.showLoadingDialog(getContext(), loadingTip, cancelable, cancelListener);
+    }
+
+    protected void hideLoadingDialog() {
+        if (mLoadingDialog != null && mLoadingDialog.isShowing()) {
+            mLoadingDialog.dismiss();
+        }
+    }
+
 
     protected void showConfirmLeftDialog() {
         new CommonDialog.Builder(getContext())

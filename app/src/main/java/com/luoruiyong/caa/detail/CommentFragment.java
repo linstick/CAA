@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.Config;
@@ -16,6 +17,7 @@ import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
 import com.luoruiyong.caa.bean.CommentData;
+import com.luoruiyong.caa.eventbus.CommonOperateEvent;
 import com.luoruiyong.caa.model.puller.CommonPuller;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.LogUtils;
@@ -23,6 +25,10 @@ import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.utils.TimeUtils;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -111,6 +117,43 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommonOperateEvent(CommonOperateEvent<CommentData> event) {
+        if (event.getTargetId() != mTargetId) {
+            return;
+        }
+        switch (event.getType()) {
+            case ADD_ACTIVITY_COMMENT:
+                if (event.getCode() == Config.CODE_OK) {
+                    // 评论内容发送成功
+                    hideTipView();
+                    CommentData data = event.getData();
+                    if (mList == null) {
+                        mList = new ArrayList<>();
+                    }
+                    mList.add(data);
+                    initAdapterIfNeed();
+                }
+                break;
+            case DELETE_ACTIVITY_COMMENT:
+                if (event.getCode() == Config.CODE_OK) {
+                    CommentData data = event.getData();
+                    for (int i = 0; i < ListUtils.getSize(mList); i++) {
+                        if (mList.get(i).getId() == data.getId()) {
+                            mList.remove(i);
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    }
+                    if (ListUtils.isEmpty(mList)) {
+                        showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_related_content));
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     class ListAdapter extends LoadMoreSupportAdapter<CommentData> implements View.OnClickListener {
 
 
@@ -129,7 +172,7 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int position) {
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int position, List payloads) {
             super.onBindViewHolder(viewHolder, position);
             if (viewHolder instanceof ViewHolder) {
                 ViewHolder holder = (ViewHolder) viewHolder;

@@ -15,13 +15,21 @@ import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
 import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
+import com.luoruiyong.caa.eventbus.CommonEvent;
+import com.luoruiyong.caa.eventbus.CommonOperateEvent;
+import com.luoruiyong.caa.model.CommonTargetOperator;
+import com.luoruiyong.caa.model.http.ResponseUtils;
 import com.luoruiyong.caa.model.puller.ActivityPuller;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.LogUtils;
 import com.luoruiyong.caa.utils.PageUtils;
+import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -32,6 +40,7 @@ import java.util.List;
 public class SwipeActivityFragment extends BaseSwipeFragment<ActivityData> {
 
     private static final String TAG = "SwipeActivityFragment";
+    private static final int PAYLOAD_COLLECT = 0;
 
     public static SwipeActivityFragment newInstance(int activityType) {
         SwipeActivityFragment fm = new SwipeActivityFragment();
@@ -111,6 +120,31 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivityData> {
         return Config.DEFAULT_TIME_STAMP;
     }
 
+    private void doCollect(ActivityData data, int position) {
+        // 收藏时先修改本地的数量，等请求结果回来时，如果收藏失败(几率比较小)，再把数据修改回来
+        boolean isCollect = !data.isHasCollect();
+        data.setHasCollect(isCollect);
+        data.setCollectCount(data.getCollectCount() + (isCollect ? 1 : -1));
+        mAdapter.notifyItemChanged(position, PAYLOAD_COLLECT);
+        CommonTargetOperator.doCollectActivity(data.getId(), isCollect);
+    }
+
+    private void rollbackCollectData(int targetId) {
+        int i = 0;
+        for (ActivityData data : mList) {
+            if (data.getId() == targetId) {
+                boolean isCollect = !data.isHasCollect();
+                data.setHasCollect(isCollect);
+                data.setCollectCount(data.getCollectCount() + (isCollect ? 1 : -1));
+                if (isItemVisible(i)) {
+                    mAdapter.notifyItemChanged(i, PAYLOAD_COLLECT);
+                }
+                break;
+            }
+            i++;
+        }
+    }
+
     @Override
     protected void doRefresh() {
         LogUtils.d(TAG, "doRefreshClick: " + mPageId);
@@ -157,6 +191,25 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivityData> {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommonEvent(CommonOperateEvent event) {
+        switch (event.getType()) {
+            case COLLECT_ACTIVITY:
+                if (event.getCode() == Config.CODE_OK) {
+                    // 收藏成功
+                    // do nothing
+                } else {
+                    // 收藏失败，需要回滚收藏数据
+                    int activity_id = event.getTargetId();
+                    rollbackCollectData(activity_id);
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     private class ListAdapter extends LoadMoreSupportAdapter<ActivityData> implements View.OnClickListener, ImageViewLayout.OnImageClickListener{
 
         public ListAdapter(List<ActivityData> list) {
@@ -174,28 +227,45 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivityData> {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-            super.onBindViewHolder(viewHolder, position);
-            if (viewHolder instanceof ActivityItemViewHolder) {
-                ActivityItemViewHolder holder = (ActivityItemViewHolder) viewHolder;
-                ActivityData data = mList.get(position);
-                holder.bindData(data, mPageId);
-                holder.itemView.setOnClickListener(this);
-                holder.mUserAvatarIv.setOnClickListener(this);
-                holder.mNicknameTv.setOnClickListener(this);
-                holder.mTopicTv.setOnClickListener(this);
-                holder.mCollectTv.setOnClickListener(this);
-                holder.mCommentTv.setOnClickListener(this);
-                holder.mMoreIv.setOnClickListener(this);
-                holder.mImageViewLayout.setOnImageClickListener(this);
-                holder.itemView.setTag(position);
-                holder.mUserAvatarIv.setTag(position);
-                holder.mNicknameTv.setTag(position);
-                holder.mTopicTv.setTag(position);
-                holder.mCollectTv.setTag(position);
-                holder.mCommentTv.setTag(position);
-                holder.mMoreIv.setTag(position);
-                holder.mImageViewLayout.setTag(data);
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position, @NonNull List payloads) {
+            if (ListUtils.isEmpty(payloads)) {
+                super.onBindViewHolder(viewHolder, position);
+                if (viewHolder instanceof ActivityItemViewHolder) {
+                    ActivityItemViewHolder holder = (ActivityItemViewHolder) viewHolder;
+                    ActivityData data = mList.get(position);
+                    holder.bindData(data, mPageId);
+                    holder.itemView.setOnClickListener(this);
+                    holder.mUserAvatarIv.setOnClickListener(this);
+                    holder.mNicknameTv.setOnClickListener(this);
+                    holder.mTopicTv.setOnClickListener(this);
+                    holder.mCollectTv.setOnClickListener(this);
+                    holder.mCommentTv.setOnClickListener(this);
+                    holder.mMoreIv.setOnClickListener(this);
+                    holder.mImageViewLayout.setOnImageClickListener(this);
+                    holder.itemView.setTag(position);
+                    holder.mUserAvatarIv.setTag(position);
+                    holder.mNicknameTv.setTag(position);
+                    holder.mTopicTv.setTag(position);
+                    holder.mCollectTv.setTag(position);
+                    holder.mCommentTv.setTag(position);
+                    holder.mMoreIv.setTag(position);
+                    holder.mImageViewLayout.setTag(data);
+                }
+            } else {
+                int type = (int) payloads.get(0);
+                switch (type) {
+                    case PAYLOAD_COLLECT:
+                        // 只刷新收藏控件
+                        if (viewHolder instanceof ActivityItemViewHolder) {
+                            ActivityData data = mList.get(position);
+                            ActivityItemViewHolder holder = (ActivityItemViewHolder) viewHolder;
+                            holder.mCollectTv.setText(data.getCollectCount() <= 0 ? ResourcesUtils.getString(R.string.common_str_collect) : String.valueOf(data.getCollectCount()));
+                            holder.mCollectTv.setSelected(data.isHasCollect());
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
@@ -215,7 +285,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivityData> {
                    PageUtils.gotoTopicPage(getContext(), data.getTopicId());
                     break;
                 case R.id.tv_collect:
-                    Toast.makeText(getContext(), "click collect", Toast.LENGTH_SHORT).show();
+                    doCollect(data, position);
                     break;
                 case R.id.tv_comment:
                     PageUtils.gotoActivityDetailPage(getContext(), data, true);

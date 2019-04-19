@@ -211,7 +211,11 @@ public class DynamicInputView extends LinearLayout implements
     }
 
     public List<String> getPictureUrls() {
-        return mImageViewLayout.getPictureUrls();
+        List list =  mImageViewLayout.getPictureUrls();
+        if (mIgnoreLastImageItem && ListUtils.isEmpty(list)) {
+            list.remove(list.get(list.size() - 1));
+        }
+        return list;
     }
 
     public void setSpinnerSelectedItem(int position) {

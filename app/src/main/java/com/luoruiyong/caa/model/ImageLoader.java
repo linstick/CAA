@@ -34,10 +34,7 @@ import java.io.File;
 public class ImageLoader {
 
     public static void loadAndSave(String url, OnLoadAndSaveCallback callback) {
-        loadAndSave(Uri.parse(url), callback);
-    }
-
-    public static void loadAndSave(Uri uri, OnLoadAndSaveCallback callback) {
+        Uri uri = Uri.parse(url);
         ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri).setProgressiveRenderingEnabled(true).build();
         ImagePipeline imagePipeline = Fresco.getImagePipeline();
         DataSource<CloseableReference<CloseableImage>> dataSource = imagePipeline.fetchDecodedImage(imageRequest, null);
@@ -45,7 +42,7 @@ public class ImageLoader {
             @Override
             public void onNewResultImpl(@Nullable Bitmap bitmap) {
                 //bitmap即为下载所得图片
-                String path = PictureUtils.save(bitmap);
+                String path = PictureUtils.save(bitmap, url);
                 if (TextUtils.isEmpty(path)) {
                     if (callback != null) {
                         callback.onFail(ResourcesUtils.getString(R.string.common_image_save_fail));
@@ -79,6 +76,37 @@ public class ImageLoader {
             draweeView.setController(controller);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void setImageSourceWithoutCache(SimpleDraweeView draweeView, ImageBean bean) {
+        if (draweeView == null || bean == null) {
+            return;
+        }
+        switch (bean.getType()) {
+            case ImageBean.TYPE_RESOURCE_ID:
+                draweeView.setActualImageResource(bean.getResId());
+                break;
+            case ImageBean.TYPE_LOCAL_FILE:
+                Uri uri = Uri.fromFile(new File(bean.getPath()));
+                // 清除Fresco的缓存
+                ImagePipeline imagePipeline = Fresco.getImagePipeline();
+                imagePipeline.evictFromMemoryCache(uri);
+                imagePipeline.evictFromDiskCache(uri);
+                imagePipeline.evictFromCache(uri);
+                draweeView.setImageURI(uri);
+                break;
+            case ImageBean.TYPE_REMOTE_FILE:
+                Uri uri1 = Uri.parse(bean.getUrl());
+                // 清除Fresco的缓存
+                ImagePipeline imagePipeline1 = Fresco.getImagePipeline();
+                imagePipeline1.evictFromMemoryCache(uri1);
+                imagePipeline1.evictFromDiskCache(uri1);
+                imagePipeline1.evictFromCache(uri1);
+                draweeView.setImageURI(uri1);
+                break;
+            default:
+                break;
         }
     }
 

@@ -114,7 +114,7 @@ public class AdditionFragment extends BaseSwipeFragment<AdditionData> {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int position) {
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position, List payloads) {
             super.onBindViewHolder(viewHolder, position);
             if (viewHolder instanceof ViewHolder) {
                 ViewHolder holder = (ViewHolder) viewHolder;

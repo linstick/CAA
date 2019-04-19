@@ -1,10 +1,6 @@
 package com.luoruiyong.caa.bean;
 
-import com.luoruiyong.caa.Config;
-
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,7 +13,7 @@ public class TopicData implements Serializable{
     private String avatarUrl;
     private int id;
     private String name;
-    private String coverUrl;
+    private String cover;
     private String introduction;
     private int visitCount;
     private int joinCount;
@@ -80,12 +76,12 @@ public class TopicData implements Serializable{
         this.name = name;
     }
 
-    public String getCoverUrl() {
-        return coverUrl;
+    public String getCover() {
+        return cover;
     }
 
-    public void setCoverUrl(String coverUrl) {
-        this.coverUrl = coverUrl;
+    public void setCover(String cover) {
+        this.cover = cover;
     }
 
     public int getVisitedCount() {

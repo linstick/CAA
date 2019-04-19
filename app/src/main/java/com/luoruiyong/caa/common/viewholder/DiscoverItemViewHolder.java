@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.bean.DiscoverData;
+import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.utils.TimeUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
@@ -54,23 +55,35 @@ public class DiscoverItemViewHolder extends RecyclerView.ViewHolder {
         if (!TextUtils.isEmpty(data.getTopic())) {
             mTopicTv.setVisibility(View.VISIBLE);
             mTopicTv.setText(String.format(ResourcesUtils.getString(R.string.common_str_topic), data.getTopic()));
+        } else {
+            mTopicTv.setVisibility(View.GONE);
         }
 
         if (!TextUtils.isEmpty(data.getCollege())) {
             mCollegeTv.setVisibility(View.VISIBLE);
             mCollegeTv.setText(data.getCollege());
+        } else {
+            mCollegeTv.setVisibility(View.GONE);
         }
+
         mContentTv.setText(data.getContent());
 
         if (!TextUtils.isEmpty(data.getLocation())) {
             mLocationTv.setVisibility(View.VISIBLE);
             mLocationTv.setText(data.getLocation());
+        } else {
+            mLocationTv.setVisibility(View.GONE);
         }
 
         mLikeTv.setText(data.getLikeCount() == 0 ? ResourcesUtils.getString(R.string.common_str_like) : data.getLikeCount() + "");
         mTopLikeTv.setText(data.getLikeCount() == 0 ? ResourcesUtils.getString(R.string.common_str_like) : data.getLikeCount() + "");
         mCommentTv.setText(data.getCommentCount() == 0 ? ResourcesUtils.getString(R.string.common_str_comment) : data.getCommentCount() + "");
 
-        mImageViewLayout.setPictureUrls(data.getPictureList());
+        if (!ListUtils.isEmpty(data.getPictureList())) {
+            mImageViewLayout.setPictureUrls(data.getPictureList());
+            mImageViewLayout.setVisibility(View.VISIBLE);
+        } else {
+            mImageViewLayout.setVisibility(View.GONE);
+        }
     }
 }

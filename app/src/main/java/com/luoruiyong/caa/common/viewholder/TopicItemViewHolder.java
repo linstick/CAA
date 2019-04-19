@@ -49,8 +49,8 @@ public class TopicItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindData(TopicData data) {
-        if (!TextUtils.isEmpty(data.getCoverUrl())) {
-            mTagCoverIv.setImageURI(data.getCoverUrl());
+        if (!TextUtils.isEmpty(data.getCover())) {
+            mTagCoverIv.setImageURI(data.getCover());
         } else {
             mTagCoverIv.setActualImageResource(R.drawable.test_image);
         }

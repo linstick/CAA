@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.eventbus.CommonEvent;
+import com.luoruiyong.caa.eventbus.CommonOperateEvent;
 import com.luoruiyong.caa.eventbus.UserFinishEvent;
 import com.luoruiyong.caa.eventbus.PullFinishEvent;
 import com.luoruiyong.caa.utils.ResourcesUtils;
@@ -73,6 +74,33 @@ public class HttpsUtils {
                     ResponseUtils.handleCommonSuccessEvent(type, event);
                 } else {
                     ResponseUtils.handleCommonFailEvent(type, Config.CODE_SERVER_ERROR, ResourcesUtils.getString(R.string.common_tip_server_error));
+                }
+            }
+        });
+    }
+
+    public static void sendCommonOperateRequest(int targetId, RequestType type, Request request, Type reflectType) {
+        Log.d(TAG, "sendUserRequest: " + request);
+        HttpsUtils.getClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (type == RequestType.NONE) {
+                    return;
+                }
+                ResponseUtils.handleCommonOperateFailEvent(targetId, type, Config.CODE_REQUEST_ERROR, ResourcesUtils.getString(R.string.common_tip_request_error));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (type == RequestType.NONE) {
+                    return;
+                }
+                if (response.isSuccessful() && response.body() != null) {
+                    String data = response.body().string();
+                    CommonOperateEvent event = new Gson().fromJson(data, reflectType);
+                    ResponseUtils.handleCommonOperateSuccessEvent(targetId, type, event);
+                } else {
+                    ResponseUtils.handleCommonOperateFailEvent(targetId, type, Config.CODE_SERVER_ERROR, ResourcesUtils.getString(R.string.common_tip_server_error));
                 }
             }
         });

@@ -10,27 +10,44 @@ public enum  RequestType {
     // 不需要客户端接收结果的请求
     NONE,
     // 用户相关请求
-    LOGIN,
-    SIGN_UP,
-    FETCH_AVATAR,
-    CHECK_ACCOUNT,
-    MODIFY_PASSWORD,
-    FETCH_USER_DETAIL,
+    LOGIN,  // post
+    SIGN_UP,// post
+    FETCH_AVATAR,  // get
+    CHECK_ACCOUNT,  // get
+    MODIFY_PASSWORD,    // pos
+    FETCH_USER_DETAIL,  // get
+    MODIFY_PROFILE, // post
 
     // 话题相关请求
-    FETCH_TOPIC_DETAIL,
-    FETCH_HOT_SIMPLE_TOPIC_LIST,
-    FETCH_SIMPLE_TOPIC_LIST,
-    CHECK_TOPIC_NAME,
+    FETCH_TOPIC_DETAIL, // get
+    FETCH_HOT_SIMPLE_TOPIC_LIST,    // get
+    FETCH_SIMPLE_TOPIC_LIST,    // get
+    CHECK_TOPIC_NAME,   // get
+    CREATE_TOPIC,   // post
+    VISIT_TOPIC,   // post
 
     // 搜索请求相关
-    FETCH_COMPOSITE_SEARCH_LIST,
-    FETCH_COMPOSITE_SEARCH_HOT_TIP,
-    FETCH_COMPOSITE_SEARCH_SIMPLE_TIP,
+    FETCH_COMPOSITE_SEARCH_LIST,    // get
+    FETCH_COMPOSITE_SEARCH_HOT_TIP, // get
+    FETCH_COMPOSITE_SEARCH_SIMPLE_TIP,  // get
 
     // 活动相关
-    FETCH_ACTIVITY_DETAIL,
+    FETCH_ACTIVITY_DETAIL,  // get
+    CREATE_ACTIVITY,    // post
+    COLLECT_ACTIVITY,   // get
+    ADD_ACTIVITY_COMMENT,   // post
+    DELETE_ACTIVITY_COMMENT,   // get
+    ADD_ACTIVITY_ADDITION,   // post
+    DELETE_ACTIVITY_ADDITION,   // get
 
     // 动态相关
-    FETCH_DISCOVER_DETAIL,
+    FETCH_DISCOVER_DETAIL,  // get
+    CREATE_DISCOVER,    // post
+    LIKE_DISCOVER, // get
+    ADD_DISCOVER_COMMENT,   // post
+    DELETE_DISCOVER_COMMENT,   // post
+
+    // 改进
+    FEEDBACK,
+    IMPEACH,
 }

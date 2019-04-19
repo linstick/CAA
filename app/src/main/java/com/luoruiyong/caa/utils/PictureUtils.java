@@ -1,8 +1,11 @@
 package com.luoruiyong.caa.utils;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.Fragment;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -43,12 +46,11 @@ import java.text.SimpleDateFormat;
 public class PictureUtils {
     private static final String TAG = "PictureUtils";
 
-    public static String save(Bitmap bitmap){
+    public static String save(Bitmap bitmap, String url){
         if (bitmap == null) {
             return null;
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-        String path = Enviroment.getCacheFolder() + sdf.format(System.currentTimeMillis()) + Enviroment.IMAGE_SUFFIX;
+        String path = Enviroment.getCacheFolder() + Utils.md5(url) + Enviroment.IMAGE_SUFFIX;
         File currentFile = new File(path);
         FileOutputStream fos = null;
         try {

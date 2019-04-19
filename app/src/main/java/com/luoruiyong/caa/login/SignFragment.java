@@ -163,7 +163,7 @@ public class SignFragment extends Fragment implements View.OnClickListener{
             return;
         }
         if (mCallBack != null) {
-            mCallBack.doSignUp(account, nickname, password);
+            mCallBack.doSignUp(account, nickname, password, mAvatarPath);
         }
     }
 

@@ -85,7 +85,7 @@
         android:layout_marginTop="10dp"
         android:ellipsize="end"
         android:maxLines="2"
-        android:text="This is the title of activity"
+        android:text="This is the title of discover"
         android:textColor="#333333"
         android:textSize="18sp" />
 
@@ -98,7 +98,7 @@
         android:layout_marginTop="6dp"
         android:ellipsize="end"
         android:maxLines="3"
-        android:text="This is the content of activity, long long long long long long long long long sentence!!!"
+        android:text="This is the content of discover, long long long long long long long long long sentence!!!"
         android:textColor="#666666"
         android:textSize="15sp" />
 

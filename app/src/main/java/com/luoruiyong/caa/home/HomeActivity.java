@@ -5,16 +5,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.Enviroment;
+import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.bean.User;
@@ -23,14 +21,13 @@ import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.common.fragment.SwipeDiscoverFragment;
 import com.luoruiyong.caa.common.fragment.SwipeTopicFragment;
 import com.luoruiyong.caa.eventbus.LoginStateChangedEvent;
+import com.luoruiyong.caa.login.LoginActivity;
 import com.luoruiyong.caa.model.bean.GlobalSource;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.edit.EditorActivity;
 import com.luoruiyong.caa.home.activity.ActivityFragment;
 import com.luoruiyong.caa.home.message.MessageFragment;
-import com.luoruiyong.caa.login.LoginActivity;
 import com.luoruiyong.caa.search.SearchActivity;
-import com.luoruiyong.caa.utils.MainActivity;
 import com.luoruiyong.caa.utils.PageUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -238,7 +235,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
                 startActivity(new Intent(this, SearchActivity.class));
                 break;
             case R.id.iv_add:
-                showEditTypeChooseDialog();
+                if (Enviroment.isVisitor()) {
+                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                    LoginActivity.startAction(this, LoginActivity.LOGIN_TAB);
+                } else {
+                    showEditTypeChooseDialog();
+                }
                 break;
             default:
                 break;

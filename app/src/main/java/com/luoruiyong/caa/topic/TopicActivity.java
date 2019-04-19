@@ -173,8 +173,8 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
             return;
         }
         mUserAvatarIv.setImageURI(mData.getAvatarUrl());
-        if (!TextUtils.isEmpty(mData.getCoverUrl())) {
-            mTagCoverIv.setImageURI(mData.getCoverUrl());
+        if (!TextUtils.isEmpty(mData.getCover())) {
+            mTagCoverIv.setImageURI(mData.getCover());
         } else {
             mTagCoverIv.setActualImageResource(R.drawable.test_image);
         }

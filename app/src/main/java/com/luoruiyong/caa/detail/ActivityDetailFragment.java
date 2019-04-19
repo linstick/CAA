@@ -22,12 +22,14 @@ import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseFragment;
 import com.luoruiyong.caa.bean.ActivityData;
+import com.luoruiyong.caa.bean.CommentData;
 import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
 import com.luoruiyong.caa.eventbus.CommonEvent;
-import com.luoruiyong.caa.eventbus.DetailFinishEvent;
+import com.luoruiyong.caa.eventbus.CommonOperateEvent;
 import com.luoruiyong.caa.model.CommonFetcher;
+import com.luoruiyong.caa.model.CommonTargetOperator;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.KeyboardUtils;
@@ -170,6 +172,7 @@ public class ActivityDetailFragment extends BaseFragment implements
                 return;
             }
             hideTipView();
+            mActivityId = mData.getId();
             mViewHolder.bindData(mData);
             bindExtrasInfo();
             initFragment();
@@ -245,6 +248,22 @@ public class ActivityDetailFragment extends BaseFragment implements
         }
     }
 
+    private void checkAndSendComment() {
+        String text = mCommentInputEt.getText().toString().trim();
+        if (TextUtils.isEmpty(text)) {
+            Toast.makeText(getContext(), R.string.activity_detail_tip_empty_comment_input, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        CommonTargetOperator.doAddActivityComment(mActivityId, text);
+    }
+
+    private void onCommentCountOrAdditionCountChanged() {
+        mTitleList.clear();
+        mTitleList.add(String.format(getString(R.string.activity_detail_str_comment), mData.getCommentCount()));
+        mTitleList.add(String.format(getString(R.string.activity_detail_str_addition), mData.getAdditionCount()));
+        mAdapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -256,7 +275,8 @@ public class ActivityDetailFragment extends BaseFragment implements
                 PageUtils.gotoTopicPage(getContext(), mData.getTopicId());
                 break;
             case R.id.tv_collect:
-                Toast.makeText(getContext(), "click collect", Toast.LENGTH_SHORT).show();
+                // 先请求，请求成功后修改数据，和列表中的活动收藏的逻辑不一样
+                CommonTargetOperator.doCollectActivity(mData.getId(), !mData.isHasCollect());
                 break;
             case R.id.tv_more:
                 List<String>  mItemMoreStringArray = Enviroment.getItemMoreNewStringArray();
@@ -278,7 +298,7 @@ public class ActivityDetailFragment extends BaseFragment implements
                 toggleCommentBar();
                 break;
             case R.id.iv_send:
-                Toast.makeText(getContext(), "send", Toast.LENGTH_SHORT).show();
+                checkAndSendComment();
                 break;
             default:
                 break;
@@ -308,12 +328,12 @@ public class ActivityDetailFragment extends BaseFragment implements
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onComonEvent(CommonEvent<ActivityData> event) {
+    public void onComonEvent(CommonEvent event) {
         hideTipView();
         switch (event.getType()) {
             case FETCH_ACTIVITY_DETAIL:
                 if (event.getCode() == Config.CODE_OK) {
-                    mData = event.getData();
+                    mData = (ActivityData) event.getData();
                     mViewHolder.bindData(mData);
                     bindExtrasInfo();
                     initFragment();
@@ -324,6 +344,63 @@ public class ActivityDetailFragment extends BaseFragment implements
                 }
                 break;
             default:
+                break;
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommonOperateEvent(CommonOperateEvent event) {
+        if (event.getTargetId() != mActivityId) {
+            return;
+        }
+        switch (event.getType()) {
+            case COLLECT_ACTIVITY:
+                if (event.getCode() == Config.CODE_OK) {
+                    boolean isCollect = !mData.isHasCollect();
+                    int collectCount = mData.getCollectCount() + (isCollect ? 1 : 0);
+                    mData.setHasCollect(isCollect);
+                    mData.setCollectCount(collectCount);
+                    mViewHolder.mCollectTv.setSelected(isCollect);
+                    mViewHolder.mCollectTv.setText(collectCount <= 0 ? getString(R.string.common_str_collect) : String.valueOf(collectCount));
+                } else {
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case ADD_ACTIVITY_COMMENT:
+                if (event.getCode() == Config.CODE_OK) {
+                    mData.setCommentCount(mData.getCommentCount() + 1);
+                    onCommentCountOrAdditionCountChanged();
+                    Toast.makeText(getContext(), R.string.common_tip_comment_success, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case DELETE_ACTIVITY_COMMENT:
+                if (event.getCode() == Config.CODE_OK) {
+                    mData.setCommentCount(mData.getCommentCount() - 1);
+                    onCommentCountOrAdditionCountChanged();
+                    Toast.makeText(getContext(), R.string.common_str_delete_success, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case ADD_ACTIVITY_ADDITION:
+                if (event.getCode() == Config.CODE_OK) {
+                    mData.setAdditionCount(mData.getAdditionCount() + 1);
+                    onCommentCountOrAdditionCountChanged();
+                    Toast.makeText(getContext(), R.string.common_tip_addition_success, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case DELETE_ACTIVITY_ADDITION:
+                if (event.getCode() == Config.CODE_OK) {
+                    mData.setAdditionCount(mData.getAdditionCount() - 1);
+                    onCommentCountOrAdditionCountChanged();
+                    Toast.makeText(getContext(), R.string.common_str_delete_success, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }

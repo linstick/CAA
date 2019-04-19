@@ -24,6 +24,7 @@ public class ActivityData implements Serializable{
     private String host;
     private String address;
     private String time;
+    private String remark;
     private String location;
     private String topic;
     private int topicId;
@@ -106,6 +107,14 @@ public class ActivityData implements Serializable{
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public String getTopic() {

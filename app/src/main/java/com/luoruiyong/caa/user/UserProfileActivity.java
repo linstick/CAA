@@ -94,8 +94,13 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
     protected void onResume() {
         super.onResume();
         // 退出登录操作
-        if (mIsSelf && Enviroment.getCurUid() != mUid) {
-            finish();
+        if (mIsSelf) {
+            if (Enviroment.getCurUid() != mUid) {
+                finish();
+            } else if (mUser != null && mUser != Enviroment.getCurUser()) {
+                mUser = Enviroment.getCurUser();
+                bindUserData();
+            }
         }
     }
 

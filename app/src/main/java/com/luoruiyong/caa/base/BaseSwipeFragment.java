@@ -342,6 +342,10 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
         }, 200);
     }
 
+    protected boolean isItemVisible(int position) {
+        return mLayoutManager.findFirstVisibleItemPosition() <= position && mLayoutManager.findLastVisibleItemPosition() >= position;
+    }
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -446,7 +450,6 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
         return;
     }
 
-
     /**
      * 刷新失败回调
      * @param event
@@ -493,10 +496,8 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
             }
             if (mPageId <= Config.MAX_GLOBAL_CACHE_ID) {
                 GlobalSource.appendData(mPageId, result);
-            } else {
-                // 非全局数据，自己添加
-                mList.addAll(0, result);
             }
+            mList.addAll(0, result);
         }
 
         mAdapter.notifyDataSetChanged();

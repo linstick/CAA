@@ -16,13 +16,16 @@ import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.common.viewholder.DiscoverItemViewHolder;
+import com.luoruiyong.caa.eventbus.CommonOperateEvent;
 import com.luoruiyong.caa.eventbus.PullFinishEvent;
+import com.luoruiyong.caa.model.CommonTargetOperator;
 import com.luoruiyong.caa.model.puller.DiscoverPuller;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicActivity;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.LogUtils;
 import com.luoruiyong.caa.utils.PageUtils;
+import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -41,6 +44,7 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
     private static final String KEY_TYPE = "key_type";
     private static final String KEY_TOPIC_ID = "key_topic_id";
     private static final String KEY_ITEM_POSITION = "key_item_position";
+    private static final int PAYLOAD_LIKE = 0;
 
     private int mTopicId = -1;
     private int mPosition = 0;
@@ -140,6 +144,32 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         return Config.DEFAULT_TIME_STAMP;
     }
 
+    private void doLike(DiscoverData data, int position) {
+        // 收藏时先修改本地的数量，等请求结果回来时，如果收藏失败(几率比较小)，再把数据修改回来
+        boolean isLike = !data.isHasLike();
+        data.setHasLike(isLike);
+        data.setLikeCount(data.getLikeCount() + (isLike ? 1 : -1));
+        mAdapter.notifyItemChanged(position, PAYLOAD_LIKE);
+        CommonTargetOperator.doLikeDiscover(data.getId(), isLike);
+    }
+
+    private void rollbackLikeData(int targetId) {
+        int i = 0;
+        for (DiscoverData data : mList) {
+            if (data.getId() == targetId) {
+                // 反向操作
+                boolean isLike = !data.isHasLike();
+                data.setHasLike(isLike);
+                data.setLikeCount(data.getLikeCount() + (isLike ? 1 : -1));
+                if (isItemVisible(i)) {
+                    mAdapter.notifyItemChanged(i, PAYLOAD_LIKE);
+                }
+                break;
+            }
+            i++;
+        }
+    }
+
     @Override
     protected void doRefresh() {
         LogUtils.d(TAG, "doRefreshClick: " + mPageId);
@@ -200,6 +230,25 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommonEvent(CommonOperateEvent event) {
+        switch (event.getType()) {
+            case LIKE_DISCOVER:
+                if (event.getCode() == Config.CODE_OK) {
+                    // 点赞成功
+                    // do nothing
+                } else {
+                    // 点赞失败，需要回滚点赞数据
+                    int discover_id = event.getTargetId();
+                    rollbackLikeData(discover_id);
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     private class ListAdapter extends LoadMoreSupportAdapter<DiscoverData> implements View.OnClickListener, ImageViewLayout.OnImageClickListener{
 
         public ListAdapter(List<DiscoverData> list) {
@@ -217,28 +266,45 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-            super.onBindViewHolder(viewHolder, position);
-            if (viewHolder instanceof DiscoverItemViewHolder) {
-                DiscoverItemViewHolder holder = (DiscoverItemViewHolder) viewHolder;
-                DiscoverData data = mList.get(position);
-                holder.bindData(data);
-                holder.itemView.setOnClickListener(this);
-                holder.mUserAvatarIv.setOnClickListener(this);
-                holder.mNicknameTv.setOnClickListener(this);
-                holder.mMoreIv.setOnClickListener(this);
-                holder.mTopicTv.setOnClickListener(this);
-                holder.mLikeTv.setOnClickListener(this);
-                holder.mCommentTv.setOnClickListener(this);
-                holder.mImageViewLayout.setOnImageClickListener(this);
-                holder.itemView.setTag(position);
-                holder.mUserAvatarIv.setTag(position);
-                holder.mNicknameTv.setTag(position);
-                holder.mMoreIv.setTag(position);
-                holder.mTopicTv.setTag(position);
-                holder.mLikeTv.setTag(position);
-                holder.mCommentTv.setTag(position);
-                holder.mImageViewLayout.setTag(data);
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position, @NonNull List payloads) {
+            if (ListUtils.isEmpty(payloads)) {
+                super.onBindViewHolder(viewHolder, position);
+                if (viewHolder instanceof DiscoverItemViewHolder) {
+                    DiscoverItemViewHolder holder = (DiscoverItemViewHolder) viewHolder;
+                    DiscoverData data = mList.get(position);
+                    holder.bindData(data);
+                    holder.itemView.setOnClickListener(this);
+                    holder.mUserAvatarIv.setOnClickListener(this);
+                    holder.mNicknameTv.setOnClickListener(this);
+                    holder.mMoreIv.setOnClickListener(this);
+                    holder.mTopicTv.setOnClickListener(this);
+                    holder.mLikeTv.setOnClickListener(this);
+                    holder.mCommentTv.setOnClickListener(this);
+                    holder.mImageViewLayout.setOnImageClickListener(this);
+                    holder.itemView.setTag(position);
+                    holder.mUserAvatarIv.setTag(position);
+                    holder.mNicknameTv.setTag(position);
+                    holder.mMoreIv.setTag(position);
+                    holder.mTopicTv.setTag(position);
+                    holder.mLikeTv.setTag(position);
+                    holder.mCommentTv.setTag(position);
+                    holder.mImageViewLayout.setTag(data);
+                }
+            } else {
+                int type = (int) payloads.get(0);
+                switch (type) {
+                    case PAYLOAD_LIKE:
+                        // 只刷新点赞控件
+                        if (viewHolder instanceof DiscoverItemViewHolder) {
+                            DiscoverData data = mList.get(position);
+                            DiscoverItemViewHolder holder = (DiscoverItemViewHolder) viewHolder;
+                            holder.mLikeTv.setText(data.getLikeCount() <= 0 ? ResourcesUtils.getString(R.string.common_str_like) : String.valueOf(data.getLikeCount()));
+                            holder.mLikeTv.setSelected(data.isHasLike());
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
@@ -269,7 +335,7 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
                     PageUtils.gotoTopicPage(getContext(), data.getTopicId());
                     break;
                 case R.id.tv_like:
-                    Toast.makeText(getContext(), "click collect", Toast.LENGTH_SHORT).show();
+                    doLike(data, position);
                     break;
                 case R.id.tv_comment:
                     PageUtils.gotoActivityDetailPage(getContext(), data, true);

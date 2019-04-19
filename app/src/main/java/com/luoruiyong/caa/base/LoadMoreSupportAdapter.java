@@ -58,6 +58,14 @@ public class LoadMoreSupportAdapter<Item> extends RecyclerView.Adapter{
     }
 
     @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull List payloads) {
+        if (holder instanceof LoadMoreViewHolder) {
+            holder.itemView.setOnClickListener(mListener);
+            ((TextView) holder.itemView).setText(mLoadMoreTip);
+        }
+    }
+
+    @Override
     public int getItemCount() {
         int count = ListUtils.getSize(mList);
         return count == 0 ? 0 : count + 1;

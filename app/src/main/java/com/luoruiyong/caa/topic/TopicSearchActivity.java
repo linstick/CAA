@@ -109,7 +109,7 @@ public class TopicSearchActivity extends BaseActivity implements View.OnClickLis
 
     public void setCreateResultDataAndFinish(String keyword) {
         Intent intent = new Intent();
-        intent.putExtra(KEY_RESULT_TYPE, RELATE_TOPIC_TYPE_SELECT);
+        intent.putExtra(KEY_RESULT_TYPE, RELATE_TOPIC_TYPE_CREATE);
         intent.putExtra(KEY_CREATE_TOPIC_NAME, keyword);
         setResult(RESULT_OK, intent);
         finish();
@@ -117,7 +117,7 @@ public class TopicSearchActivity extends BaseActivity implements View.OnClickLis
 
     public void setSelectResultDataAndFinish(TopicData data) {
         Intent intent = new Intent();
-        intent.putExtra(KEY_RESULT_TYPE, RELATE_TOPIC_TYPE_CREATE);
+        intent.putExtra(KEY_RESULT_TYPE, RELATE_TOPIC_TYPE_SELECT);
         intent.putExtra(KEY_SELECTED_TOPIC_NAME, data.getName());
         intent.putExtra(KEY_SELECTED_TOPIC_ID, data.getId());
         setResult(RESULT_OK, intent);

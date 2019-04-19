@@ -24,6 +24,7 @@ public class Enviroment {
 
     public final static String AMAP_WEB_API_KEY = "c3bab68b9ed24b289631570eb02750fa";
     public final static String CACHE_FOLDER = Environment.getExternalStorageDirectory().getPath() + "/CAA/";
+    public final static String TEMP_FILE_NAME = "temp.jpeg";
     public final static String IMAGE_SUFFIX = ".jpg";
 
     private static User sUser;
@@ -62,26 +63,6 @@ public class Enviroment {
 
     public static void clearCurUser() {
         sUser = null;
-    }
-
-    public static void createVirtualUser() {
-        sUser = new User();
-        sUser.setUid(10);
-        sUser.setId("PSC52193");
-        sUser.setAvatar("https://www.baidu.com/1.jpg");
-        sUser.setNickname("会飞的猪");
-        sUser.setGender("男");
-        sUser.setAge(23);
-        sUser.setCellNumber("15102032936");
-        sUser.setEmail("linstick@163.com");
-        sUser.setDescription("Android开发入门Coder");
-
-        User.CollegeInfo info = new User.CollegeInfo();
-        info.setName("Guangdong University Of Technology");
-        info.setDepartment("Computer Department");
-        info.setMajor("Software Project");
-        info.setKlass("15 Class");
-        sUser.setCollegeInfo(info);
     }
 
     public static List<String> getCreateNewStringArray() {
@@ -134,6 +115,10 @@ public class Enviroment {
             dir.mkdirs();
         }
         return CACHE_FOLDER;
+    }
+
+    public static String getTempFilePath() {
+        return getCacheFolder() + TEMP_FILE_NAME;
     }
 
     public static Map<Integer, String> getMessageTypeMap() {

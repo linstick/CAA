@@ -140,7 +140,7 @@
         android:layout_marginTop="8dp"
         android:ellipsize="end"
         android:maxLines="3"
-        android:text="This is the content of activity, long long long long long long long long long sentence!!!"
+        android:text="This is the content of discover, long long long long long long long long long sentence!!!"
         android:textColor="#666666"
         android:textSize="15sp" />
 

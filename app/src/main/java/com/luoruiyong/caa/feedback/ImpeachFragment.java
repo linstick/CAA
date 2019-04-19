@@ -11,18 +11,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
+import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.OnPermissionCallback;
 import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.bean.CommentData;
 import com.luoruiyong.caa.bean.DiscoverData;
+import com.luoruiyong.caa.bean.Feedback;
 import com.luoruiyong.caa.bean.ImageBean;
+import com.luoruiyong.caa.bean.ImpeachData;
 import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.edit.BaseCreateFragment;
 import com.luoruiyong.caa.edit.CreateActivityFragment;
 import com.luoruiyong.caa.edit.EditorActivity;
+import com.luoruiyong.caa.eventbus.CommonEvent;
+import com.luoruiyong.caa.model.CommonPoster;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.PageUtils;
@@ -30,6 +36,10 @@ import com.luoruiyong.caa.utils.PictureUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView;
 import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -69,6 +79,7 @@ public class ImpeachFragment extends BaseCreateFragment implements
     private DiscoverData mTargetDiscover;
     private User mTargetUser;
     private CommentData mTargetComment;
+    private int mTargetId;
 
     private List<ImageBean> mPictureDataList;
 
@@ -113,6 +124,18 @@ public class ImpeachFragment extends BaseCreateFragment implements
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
     private void initView(View view) {
         mTypeInputView = view.findViewById(R.id.input_view_type);
         mContentInputView = view.findViewById(R.id.input_view_content);
@@ -152,20 +175,24 @@ public class ImpeachFragment extends BaseCreateFragment implements
             }
             return;
         }
-        int titleResId = -1;
+        int titleResId;
         if (data instanceof ActivityData) {
             mType = FEEDBACK_TYPE_IMPEACH_ACTIVITY;
+            mTargetId = ((ActivityData) data).getId();
             mTargetActivity = (ActivityData) data;
             titleResId = R.string.title_impeach_activity;
         } else if (data instanceof TopicData) {
             mType = FEEDBACK_TYPE_IMPEACH_TOPIC;
+            mTargetId = ((TopicData) data).getId();
             mTargetTopic = (TopicData) data;
             titleResId = R.string.title_impeach_topic;
         } else if (data instanceof DiscoverData) {
             mType = FEEDBACK_TYPE_IMPEACH_DISCOVER;
+            mTargetId = ((DiscoverData) data).getId();
             mTargetDiscover = (DiscoverData) data;
             titleResId = R.string.title_impeach_discover;
         }else if (data instanceof User) {
+            mTargetId = ((User) data).getUid();
             mType = FEEDBACK_TYPE_IMPEACH_USER;
             mTargetUser = (User) data;
             titleResId = R.string.title_impeach_user;
@@ -208,13 +235,26 @@ public class ImpeachFragment extends BaseCreateFragment implements
         for (DynamicInputView view : mCheckNonNullList) {
             canSend &= view.checkAndShowErrorTipIfNeed();
         }
-        if (canSend) {
-            Toast.makeText(getContext(), "can send", Toast.LENGTH_SHORT).show();
-
-            // do send
-
+        if (!canSend) {
+            return;
+        }
+        if (mType == FEEDBACK_TYPE_SUGGESTION_OR_PROBLEM) {
+            // 用户反馈
+            Feedback feedback = new Feedback();
+            feedback.setType(mTypeInputView.getSpinnerSelectedItem());
+            feedback.setDescription(mContentInputView.getInputText());
+            feedback.setPictureList(mPictureInputView.getPictureUrls());
+            showLoadingDialog(R.string.common_tip_on_submit);
+            CommonPoster.doFeedback(feedback);
         } else {
-            Toast.makeText(getContext(), "can not send", Toast.LENGTH_SHORT).show();
+            // 举报
+            ImpeachData impeach = new ImpeachData();
+            impeach.setTargetType(mType);
+            impeach.setReasonType(mTypeInputView.getSpinnerSelectedItem());
+            impeach.setDescription(mContentInputView.getInputText());
+            impeach.setPictureList(mPictureInputView.getPictureUrls());
+            showLoadingDialog(R.string.common_tip_on_submit);
+            CommonPoster.doImpeach(impeach);
         }
     }
 
@@ -247,18 +287,6 @@ public class ImpeachFragment extends BaseCreateFragment implements
         }
     }
 
-    class StoragePermissionCallback implements OnPermissionCallback {
-        @Override
-        public void onGranted() {
-            PageUtils.gotoSystemAlbum(ImpeachFragment.this, BaseCreateFragment.REQUEST_CHOOSE_PICTURE_CODE);
-        }
-
-        @Override
-        public void onDenied() {
-
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK && data != null) {
@@ -272,6 +300,44 @@ public class ImpeachFragment extends BaseCreateFragment implements
                     mPictureInputView.notifyInputDataChanged();
                     break;
             }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommonEvent(CommonEvent event) {
+        switch (event.getType()) {
+            case FEEDBACK:
+                hideLoadingDialog();
+                if (event.getCode() == Config.CODE_OK) {
+                    Toast.makeText(MyApplication.getAppContext(), R.string.feedback_tip_feedback_success, Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case IMPEACH:
+                hideLoadingDialog();
+                if (event.getCode() == Config.CODE_OK) {
+                    Toast.makeText(MyApplication.getAppContext(), R.string.feedback_tip_impeach_success, Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    class StoragePermissionCallback implements OnPermissionCallback {
+        @Override
+        public void onGranted() {
+            PageUtils.gotoSystemAlbum(ImpeachFragment.this, BaseCreateFragment.REQUEST_CHOOSE_PICTURE_CODE);
+        }
+
+        @Override
+        public void onDenied() {
+
         }
     }
 }

@@ -10,16 +10,19 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
+import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.OnPermissionCallback;
 import com.luoruiyong.caa.bean.ImageBean;
+import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.eventbus.CommonEvent;
 import com.luoruiyong.caa.model.CommonChecker;
+import com.luoruiyong.caa.model.CommonPoster;
+import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.PictureUtils;
 import com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView;
@@ -143,11 +146,17 @@ public class CreateTopicFragment extends BaseCreateFragment implements
 
     @Override
     public void onFinishClick() {
-        if (mNameInputView.checkAndShowErrorTipIfNeed()) {
-            Toast.makeText(getContext(), "can send", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getContext(), "can not send", Toast.LENGTH_SHORT).show();
+        if (!mNameInputView.checkAndShowErrorTipIfNeed()) {
+            return;
         }
+        TopicData topic = new TopicData();
+        topic.setUid(Enviroment.getCurUid());
+        topic.setName(mNameInputView.getInputText());
+        topic.setIntroduction(mIntroduceInputView.getInputText());
+        topic.setCover(ListUtils.getSize(mTopicCoverList) > 0 ? mTopicCoverList.get(0).toString() : null);
+
+        showLoadingDialog(R.string.common_tip_on_publish);
+        CommonPoster.doCreateTopic(topic);
     }
 
     @Override
@@ -163,7 +172,7 @@ public class CreateTopicFragment extends BaseCreateFragment implements
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK && data != null) {
+        if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_CHOOSE_COVER_CODE:
                     Uri uri = data.getData();
@@ -181,6 +190,35 @@ public class CreateTopicFragment extends BaseCreateFragment implements
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommentEvent(CommonEvent event) {
+        switch (event.getType()) {
+            case CHECK_TOPIC_NAME:
+                String text = mNameInputView.getInputText();
+                if (TextUtils.equals(mLastTopicName, text)) {
+                    if (event.getCode() == Config.CODE_OK) {
+                        mHasCheckName = true;
+                        mIsNameExists = (boolean) event.getData();
+                        if (mIsNameExists) {
+                            mNameInputView.setErrorText(getString(R.string.fm_create_topic_tip_topic_name_exists), true);
+                        }
+                    }
+                }
+                break;
+            case CREATE_TOPIC:
+                if (event.getCode() == Config.CODE_OK) {
+                    TopicData topic = (TopicData) event.getData();
+                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_create_topic_tip_publish_success, Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     class StoragePermissionCallback implements OnPermissionCallback {
         @Override
         public void onGranted() {
@@ -190,26 +228,6 @@ public class CreateTopicFragment extends BaseCreateFragment implements
         @Override
         public void onDenied() {
 
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onCommonEvent(CommonEvent<Boolean> event) {
-        switch (event.getType()) {
-            case CHECK_TOPIC_NAME:
-                String text = mNameInputView.getInputText();
-                if (TextUtils.equals(mLastTopicName, text)) {
-                    if (event.getCode() == Config.CODE_OK) {
-                        mHasCheckName = true;
-                        mIsNameExists = event.getData();
-                        if (mIsNameExists) {
-                            mNameInputView.setErrorText(getString(R.string.fm_create_topic_tip_topic_name_exists), true);
-                        }
-                    }
-                }
-                break;
-            default:
-                break;
         }
     }
 }
