@@ -19,17 +19,21 @@ import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
+import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseFragment;
 import com.luoruiyong.caa.bean.ActivityData;
+import com.luoruiyong.caa.bean.ActivityDynamicData;
 import com.luoruiyong.caa.bean.CommentData;
 import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
 import com.luoruiyong.caa.eventbus.CommonEvent;
 import com.luoruiyong.caa.eventbus.CommonOperateEvent;
+import com.luoruiyong.caa.login.LoginActivity;
 import com.luoruiyong.caa.model.CommonFetcher;
 import com.luoruiyong.caa.model.CommonTargetOperator;
+import com.luoruiyong.caa.model.bean.GlobalSource;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.KeyboardUtils;
@@ -41,6 +45,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +62,8 @@ import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_BROWSE_COMMENT;
  **/
 public class ActivityDetailFragment extends BaseFragment implements
         View.OnClickListener,
-        ImageViewLayout.OnImageClickListener{
+        ImageViewLayout.OnImageClickListener,
+        DetailActivity.OnBackClickListener{
 
     private static final int INPUT_TYPE_COMMENT = 1;
     private static final int INPUT_TYPE_ADDITION = 2;
@@ -176,6 +182,7 @@ public class ActivityDetailFragment extends BaseFragment implements
             mViewHolder.bindData(mData);
             bindExtrasInfo();
             initFragment();
+            CommonTargetOperator.doFetchActivityDynamicData(mActivityId);
             if (bundle.getBoolean(KEY_DETAIL_PAGE_BROWSE_COMMENT, false)) {
                 toggleCommentBar();
             }
@@ -205,10 +212,11 @@ public class ActivityDetailFragment extends BaseFragment implements
                     if (Enviroment.isSelf(mData.getUid())) {
                         mAddOperateIv.setImageResource(R.drawable.ic_edit_light_gray);
                         mCommentInputEt.setHint(R.string.activity_detail_str_addition_bar_hint);
+                        mInputType = INPUT_TYPE_ADDITION;
                     } else {
                         mAddOperateIv.setVisibility(View.GONE);
+                        hideCommentBar();
                     }
-                    mInputType = INPUT_TYPE_ADDITION;
                 } else {
                     mAddOperateIv.setVisibility(View.VISIBLE);
                     mAddOperateIv.setImageResource(R.drawable.ic_comment_light_gray);
@@ -251,10 +259,19 @@ public class ActivityDetailFragment extends BaseFragment implements
     private void checkAndSendComment() {
         String text = mCommentInputEt.getText().toString().trim();
         if (TextUtils.isEmpty(text)) {
-            Toast.makeText(getContext(), R.string.activity_detail_tip_empty_comment_input, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(),
+                    mInputType == INPUT_TYPE_COMMENT
+                    ? R.string.activity_detail_tip_empty_comment_input
+                    : R.string.activity_detail_tip_empty_addition_input,
+                    Toast.LENGTH_SHORT).show();
             return;
         }
-        CommonTargetOperator.doAddActivityComment(mActivityId, text);
+        if (mInputType == INPUT_TYPE_COMMENT) {
+            CommonTargetOperator.doAddActivityComment(mActivityId, text);
+        } else {
+            CommonTargetOperator.doAddActivityAddition(mActivityId, text);
+        }
+        KeyboardUtils.hideKeyboard(mCommentInputEt);
     }
 
     private void onCommentCountOrAdditionCountChanged() {
@@ -275,26 +292,45 @@ public class ActivityDetailFragment extends BaseFragment implements
                 PageUtils.gotoTopicPage(getContext(), mData.getTopicId());
                 break;
             case R.id.tv_collect:
+                if (Enviroment.isVisitor()) {
+                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                    LoginActivity.startAction(getActivity(), LoginActivity.LOGIN_TAB);
+                    return;
+                }
                 // 先请求，请求成功后修改数据，和列表中的活动收藏的逻辑不一样
                 CommonTargetOperator.doCollectActivity(mData.getId(), !mData.isHasCollect());
                 break;
             case R.id.tv_more:
-                List<String>  mItemMoreStringArray = Enviroment.getItemMoreNewStringArray();
+                if (Enviroment.isVisitor()) {
+                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                    LoginActivity.startAction(getActivity(), LoginActivity.LOGIN_TAB);
+                    return;
+                }
                 List<String> items = new ArrayList<>();
+                items.add(getString(R.string.common_str_impeach));
                 if (Enviroment.isSelf(mData.getUid())) {
-                    items.addAll(mItemMoreStringArray);
                     items.add(ResourcesUtils.getString(R.string.common_str_delete));
-                } else {
-                    items = mItemMoreStringArray;
                 }
                 DialogHelper.showListDialog(getContext(), items, new CommonDialog.Builder.OnItemClickListener() {
                     @Override
                     public void onItemClick(int position) {
-                        Toast.makeText(ActivityDetailFragment.this.getContext(), "click position = " + position, Toast.LENGTH_SHORT).show();
+                        switch (position) {
+                            case 0:
+                                PageUtils.gotoFeedbackPage(getContext(), mData);
+                                break;
+                            case 1:
+                                CommonTargetOperator.doDeleteActivity(mActivityId);
+                                break;
+                        }
                     }
                 });
                 break;
             case R.id.iv_add_operate:
+                if (Enviroment.isVisitor()) {
+                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                    LoginActivity.startAction(getActivity(), LoginActivity.LOGIN_TAB);
+                    return;
+                }
                 toggleCommentBar();
                 break;
             case R.id.iv_send:
@@ -312,13 +348,17 @@ public class ActivityDetailFragment extends BaseFragment implements
 
     private void toggleCommentBar() {
         if (mCommentBarLayout.getVisibility() == View.VISIBLE) {
-            mCommentBarLayout.setVisibility(View.GONE);
-            mCommentInputEt.clearFocus();
+            hideCommentBar();
         } else {
             mCommentBarLayout.setVisibility(View.VISIBLE);
             mCommentInputEt.requestFocus();
             KeyboardUtils.showKeyboard(mCommentInputEt);
         }
+    }
+
+    private void hideCommentBar() {
+        mCommentBarLayout.setVisibility(View.GONE);
+        mCommentInputEt.clearFocus();
     }
 
     @Override
@@ -339,8 +379,10 @@ public class ActivityDetailFragment extends BaseFragment implements
                     initFragment();
                 } else if (event.getCode() == Config.CODE_NO_DATA) {
                     showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_data));
-                } else if (event.getCode() == Config.CODE_NETWORK_ERROR) {
+                } else if (event.getCode() == Config.CODE_REQUEST_ERROR) {
                     showErrorView(R.drawable.bg_no_network, getString(R.string.common_tip_no_network));
+                } else {
+                    showErrorView(R.drawable.bg_load_fail, event.getStatus());
                 }
                 break;
             default:
@@ -357,7 +399,7 @@ public class ActivityDetailFragment extends BaseFragment implements
             case COLLECT_ACTIVITY:
                 if (event.getCode() == Config.CODE_OK) {
                     boolean isCollect = !mData.isHasCollect();
-                    int collectCount = mData.getCollectCount() + (isCollect ? 1 : 0);
+                    int collectCount = mData.getCollectCount() + (isCollect ? 1 : -1);
                     mData.setHasCollect(isCollect);
                     mData.setCollectCount(collectCount);
                     mViewHolder.mCollectTv.setSelected(isCollect);
@@ -370,6 +412,8 @@ public class ActivityDetailFragment extends BaseFragment implements
                 if (event.getCode() == Config.CODE_OK) {
                     mData.setCommentCount(mData.getCommentCount() + 1);
                     onCommentCountOrAdditionCountChanged();
+                    mCommentInputEt.setText(null);
+                    toggleCommentBar();
                     Toast.makeText(getContext(), R.string.common_tip_comment_success, Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
@@ -388,6 +432,8 @@ public class ActivityDetailFragment extends BaseFragment implements
                 if (event.getCode() == Config.CODE_OK) {
                     mData.setAdditionCount(mData.getAdditionCount() + 1);
                     onCommentCountOrAdditionCountChanged();
+                    mCommentInputEt.setText(null);
+                    toggleCommentBar();
                     Toast.makeText(getContext(), R.string.common_tip_addition_success, Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
@@ -402,6 +448,26 @@ public class ActivityDetailFragment extends BaseFragment implements
                     Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case FETCH_ACTIVITY_DYNAMIC_DATA:
+                if (event.getCode() == Config.CODE_OK) {
+                    ActivityDynamicData data = (ActivityDynamicData) event.getData();
+                    mData.setCommentCount(data.getCommentCount());
+                    mData.setAdditionCount(data.getAdditionCount());
+                    mData.setCollectCount(data.getCollectCount());
+                    onCommentCountOrAdditionCountChanged();
+                    mViewHolder.mCollectTv.setText(
+                            mData.getCollectCount() <= 0
+                            ? getString(R.string.common_str_collect)
+                            : String.valueOf(mData.getCollectCount()));
+                }
+                break;
+            default:
+                break;
         }
+    }
+
+    @Override
+    public void onBackClick() {
+        GlobalSource.updateActivityItemDataIfNeed(mData);
     }
 }

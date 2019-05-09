@@ -8,18 +8,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
+import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
 import com.luoruiyong.caa.bean.AdditionData;
+import com.luoruiyong.caa.bean.CommentData;
+import com.luoruiyong.caa.eventbus.CommonOperateEvent;
+import com.luoruiyong.caa.model.CommonTargetOperator;
 import com.luoruiyong.caa.model.puller.CommonPuller;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.LogUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.utils.TimeUtils;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,6 +56,7 @@ public class AdditionFragment extends BaseSwipeFragment<AdditionData> {
         super.onCreate(savedInstanceState);
         mPageId = Config.PAGE_ID_ACTIVITY_ADDITION;
         setCanPullRefresh(false);
+        setSupportImpeach(false);
         handleArguments();
     }
 
@@ -97,6 +108,54 @@ public class AdditionFragment extends BaseSwipeFragment<AdditionData> {
     protected void setupRecyclerViewDivider() {
     }
 
+    @Override
+    protected void onDeleteItem(int position) {
+        CommonTargetOperator.doDeleteActivityAddition(mActivityId, mList.get(position).getId());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommonOperateEvent(CommonOperateEvent<AdditionData> event) {
+        if (event.getTargetId() != mActivityId) {
+            return;
+        }
+        switch (event.getType()) {
+            case ADD_ACTIVITY_ADDITION:
+                if (event.getCode() == Config.CODE_OK) {
+                    // 补充内容发送成功
+                    hideTipView();
+                    AdditionData data = event.getData();
+                    if (mList == null) {
+                        mList = new ArrayList<>();
+                    }
+                    mList.add(0, data);
+                    initAdapterIfNeed();
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case DELETE_ACTIVITY_ADDITION:
+                if (event.getCode() == Config.CODE_OK) {
+                    AdditionData data = event.getData();
+                    for (int i = 0; i < ListUtils.getSize(mList); i++) {
+                        if (mList.get(i).getId() == data.getId()) {
+                            mList.remove(i);
+                            mAdapter.notifyDataSetChanged();
+                            break;
+                        }
+                    }
+                    if (ListUtils.isEmpty(mList)) {
+                        showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_related_content));
+                    }
+                } else {
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     class ListAdapter extends LoadMoreSupportAdapter<AdditionData> {
 
         public ListAdapter(List<AdditionData> list) {
@@ -125,6 +184,10 @@ public class AdditionFragment extends BaseSwipeFragment<AdditionData> {
                 holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
+                        if (Enviroment.isVisitor()) {
+                            Toast.makeText(getContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                            return false;
+                        }
                         int itemPosition = (int) v.getTag();
                         showMoreOperateDialog(itemPosition, mUid);
                         return true;

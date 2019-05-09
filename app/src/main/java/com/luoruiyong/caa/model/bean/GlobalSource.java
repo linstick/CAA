@@ -1,12 +1,16 @@
 package com.luoruiyong.caa.model.bean;
 
+import android.widget.ListView;
+
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.bean.MessageData;
 import com.luoruiyong.caa.bean.TopicData;
+import com.luoruiyong.caa.utils.ListUtils;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -106,6 +110,50 @@ public class GlobalSource {
         }
     }
 
+    public static void updateActivityItemDataIfNeed(ActivityData data) {
+        if (sActivityData == null || data == null) {
+            return;
+        }
+        // 全部类型的列表
+        List<ActivityData> list = sActivityData.get(Config.PAGE_ID_ACTIVITY_ALL);
+        if (!ListUtils.isEmpty(list)) {
+            for (ActivityData item : list) {
+                if (item.getId() == data.getId()) {
+                    item.setCollectCount(data.getCollectCount());
+                    item.setAdditionCount(data.getAdditionCount());
+                    item.setCommentCount(data.getCommentCount());
+                    break;
+                }
+            }
+        }
+
+        list = sActivityData.get(data.getType());
+        if (!ListUtils.isEmpty(list)) {
+            for (ActivityData item : list) {
+                if (item.getId() == data.getId()) {
+                    item.setHasCollect(data.isHasCollect());
+                    item.setCollectCount(data.getCollectCount());
+                    item.setAdditionCount(data.getAdditionCount());
+                    item.setCommentCount(data.getCommentCount());
+                    break;
+                }
+            }
+        }
+    }
+
+    public static void deleteActivityItemIfNeed(ActivityData data) {
+        if (sActivityData == null || data == null) {
+            return;
+        }
+        // 全部类型的列表
+        List<ActivityData> list = sActivityData.get(Config.PAGE_ID_ACTIVITY_ALL);
+        ListUtils.deleteActivityItem(list, data);
+
+        list = sActivityData.get(data.getType());
+        ListUtils.deleteActivityItem(list, data);
+    }
+
+
     private static void insertDiscoverData(int pageId, List<DiscoverData> data) {
         List<DiscoverData> src = sDiscoverData.get(pageId);
         if (src == null) {
@@ -122,6 +170,27 @@ public class GlobalSource {
         } else {
             src.addAll(data);
         }
+    }
+
+    public static void updateDiscoverItemDataIfNeed(DiscoverData data) {
+        if (sDiscoverData == null || data == null) {
+            return;
+        }
+        List<DiscoverData> list = sDiscoverData.get(Config.PAGE_ID_DISCOVER_ALL);
+        if (!ListUtils.isEmpty(list)) {
+            Iterator<DiscoverData> iterator = list.iterator();
+            while (iterator.hasNext()) {
+                DiscoverData item = iterator.next();
+                if (item.getId() == data.getId()) {
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
+    }
+
+    public static void deleteDiscoverItemDataIfNeed(DiscoverData data) {
+        ListUtils.deleteDiscoverItem(sDiscoverData.get(Config.PAGE_ID_DISCOVER_ALL), data);
     }
 
     private static void insertTopicData(int pageId, List<TopicData> data) {
@@ -142,6 +211,26 @@ public class GlobalSource {
         }
     }
 
+    public static void updateTopicItemDataIfNeed(TopicData data) {
+        if (sTopicData == null || data == null) {
+            return;
+        }
+        List<TopicData> list = sTopicData.get(Config.PAGE_ID_TOPIC_ALL);
+        if (!ListUtils.isEmpty(list)) {
+            for (TopicData item : list) {
+                if (item.getId() == data.getId()) {
+                    item.setVisitCount(data.getVisitCount());
+                    item.setJoinCount(data.getJoinCount());
+                    break;
+                }
+            }
+        }
+    }
+
+    public static void deleteTopicItemDataIfNeed(TopicData data) {
+        ListUtils.deleteTopicItem(sTopicData.get(Config.PAGE_ID_TOPIC_ALL), data);
+    }
+
     private static void insertMessageData(List<MessageData> data) {
         if (sMessageData == null) {
             sMessageData = data;
@@ -156,6 +245,10 @@ public class GlobalSource {
         } else {
             sMessageData.addAll(data);
         }
+    }
+
+    public static void deleteMessageItemDataIfNeed(MessageData data) {
+        ListUtils.deleteMessageItem(sMessageData, data);
     }
 
     private static List<ActivityData> getActivityData(int pageId) {

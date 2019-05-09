@@ -1,4 +1,4 @@
-package com.luoruiyong.caa.gson;
+package com.luoruiyong.caa.model.gson;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;

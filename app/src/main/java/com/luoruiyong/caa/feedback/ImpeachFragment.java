@@ -318,7 +318,7 @@ public class ImpeachFragment extends BaseCreateFragment implements
             case IMPEACH:
                 hideLoadingDialog();
                 if (event.getCode() == Config.CODE_OK) {
-                    Toast.makeText(MyApplication.getAppContext(), R.string.feedback_tip_impeach_success, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MyApplication.getAppContext(), R.string.feedback_tip_impeach_success, Toast.LENGTH_LONG).show();
                     finish();
                 } else {
                     Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();

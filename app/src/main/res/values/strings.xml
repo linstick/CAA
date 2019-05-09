@@ -158,6 +158,7 @@
     <string name="common_tip_no_related_content">无相关内容</string>
     <string name="common_tip_comment_success">评论成功</string>
     <string name="common_tip_addition_success">补充成功</string>
+    <string name="common_tip_no_operation">没有可操作项</string>
 
 
     <string name="common_tip_on_publish">正在发布，请稍后...</string>
@@ -267,7 +268,7 @@
     <string name="feedback_str_suggestion">意见或建议</string>
     <string name="feedback_str_problem">问题反馈</string>
     <string name="feedback_tip_hint">请留下您的宝贵意见或者问题反馈</string>
-    <string name="feedback_tip_feedback_success">反馈成功，感谢您的使用！</string>
+    <string name="feedback_tip_feedback_success">反馈成功，感谢您的使用和支持！</string>
     <string name="feedback_tip_impeach_success">举报成功，我们会尽快审查处理，感谢您的使用！</string>
     <string name="feedback_tip_empty_content">反馈内容不能为空哦~</string>
 
@@ -374,6 +375,7 @@
     <string name="activity_detail_str_comment_bar_hint">添加评论...</string>
     <string name="activity_detail_str_addition_bar_hint">补充内容...</string>
     <string name="activity_detail_tip_empty_comment_input">评论内容不能为空哦</string>
+    <string name="activity_detail_tip_empty_addition_input">补充内容不能为空哦</string>
 
     <!--创建活动页相关文案-->
     <string name="fm_create_activity_str_type">活动类型</string>

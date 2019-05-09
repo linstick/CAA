@@ -75,6 +75,8 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
     protected boolean mAutoLoadMore = true;
     // 自动预加载更多的阈值
     private int mLoadMoreThreshold = DEFAULT_LOAD_MORE_THRESHOLD;
+    // Item是否支持举报
+    protected boolean mSupportImpeach = true;
 
     /**
      * 状态项
@@ -96,7 +98,6 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
     protected boolean mHasVisible;
     protected boolean mHasResume;
 
-    private List<String> mItemMoreStringArray;
     // 当前活动的类型，具体定义在其子类
     protected int mPageId = Config.PAGE_ID_NONE;
     protected int mOtherUid;
@@ -124,6 +125,7 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
         super.onResume();
         mHasResume = true;
         checkRefreshIfNeed();
+        tryUpdateUI();
     }
 
     @Override
@@ -211,6 +213,15 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
         }
     }
 
+    private void tryUpdateUI() {
+        if (mLayoutManager == null || mAdapter == null) {
+            return;
+        }
+        int first = mLayoutManager.findFirstVisibleItemPosition();
+        int last = mLayoutManager.findLastVisibleItemPosition();
+        mAdapter.notifyItemRangeChanged(first, last);
+    }
+
     public void setAutoRefreshForEmpty(boolean autoRefresh) {
         mAutoRefreshForEmpty = autoRefresh;
     }
@@ -248,6 +259,10 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
         this.mLoadMoreThreshold = threshold;
     }
 
+    public void setSupportImpeach(boolean supportImpeach) {
+        this.mSupportImpeach = supportImpeach;
+    }
+
     /**
      * 刷新成功提示，部分页面不需要展示
      * @param count
@@ -270,16 +285,17 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
      * @param itemPosition
      * @param uid
      */
-    protected void showMoreOperateDialog(final int itemPosition, long uid) {
-        if (mItemMoreStringArray == null) {
-            mItemMoreStringArray = Enviroment.getItemMoreNewStringArray();
-        }
+    protected void showMoreOperateDialog(final int itemPosition, int uid) {
         List<String> items = new ArrayList<>();
+        if (mSupportImpeach) {
+            items.add(getString(R.string.common_str_impeach));
+        }
         if (Enviroment.isSelf(uid)) {
-            items.addAll(mItemMoreStringArray);
             items.add(ResourcesUtils.getString(R.string.common_str_delete));
-        } else {
-            items = mItemMoreStringArray;
+        }
+        if (ListUtils.isEmpty(items)) {
+            Toast.makeText(getContext(), R.string.common_tip_no_operation, Toast.LENGTH_SHORT).show();
+            return;
         }
         DialogHelper.showListDialog(getContext(), items, new CommonDialog.Builder.OnItemClickListener() {
             @Override
@@ -294,23 +310,32 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
      * @param itemPosition
      * @param moreItemPosition
      */
-    protected void onMoreItemClick(int itemPosition, int moreItemPosition) {
-        switch (moreItemPosition) {
-            case 0:
-                // 举报
-                PageUtils.gotoFeedbackPage(getContext(), (Serializable) mList.get(itemPosition));
-                break;
-            case 1:
-                if (!ListUtils.isIndexBetween(mList, itemPosition)) {
-                    return;
-                }
-                mList.remove(itemPosition);
-                mAdapter.notifyDataSetChanged();
-                Toast.makeText(getContext(), R.string.common_str_delete_success, Toast.LENGTH_SHORT).show();
-                break;
-            default:
-                break;
+    private void onMoreItemClick(int itemPosition, int moreItemPosition) {
+        if (mSupportImpeach) {
+            switch (moreItemPosition) {
+                case 0:
+                    // 举报
+                    PageUtils.gotoFeedbackPage(getContext(), (Serializable) mList.get(itemPosition));
+                    break;
+                case 1:
+                    onDeleteItem(itemPosition);
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            switch (moreItemPosition) {
+                case 0:
+                    onDeleteItem(itemPosition);
+                    break;
+                default:
+                    break;
+            }
         }
+    }
+
+    protected void onDeleteItem(int position) {
+
     }
 
     /**
@@ -456,11 +481,18 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
      */
     protected void onRefreshFail(PullFinishEvent event) {
         mRefreshLayout.setRefreshing(false);
+        int code = event.getCode();
         String error = event.getStatus();
-        if (ListUtils.isEmpty(mList)) {
-            showErrorView(R.drawable.bg_load_fail, error);
-        } else {
-            Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+        switch (code) {
+            case Config.CODE_NO_DATA:
+                showErrorView(R.drawable.bg_load_fail, error);
+                break;
+            case Config.CODE_REQUEST_ERROR:
+                showErrorView(R.drawable.bg_no_network, error);
+                break;
+            default:
+                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+                break;
         }
         LogUtils.d(TAG, "onRefreshFail: " + error);
     }

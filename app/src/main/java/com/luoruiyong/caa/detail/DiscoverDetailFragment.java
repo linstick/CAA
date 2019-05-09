@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +15,19 @@ import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
+import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseFragment;
 import com.luoruiyong.caa.bean.DiscoverData;
+import com.luoruiyong.caa.bean.DiscoverDynamicData;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.common.viewholder.DiscoverItemViewHolder;
 import com.luoruiyong.caa.eventbus.CommonEvent;
-import com.luoruiyong.caa.eventbus.DetailFinishEvent;
+import com.luoruiyong.caa.eventbus.CommonOperateEvent;
+import com.luoruiyong.caa.login.LoginActivity;
 import com.luoruiyong.caa.model.CommonFetcher;
+import com.luoruiyong.caa.model.CommonTargetOperator;
+import com.luoruiyong.caa.model.bean.GlobalSource;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.KeyboardUtils;
@@ -49,7 +55,8 @@ import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_TYPE;
  **/
 public class DiscoverDetailFragment extends BaseFragment implements
         View.OnClickListener,
-        ImageViewLayout.OnImageClickListener{
+        ImageViewLayout.OnImageClickListener,
+        DetailActivity.OnBackClickListener{
 
     private TextView mCommentLabelTv;
     private ImageView mAddCommentIv;
@@ -81,18 +88,6 @@ public class DiscoverDetailFragment extends BaseFragment implements
         return fm;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -103,6 +98,18 @@ public class DiscoverDetailFragment extends BaseFragment implements
         handleArguments();
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     private void handleArguments() {
@@ -124,9 +131,11 @@ public class DiscoverDetailFragment extends BaseFragment implements
                 getActivity().finish();
                 return;
             }
+            mDiscoverId = mData.getId();
             mViewHolder.bindData(mData);
             mCommentLabelTv.setText(String.format(getString(R.string.activity_detail_str_comment), mData.getCommentCount()));
             initFragment();
+            CommonTargetOperator.doFetchDiscoverDynamicData(mDiscoverId);
             if (bundle.getBoolean(KEY_DETAIL_PAGE_BROWSE_COMMENT, false)) {
                 toggleCommentBar();
             }
@@ -135,7 +144,7 @@ public class DiscoverDetailFragment extends BaseFragment implements
 
     private void initView(View rootView) {
         mViewHolder = new DiscoverItemViewHolder(rootView);
-        mCommentLabelTv = rootView.findViewById(R.id.tv_comment);
+        mCommentLabelTv = rootView.findViewById(R.id.tv_comment_label);
         mAddCommentIv = rootView.findViewById(R.id.iv_add_comment);
         mCommentBarLayout = rootView.findViewById(R.id.ll_comment_bar_layout);
         mCommentInputEt = rootView.findViewById(R.id.et_input);
@@ -165,6 +174,15 @@ public class DiscoverDetailFragment extends BaseFragment implements
         getChildFragmentManager().beginTransaction().replace(R.id.fl_container, fm).commit();
     }
 
+    private void checkAndSendComment() {
+        String text = mCommentInputEt.getText().toString().trim();
+        if (TextUtils.isEmpty(text)) {
+            Toast.makeText(getContext(), R.string.activity_detail_tip_empty_comment_input, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        CommonTargetOperator.doAddDiscoverComment(mDiscoverId, text);
+    }
+
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
@@ -173,21 +191,35 @@ public class DiscoverDetailFragment extends BaseFragment implements
                 PageUtils.gotoUserProfilePage(getContext(), mData.getUid());
                 break;
             case R.id.tv_top_like:
-                Toast.makeText(getContext(), "click like", Toast.LENGTH_SHORT).show();
+                if (Enviroment.isVisitor()) {
+                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                    LoginActivity.startAction(getActivity(), LoginActivity.LOGIN_TAB);
+                    return;
+                }
+                CommonTargetOperator.doLikeDiscover(mDiscoverId, !mData.isHasLike());
                 break;
             case R.id.iv_more:
-                List<String>  mItemMoreStringArray = Enviroment.getItemMoreNewStringArray();
+                if (Enviroment.isVisitor()) {
+                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                    LoginActivity.startAction(getActivity(), LoginActivity.LOGIN_TAB);
+                    return;
+                }
                 List<String> items = new ArrayList<>();
+                items.add(getString(R.string.common_str_impeach));
                 if (Enviroment.isSelf(mData.getUid())) {
-                    items.addAll(mItemMoreStringArray);
                     items.add(ResourcesUtils.getString(R.string.common_str_delete));
-                } else {
-                    items = mItemMoreStringArray;
                 }
                 DialogHelper.showListDialog(getContext(), items, new CommonDialog.Builder.OnItemClickListener() {
                     @Override
                     public void onItemClick(int position) {
-                        Toast.makeText(DiscoverDetailFragment.this.getContext(), "click position = " + position, Toast.LENGTH_SHORT).show();
+                        switch (position) {
+                            case 0:
+                                PageUtils.gotoFeedbackPage(getContext(), mData);
+                                break;
+                            case 1:
+                                CommonTargetOperator.doDeleteDiscover(mDiscoverId);
+                                break;
+                        }
                     }
                 });
                 break;
@@ -195,10 +227,15 @@ public class DiscoverDetailFragment extends BaseFragment implements
                 PageUtils.gotoTopicPage(getContext(), mData.getTopicId());
                 break;
             case R.id.iv_add_comment:
+                if (Enviroment.isVisitor()) {
+                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                    LoginActivity.startAction(getActivity(), LoginActivity.LOGIN_TAB);
+                    return;
+                }
                 toggleCommentBar();
                 break;
             case R.id.iv_send:
-                Toast.makeText(getContext(), "send", Toast.LENGTH_SHORT).show();
+                checkAndSendComment();
                 break;
             default:
                 break;
@@ -233,12 +270,78 @@ public class DiscoverDetailFragment extends BaseFragment implements
                     initFragment();
                 } else if (event.getCode() == Config.CODE_NO_DATA) {
                     showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_data));
-                } else if (event.getCode() == Config.CODE_NETWORK_ERROR) {
+                } else if (event.getCode() == Config.CODE_REQUEST_ERROR) {
                     showErrorView(R.drawable.bg_no_network, getString(R.string.common_tip_no_network));
+                } else {
+                    showErrorView(R.drawable.bg_load_fail, event.getStatus());
                 }
                 break;
             default:
                 break;
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommonOperateEvent(CommonOperateEvent event) {
+        if (event.getTargetId() != mDiscoverId) {
+            return;
+        }
+        switch (event.getType()) {
+            case LIKE_DISCOVER:
+                if (event.getCode() == Config.CODE_OK) {
+                    boolean isLike = !mData.isHasLike();
+                    int likeCount = mData.getLikeCount() + (isLike ? 1 : -1);
+                    mData.setHasLike(isLike);
+                    mData.setLikeCount(likeCount);
+                    mViewHolder.mTopLikeTv.setSelected(isLike);
+                    mViewHolder.mTopLikeTv.setText(likeCount <= 0 ? getString(R.string.common_str_like) : String.valueOf(likeCount));
+                } else {
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case ADD_DISCOVER_COMMENT:
+                if (event.getCode() == Config.CODE_OK) {
+                    mData.setCommentCount(mData.getCommentCount() + 1);
+                    mCommentLabelTv.setText(String.format(getString(R.string.activity_detail_str_comment), mData.getCommentCount()));
+                    mCommentInputEt.setText(null);
+                    toggleCommentBar();
+                    Toast.makeText(getContext(), R.string.common_tip_comment_success, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case DELETE_ACTIVITY_COMMENT:
+                if (event.getCode() == Config.CODE_OK) {
+                    mData.setCommentCount(mData.getCommentCount() - 1);
+                    mCommentLabelTv.setText(String.format(getString(R.string.activity_detail_str_comment), mData.getCommentCount()));
+                    Toast.makeText(getContext(), R.string.common_str_delete_success, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case FETCH_DISCOVER_DYNAMIC_DATA:
+                if (event.getCode() == Config.CODE_OK) {
+                    DiscoverDynamicData data = (DiscoverDynamicData) event.getData();
+                    mData.setCommentCount(data.getCommentCount());
+                    mData.setLikeCount(data.getLikeCount());
+                    mCommentLabelTv.setText(String.format(getString(R.string.activity_detail_str_comment), data.getCommentCount()));
+                    mViewHolder.mTopLikeTv.setText(
+                            mData.getLikeCount() <= 0
+                                    ? getString(R.string.common_str_like) : String.valueOf(mData.getLikeCount()));
+                }
+                break;
+            case DELETE_DISCOVER:
+                if (event.getCode() == Config.CODE_OK) {
+
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onBackClick() {
+        GlobalSource.updateDiscoverItemDataIfNeed(mData);
     }
 }

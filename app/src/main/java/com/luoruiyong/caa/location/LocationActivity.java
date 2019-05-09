@@ -33,7 +33,7 @@ import com.google.gson.Gson;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
-import com.luoruiyong.caa.gson.GsonFactory;
+import com.luoruiyong.caa.model.gson.GsonFactory;
 import com.luoruiyong.caa.utils.DisplayUtils;
 import com.luoruiyong.caa.utils.ListUtils;
 

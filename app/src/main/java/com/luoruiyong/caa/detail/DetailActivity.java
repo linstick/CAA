@@ -30,7 +30,7 @@ public class DetailActivity extends BaseActivity implements View.OnClickListener
 
     private ImageView mBackIv;
     private TextView mTitleTv;
-
+    private OnBackClickListener mListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,6 +85,9 @@ public class DetailActivity extends BaseActivity implements View.OnClickListener
         if (fm != null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fl_container, fm).commit();
             mTitleTv.setText(title);
+            if (fm instanceof OnBackClickListener) {
+                mListener = (OnBackClickListener) fm;
+            }
         }
     }
 
@@ -92,10 +95,22 @@ public class DetailActivity extends BaseActivity implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_back:
-                finish();
+                onBackPressed();
                 break;
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mListener != null) {
+            mListener.onBackClick();
+        }
+        super.onBackPressed();
+    }
+
+    public interface OnBackClickListener {
+        void onBackClick();
     }
 }

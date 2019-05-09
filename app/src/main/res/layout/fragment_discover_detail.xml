@@ -53,13 +53,13 @@
                 android:background="@color/white">
 
                 <TextView
-                    android:id="@+id/tv_comment"
+                    android:id="@+id/tv_comment_label"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginLeft="12dp"
                     android:layout_marginStart="12dp"
-                    android:textSize="17sp"
+                    android:textSize="16sp"
                     android:textColor="#444444"
                     android:text="评论(23)"/>
 

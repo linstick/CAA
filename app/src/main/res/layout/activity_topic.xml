@@ -247,7 +247,9 @@
         android:textSize="14sp"
         android:textColor="#FFFFFF"
         android:text="立即参与"
-        android:background="@drawable/bg_join_button"/>
+        android:background="@drawable/bg_join_button"
+        android:visibility="gone"
+        tools:visibility="visible"/>
 
 </FrameLayout>
 

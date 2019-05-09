@@ -45,7 +45,8 @@ public class CommonPoster {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_ACCOUNT, account);
         params.put(Config.PARAM_KEY_PASSWORD, password);
-        doPost(RequestType.LOGIN, Config.URL_USER_LOGIN, params, new TypeToken<CommonEvent<User>>(){}.getType());
+        doPost(RequestType.LOGIN, Config.URL_USER_LOGIN, params,
+                new TypeToken<CommonEvent<User>>(){}.getType());
     }
 
     /**
@@ -53,6 +54,7 @@ public class CommonPoster {
      * @param account
      * @param nickname
      * @param password
+     * @param avatarPath
      */
     public static void doSignUp(String account, String nickname, String password, String avatarPath) {
         Map<String, String> params = new HashMap<>();
@@ -67,9 +69,11 @@ public class CommonPoster {
                     .params(params)
                     .url(Config.URL_USER_SIGN_UP)
                     .build();
-            HttpsUtils.sendCommonRequest(RequestType.SIGN_UP, request, new TypeToken<CommonEvent<User>>(){}.getType());
+            HttpsUtils.sendCommonRequest(RequestType.SIGN_UP, request,
+                    new TypeToken<CommonEvent<User>>(){}.getType());
         } else {
-            doPost(RequestType.SIGN_UP, Config.URL_USER_SIGN_UP, params, new TypeToken<CommonEvent<User>>(){}.getType());
+            doPost(RequestType.SIGN_UP, Config.URL_USER_SIGN_UP, params,
+                    new TypeToken<CommonEvent<User>>(){}.getType());
         }
     }
 

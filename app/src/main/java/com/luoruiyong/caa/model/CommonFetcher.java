@@ -34,7 +34,8 @@ public class CommonFetcher {
     public static void doFetchActivityDetail(int activity_id) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_ACTIVITY_ID, String.valueOf(activity_id));
-        doFetch(RequestType.FETCH_ACTIVITY_DETAIL, Config.URL_ACTIVITY_DETAIL, params, new TypeToken<CommonEvent<ActivityData>>(){}.getType());
+        doFetch(RequestType.FETCH_ACTIVITY_DETAIL, Config.URL_ACTIVITY_DETAIL, params,
+                new TypeToken<CommonEvent<ActivityData>>(){}.getType());
     }
 
     /**
@@ -99,7 +100,8 @@ public class CommonFetcher {
         params.put(Config.PARAM_KEY_UID, String.valueOf(Enviroment.getCurUid()));
         params.put(Config.PARAM_KEY_KEYWORD, keyword);
         params.put(Config.PARAM_KEY_REQUEST_COUNT, String.valueOf(requestCount));
-        doFetch(RequestType.FETCH_COMPOSITE_SEARCH_LIST, Config.URL_SEARCH_COMPOSITE, params, new TypeToken<CommonEvent<CompositeSearchData>>(){}.getType());
+        doFetch(RequestType.FETCH_COMPOSITE_SEARCH_LIST, Config.URL_SEARCH_COMPOSITE, params,
+                new TypeToken<CommonEvent<CompositeSearchData>>(){}.getType());
     }
 
     public static void doFetchCompositeSearchSimpleList(String keyword, int requestCount) {

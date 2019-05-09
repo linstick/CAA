@@ -8,6 +8,7 @@ import com.luoruiyong.caa.Config;
  **/
 public class MessageData {
 
+    private int id;
     private int uid;
     private String avatarUrl;
     private String nickname;
@@ -22,6 +23,14 @@ public class MessageData {
     private String targetContent;
 
     public MessageData() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getUid() {

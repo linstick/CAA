@@ -211,6 +211,7 @@ public class CreateTopicFragment extends BaseCreateFragment implements
                     Toast.makeText(MyApplication.getAppContext(), R.string.fm_create_topic_tip_publish_success, Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
+                    hideLoadingDialog();
                     Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
                 }
                 break;

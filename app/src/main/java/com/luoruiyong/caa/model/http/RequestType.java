@@ -20,11 +20,12 @@ public enum  RequestType {
 
     // 话题相关请求
     FETCH_TOPIC_DETAIL, // get
+    FETCH_TOPIC_DYNAMIC_DATA,  // get
     FETCH_HOT_SIMPLE_TOPIC_LIST,    // get
     FETCH_SIMPLE_TOPIC_LIST,    // get
     CHECK_TOPIC_NAME,   // get
     CREATE_TOPIC,   // post
-    VISIT_TOPIC,   // post
+    DELETE_TOPIC,   // post
 
     // 搜索请求相关
     FETCH_COMPOSITE_SEARCH_LIST,    // get
@@ -33,7 +34,9 @@ public enum  RequestType {
 
     // 活动相关
     FETCH_ACTIVITY_DETAIL,  // get
+    FETCH_ACTIVITY_DYNAMIC_DATA,  // get
     CREATE_ACTIVITY,    // post
+    DELETE_ACTIVITY,    // post
     COLLECT_ACTIVITY,   // get
     ADD_ACTIVITY_COMMENT,   // post
     DELETE_ACTIVITY_COMMENT,   // get
@@ -42,7 +45,9 @@ public enum  RequestType {
 
     // 动态相关
     FETCH_DISCOVER_DETAIL,  // get
+    FETCH_DISCOVER_DYNAMIC_DATA,  // get
     CREATE_DISCOVER,    // post
+    DELETE_DISCOVER,    // get
     LIKE_DISCOVER, // get
     ADD_DISCOVER_COMMENT,   // post
     DELETE_DISCOVER_COMMENT,   // post
@@ -50,4 +55,7 @@ public enum  RequestType {
     // 改进
     FEEDBACK,
     IMPEACH,
+
+    // 消息
+    DELETE_MESSAGE,
 }

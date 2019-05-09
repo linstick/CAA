@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.Config;
@@ -17,10 +18,17 @@ import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
+import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.bean.MessageData;
 
+import com.luoruiyong.caa.bean.TopicData;
+import com.luoruiyong.caa.common.dialog.CommonDialog;
+import com.luoruiyong.caa.eventbus.CommonOperateEvent;
 import com.luoruiyong.caa.login.LoginActivity;
+import com.luoruiyong.caa.model.CommonTargetOperator;
+import com.luoruiyong.caa.model.bean.GlobalSource;
 import com.luoruiyong.caa.model.puller.CommonPuller;
+import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.LogUtils;
 import com.luoruiyong.caa.utils.PageUtils;
@@ -28,6 +36,10 @@ import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.utils.TimeUtils;
 
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.Iterator;
 import java.util.List;
 
 import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_ACTIVITY_ID;
@@ -52,6 +64,11 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
         // 顺序不能变，未登录的用户切换到消息页不主动刷新
         checkUserState();
         super.onResume();
+    }
+
+    @Override
+    protected void onDeleteItem(int position) {
+        CommonTargetOperator.doDeleteMessage(mList.get(position).getId());
     }
 
     private String getFirstItemTime() {
@@ -119,6 +136,30 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
         return new ListAdapter(list);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommonOperateEvent(CommonOperateEvent<MessageData> event) {
+        switch (event.getType()) {
+            case DELETE_MESSAGE:
+                if (event.getCode() == Config.CODE_OK) {
+                    if (mPageId <= Config.MAX_GLOBAL_CACHE_ID) {
+                        GlobalSource.deleteMessageItemDataIfNeed(event.getData());
+                    } else {
+                        ListUtils.deleteMessageItem(mList, event.getData());
+                    }
+                    mAdapter.notifyDataSetChanged();
+                    Toast.makeText(getContext(), R.string.common_str_delete_success, Toast.LENGTH_SHORT).show();
+                    if (ListUtils.isEmpty(mList)) {
+                        showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_related_content));
+                    }
+                } else {
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     private class ListAdapter extends LoadMoreSupportAdapter<MessageData> implements View.OnClickListener{
 
         public ListAdapter(List<MessageData> list) {
@@ -142,7 +183,18 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
                 ViewHolder holder = (ViewHolder) viewHolder;
                 MessageData data = mList.get(position);
                 holder.bindData(data);
-
+                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        DialogHelper.showListDialog(getContext(), getString(R.string.common_str_delete), new CommonDialog.Builder.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(int position) {
+                                CommonTargetOperator.doDeleteMessage(mList.get(position).getId());
+                            }
+                        });
+                        return true;
+                    }
+                });
                 holder.itemView.setOnClickListener(this);
                 holder.mSrcLayout.setOnClickListener(this);
                 holder.mUserAvatarIv.setOnClickListener(this);

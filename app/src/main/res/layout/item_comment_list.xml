@@ -29,6 +29,8 @@
             android:layout_toRightOf="@id/iv_user_avatar"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginEnd="40dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="linstick"
@@ -45,7 +47,7 @@
             android:layout_marginTop="2dp"
             android:text="2 hours ago"
             android:textColor="#AAAAAA"
-            android:textSize="13sp" />
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/tv_content"
@@ -59,7 +61,7 @@
             android:maxLines="3"
             android:text="This is the title of discover"
             android:textColor="#888888"
-            android:textSize="15sp" />
+            android:textSize="14sp" />
     </RelativeLayout>
 
     <View

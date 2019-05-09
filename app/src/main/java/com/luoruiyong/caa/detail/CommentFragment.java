@@ -13,11 +13,13 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.Config;
+import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
 import com.luoruiyong.caa.bean.CommentData;
 import com.luoruiyong.caa.eventbus.CommonOperateEvent;
+import com.luoruiyong.caa.model.CommonTargetOperator;
 import com.luoruiyong.caa.model.puller.CommonPuller;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.LogUtils;
@@ -53,6 +55,7 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setCanPullRefresh(false);
+        setSupportImpeach(false);
         handleArguments();
     }
 
@@ -80,6 +83,15 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
 
     @Override
     protected void setupRecyclerViewDivider() {
+    }
+
+    @Override
+    protected void onDeleteItem(int position) {
+        if (mPageId == Config.PAGE_ID_ACTIVITY_COMMENT) {
+            CommonTargetOperator.doDeleteActivityComment(mTargetId, mList.get(position).getId());
+        } else if (mPageId == Config.PAGE_ID_DISCOVER_COMMENT) {
+            CommonTargetOperator.doDeleteDiscoverComment(mTargetId, mList.get(position).getId());
+        }
     }
 
     private String getLastItemTime() {
@@ -124,6 +136,7 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
         }
         switch (event.getType()) {
             case ADD_ACTIVITY_COMMENT:
+            case ADD_DISCOVER_COMMENT:
                 if (event.getCode() == Config.CODE_OK) {
                     // 评论内容发送成功
                     hideTipView();
@@ -131,22 +144,29 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
                     if (mList == null) {
                         mList = new ArrayList<>();
                     }
-                    mList.add(data);
+                    mList.add(0, data);
                     initAdapterIfNeed();
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
                 }
                 break;
             case DELETE_ACTIVITY_COMMENT:
+            case DELETE_DISCOVER_COMMENT:
                 if (event.getCode() == Config.CODE_OK) {
                     CommentData data = event.getData();
                     for (int i = 0; i < ListUtils.getSize(mList); i++) {
                         if (mList.get(i).getId() == data.getId()) {
                             mList.remove(i);
                             mAdapter.notifyDataSetChanged();
+                            break;
                         }
                     }
                     if (ListUtils.isEmpty(mList)) {
                         showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_related_content));
                     }
+                } else {
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:
@@ -187,6 +207,10 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
                 holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
+                        if (Enviroment.isVisitor()) {
+                            Toast.makeText(getContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                            return false;
+                        }
                         int itemPosition = (int) v.getTag();
                         CommentData comment = mList.get(itemPosition);
                         showMoreOperateDialog(itemPosition, comment.getUid());

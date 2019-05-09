@@ -11,14 +11,18 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
+import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
+import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.bean.DiscoverData;
+import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.common.viewholder.DiscoverItemViewHolder;
 import com.luoruiyong.caa.eventbus.CommonOperateEvent;
 import com.luoruiyong.caa.eventbus.PullFinishEvent;
 import com.luoruiyong.caa.model.CommonTargetOperator;
+import com.luoruiyong.caa.model.bean.GlobalSource;
 import com.luoruiyong.caa.model.puller.DiscoverPuller;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicActivity;
@@ -31,6 +35,7 @@ import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -101,11 +106,6 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         handleArguments();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
     private void handleArguments() {
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -119,10 +119,15 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
             } else if (mPageId == Config.PAGE_ID_DISCOVER_OTHER_USER) {
                 mOtherUid = bundle.getInt(KEY_OTHER_UID, -1);
             }
-            if (mPageId != Config.PAGE_ID_DISCOVER_ALL) {
+            if (mPageId != Config.PAGE_ID_DISCOVER_ALL && mPageId != Config.PAGE_ID_DISCOVER_TOPIC_LASTED) {
                 setCanPullRefresh(false);
             }
         }
+    }
+
+    @Override
+    protected void onDeleteItem(int position) {
+        CommonTargetOperator.doDeleteDiscover(mList.get(position).getId());
     }
 
     @Override
@@ -145,7 +150,11 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
     }
 
     private void doLike(DiscoverData data, int position) {
-        // 收藏时先修改本地的数量，等请求结果回来时，如果收藏失败(几率比较小)，再把数据修改回来
+        if (Enviroment.isVisitor()) {
+            Toast.makeText(getContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // 点赞时先修改本地的数量，等请求结果回来时，如果点赞失败(几率比较小)，再把数据修改回来
         boolean isLike = !data.isHasLike();
         data.setHasLike(isLike);
         data.setLikeCount(data.getLikeCount() + (isLike ? 1 : -1));
@@ -249,6 +258,30 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommonOperateEvent(CommonOperateEvent<DiscoverData> event) {
+        switch (event.getType()) {
+            case DELETE_DISCOVER:
+                if (event.getCode() == Config.CODE_OK) {
+                    if (mPageId <= Config.MAX_GLOBAL_CACHE_ID) {
+                        GlobalSource.deleteDiscoverItemDataIfNeed(event.getData());
+                    }  else {
+                        ListUtils.deleteDiscoverItem(mList, event.getData());
+                    }
+                    mAdapter.notifyDataSetChanged();
+                    Toast.makeText(getContext(), R.string.common_str_delete_success, Toast.LENGTH_SHORT).show();
+                    if (ListUtils.isEmpty(mList)) {
+                        showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_related_content));
+                    }
+                } else {
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     private class ListAdapter extends LoadMoreSupportAdapter<DiscoverData> implements View.OnClickListener, ImageViewLayout.OnImageClickListener{
 
         public ListAdapter(List<DiscoverData> list) {
@@ -329,6 +362,10 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
                     PageUtils.gotoUserProfilePage(getContext(), data.getUid());
                     break;
                 case R.id.iv_more:
+                    if (Enviroment.isVisitor()) {
+                        Toast.makeText(getContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     showMoreOperateDialog(position, data.getUid());
                     break;
                 case R.id.tv_topic:
@@ -338,6 +375,10 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
                     doLike(data, position);
                     break;
                 case R.id.tv_comment:
+                    if (Enviroment.isVisitor()) {
+                        Toast.makeText(getContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     PageUtils.gotoActivityDetailPage(getContext(), data, true);
                     break;
                 default:

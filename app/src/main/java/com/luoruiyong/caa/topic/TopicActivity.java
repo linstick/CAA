@@ -13,17 +13,26 @@ import android.view.View;
 
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.Config;
+import com.luoruiyong.caa.Enviroment;
+import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
+import com.luoruiyong.caa.bean.DiscoverDynamicData;
 import com.luoruiyong.caa.bean.TopicData;
+import com.luoruiyong.caa.bean.TopicDynamicData;
 import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.fragment.SwipeDiscoverFragment;
 import com.luoruiyong.caa.edit.EditorActivity;
 import com.luoruiyong.caa.eventbus.CommonEvent;
+import com.luoruiyong.caa.eventbus.CommonOperateEvent;
+import com.luoruiyong.caa.login.LoginActivity;
 import com.luoruiyong.caa.model.CommonFetcher;
+import com.luoruiyong.caa.model.CommonTargetOperator;
+import com.luoruiyong.caa.model.bean.GlobalSource;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 
@@ -157,14 +166,36 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
                 finish();
                 return;
             }
-            CommonFetcher.doFetchTopicDetail(mTopicId);
+            if (!Enviroment.isVisitor()) {
+                // 这里只需要上报，不需要处理回调结果
+                CommonTargetOperator.doVisitTopic(mTopicId);
+            }
+            getWindow().getDecorView().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    CommonFetcher.doFetchTopicDetail(mTopicId);
+                }
+            }, 200);
         } else {
             if ((mData = (TopicData) intent.getSerializableExtra(KEY_DETAIL_PAGE_DATA)) == null) {
                 finish();
                 return;
             }
+            mTopicId = mData.getId();
+            if (!Enviroment.isVisitor()) {
+                // 这里只需要上报，不需要处理回调结果
+                CommonTargetOperator.doVisitTopic(mTopicId);
+            }
             bindBasicData();
             initFragment();
+            mJoinInTv.setVisibility(View.VISIBLE);
+            // 延迟为了更加准确的得到浏览话题的人数
+            getWindow().getDecorView().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    CommonTargetOperator.doFetchTopicDynamicData(mData.getId());
+                }
+            }, 200);
         }
     }
 
@@ -228,6 +259,7 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
         switch (v.getId()) {
             case R.id.iv_back:
             case R.id.iv_header_back:
+                GlobalSource.updateTopicItemDataIfNeed(mData);
                 finish();
                 break;
             case R.id.iv_user_avatar:
@@ -235,7 +267,12 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
                 PageUtils.gotoUserProfilePage(this, mData.getUid());
                 break;
             case R.id.tv_join_in:
-                EditorActivity.startAction(this, mData.getId(), mData.getName());
+                if (Enviroment.isVisitor()) {
+                    LoginActivity.startAction(this, LoginActivity.LOGIN_TAB);
+                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                } else {
+                    EditorActivity.startAction(this, mData.getId(), mData.getName());
+                }
                 break;
             default:
                 break;
@@ -244,20 +281,40 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCommonEvent(CommonEvent<TopicData> event) {
-        hideTipView();
         switch (event.getType()) {
             case FETCH_TOPIC_DETAIL:
                 if (event.getCode() == Config.CODE_OK) {
                     mData = event.getData();
                     bindBasicData();
                     initFragment();
+                    mJoinInTv.setVisibility(View.VISIBLE);
                 } else if (event.getCode() == Config.CODE_NO_DATA) {
-                    showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_data));
-                } else if (event.getCode() == Config.CODE_NETWORK_ERROR) {
-                    showErrorView(R.drawable.bg_no_network, getString(R.string.common_tip_no_network));
+                    Toast.makeText(this, R.string.common_tip_no_data, Toast.LENGTH_SHORT).show();
+                } else if (event.getCode() == Config.CODE_REQUEST_ERROR) {
+                    Toast.makeText(this, R.string.common_tip_no_network, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, event.getStatus(), Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:
+                break;
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommonTargetEvent(CommonOperateEvent<TopicDynamicData> event) {
+        if (event.getTargetId() != mTopicId) {
+            return;
+        }
+        switch (event.getType()) {
+            case FETCH_TOPIC_DYNAMIC_DATA:
+                if (event.getCode() == Config.CODE_OK) {
+                    TopicDynamicData data = event.getData();
+                    mData.setJoinCount(data.getJoinCount());
+                    mData.setVisitCount(data.getVisitCount());
+                    mVisitedCountTv.setText(String.format(getString(R.string.common_str_visit_count), mData.getVisitedCount()));
+                    mJoinedCountTv.setText(String.format(getString(R.string.common_str_join_count), mData.getJoinCount()));
+                }
                 break;
         }
     }

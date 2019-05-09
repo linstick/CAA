@@ -10,15 +10,15 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
+import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
 import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
-import com.luoruiyong.caa.eventbus.CommonEvent;
 import com.luoruiyong.caa.eventbus.CommonOperateEvent;
 import com.luoruiyong.caa.model.CommonTargetOperator;
-import com.luoruiyong.caa.model.http.ResponseUtils;
+import com.luoruiyong.caa.model.bean.GlobalSource;
 import com.luoruiyong.caa.model.puller.ActivityPuller;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.utils.ListUtils;
@@ -31,6 +31,7 @@ import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -120,7 +121,16 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivityData> {
         return Config.DEFAULT_TIME_STAMP;
     }
 
+    @Override
+    protected void onDeleteItem(int position) {
+        CommonTargetOperator.doDeleteActivity(mList.get(position).getId());
+    }
+
     private void doCollect(ActivityData data, int position) {
+        if (Enviroment.isVisitor()) {
+            Toast.makeText(getContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+            return;
+        }
         // 收藏时先修改本地的数量，等请求结果回来时，如果收藏失败(几率比较小)，再把数据修改回来
         boolean isCollect = !data.isHasCollect();
         data.setHasCollect(isCollect);
@@ -210,6 +220,30 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivityData> {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommonOperateEvent(CommonOperateEvent<ActivityData> event) {
+        switch (event.getType()) {
+            case DELETE_ACTIVITY:
+                if (event.getCode() == Config.CODE_OK) {
+                    if (mPageId <= Config.MAX_GLOBAL_CACHE_ID) {
+                        GlobalSource.deleteActivityItemIfNeed(event.getData());
+                    } else {
+                        ListUtils.deleteActivityItem(mList, event.getData());
+                    }
+                    mAdapter.notifyDataSetChanged();
+                    Toast.makeText(getContext(), R.string.common_str_delete_success, Toast.LENGTH_SHORT).show();
+                    if (ListUtils.isEmpty(mList)) {
+                        showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_related_content));
+                    }
+                } else {
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     private class ListAdapter extends LoadMoreSupportAdapter<ActivityData> implements View.OnClickListener, ImageViewLayout.OnImageClickListener{
 
         public ListAdapter(List<ActivityData> list) {
@@ -288,9 +322,17 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivityData> {
                     doCollect(data, position);
                     break;
                 case R.id.tv_comment:
+                    if (Enviroment.isVisitor()) {
+                        Toast.makeText(getContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     PageUtils.gotoActivityDetailPage(getContext(), data, true);
                     break;
                 case R.id.tv_more:
+                    if (Enviroment.isVisitor()) {
+                        Toast.makeText(getContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     showMoreOperateDialog(position, data.getUid());
                     break;
                 default:

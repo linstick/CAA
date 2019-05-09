@@ -10,9 +10,9 @@ import java.util.List;
  **/
 public class Feedback implements Serializable{
 
-    int type;
-    String description;
-    List<String> pictureList;
+    private int type;
+    private String description;
+    private List<String> pictureList;
 
     public int getType() {
         return type;

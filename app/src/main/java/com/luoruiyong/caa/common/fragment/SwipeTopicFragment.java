@@ -7,19 +7,30 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
+import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
+import com.luoruiyong.caa.bean.DiscoverData;
+import com.luoruiyong.caa.bean.MessageData;
 import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.common.viewholder.TopicItemViewHolder;
+import com.luoruiyong.caa.eventbus.CommonOperateEvent;
+import com.luoruiyong.caa.model.CommonTargetOperator;
+import com.luoruiyong.caa.model.bean.GlobalSource;
 import com.luoruiyong.caa.model.puller.TopicPuller;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.LogUtils;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.widget.TagInnerItemContainer;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -90,6 +101,11 @@ public class SwipeTopicFragment extends BaseSwipeFragment<TopicData> {
     }
 
     @Override
+    protected void onDeleteItem(int position) {
+        CommonTargetOperator.doDeleteTopic(mList.get(position).getId());
+    }
+
+    @Override
     protected RecyclerView.Adapter getListAdapter(List<TopicData> list) {
         return new ListAdapter(list);
     }
@@ -156,6 +172,30 @@ public class SwipeTopicFragment extends BaseSwipeFragment<TopicData> {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommonOperateEvent(CommonOperateEvent<TopicData> event) {
+        switch (event.getType()) {
+            case DELETE_TOPIC:
+                if (event.getCode() == Config.CODE_OK) {
+                    if (mPageId <= Config.MAX_GLOBAL_CACHE_ID) {
+                        GlobalSource.deleteTopicItemDataIfNeed(event.getData());
+                    }  else {
+                        ListUtils.deleteTopicItem(mList, event.getData());
+                    }
+                    Toast.makeText(getContext(), R.string.common_str_delete_success, Toast.LENGTH_SHORT).show();
+                    mAdapter.notifyDataSetChanged();
+                    if (ListUtils.isEmpty(mList)) {
+                        showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_related_content));
+                    }
+                } else {
+                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     private class ListAdapter extends LoadMoreSupportAdapter<TopicData> implements View.OnClickListener, TagInnerItemContainer.OnItemClickListener{
 
 
@@ -198,6 +238,10 @@ public class SwipeTopicFragment extends BaseSwipeFragment<TopicData> {
                     PageUtils.gotoTopicPage(getContext(), data);
                     break;
                 case R.id.iv_more:
+                    if (Enviroment.isVisitor()) {
+                        Toast.makeText(getContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     showMoreOperateDialog(position, data.getUid());
                     break;
                 default:
