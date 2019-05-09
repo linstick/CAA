@@ -86,6 +86,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (Enviroment.getCurUser() != null) {
+            mUserAvatarIv.setImageURI(Enviroment.getCurUser().getAvatar());
+        }
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);

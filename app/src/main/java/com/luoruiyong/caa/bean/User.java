@@ -1,5 +1,7 @@
 package com.luoruiyong.caa.bean;
 
+import android.text.TextUtils;
+
 import java.io.Serializable;
 
 /**
@@ -84,7 +86,7 @@ public class User implements Serializable{
     }
 
     public String getEmail() {
-        return email;
+        return TextUtils.equals(email, "null") ? "" : email;
     }
 
     public void setEmail(String email) {

@@ -118,7 +118,7 @@
     <string name="common_str_delete_success">删除成功</string>
 
     <string name="common_str_avatar">头像</string>
-    <string name="common_str_id">ID</string>
+    <string name="common_str_account">账号</string>
     <string name="common_str_nickname">昵称</string>
     <string name="common_str_collect">收藏</string>
     <string name="common_str_comment">评论</string>
@@ -308,11 +308,12 @@
     <string name="settings_str_logout">退出登录</string>
     <string name="settings_str_has_logout">已退出登录</string>
     <string name="settings_tip_clear_success">已清理缓存</string>
+    <string name="settings_tip_no_cache_data">无缓存数据</string>
     <string name="settings_tip_no_new_version">已是最新版本</string>
     <string name="settings_tip_about_us_info">本应用由广东工业大学的大四学生，罗瑞泳个人开发，您可以通过邮件与我们取得联系：linstick@163.com。感谢您的使用和支持！</string>
 
     <!--个人页相关文案-->
-    <string name="profile_str_id">ID:%s</string>
+    <string name="profile_str_account">账号:%s</string>
     <string name="profile_str_nickname">昵称:%s</string>
     <string name="profile_str_activity_count">活动&#160;%s</string>
     <string name="profile_str_topic_count">话题&#160;%s</string>
@@ -323,9 +324,10 @@
     <string name="profile_str_description">个性签名</string>
 
     <!--编辑资料页相关文案-->
-    <string name="modify_profile_tip_can_no_modify_id">用户ID无法修改</string>
+    <string name="modify_profile_tip_can_no_modify_id">用户账号无法修改</string>
     <string name="modify_profile_str_gender">性别</string>
     <string name="modify_profile_str_age">年龄</string>
+    <string name="modify_profile_str_email">邮箱</string>
     <string name="modify_profile_str_college">学校</string>
     <string name="modify_profile_str_department">学院</string>
     <string name="modify_profile_str_major">专业</string>

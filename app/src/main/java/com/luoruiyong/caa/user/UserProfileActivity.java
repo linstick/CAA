@@ -98,6 +98,7 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
             if (Enviroment.getCurUid() != mUid) {
                 finish();
             } else if (mUser != null && mUser != Enviroment.getCurUser()) {
+                // 用户修改过信息
                 mUser = Enviroment.getCurUser();
                 bindUserData();
             }
@@ -153,7 +154,7 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
             return;
         }
         mUserAvatarIv.setImageURI(mUser.getAvatar());
-        mUserIdTv.setText(String.format(getString(R.string.profile_str_id), mUser.getId()));
+        mUserIdTv.setText(String.format(getString(R.string.profile_str_account), mUser.getId()));
         mNicknameTv.setText(String.format(getString(R.string.profile_str_nickname), mUser.getNickname()));
         mActivityCountTv.setText(String.format(getString(R.string.profile_str_activity_count), String.valueOf(mUser.getActivityCount())));
         mTopicCountTv.setText(String.format(getString(R.string.profile_str_topic_count), String.valueOf(mUser.getTopicCount())));

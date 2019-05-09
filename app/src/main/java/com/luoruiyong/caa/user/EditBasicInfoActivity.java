@@ -13,13 +13,10 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.core.ImagePipeline;
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.MyApplication;
@@ -29,7 +26,6 @@ import com.luoruiyong.caa.bean.ImageBean;
 import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.bean.UserBasicMap;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
-import com.luoruiyong.caa.edit.EditorActivity;
 import com.luoruiyong.caa.eventbus.CommonEvent;
 import com.luoruiyong.caa.model.CommonPoster;
 import com.luoruiyong.caa.model.ImageLoader;
@@ -113,7 +109,7 @@ public class EditBasicInfoActivity extends BaseActivity implements View.OnClickL
         mList.add(info);
 
         info = new UserBasicMap();
-        info.setLabel(getString(R.string.common_str_id));
+        info.setLabel(getString(R.string.common_str_account));
         info.setValue(mCurUser.getId());
         mList.add(info);
 
@@ -130,6 +126,11 @@ public class EditBasicInfoActivity extends BaseActivity implements View.OnClickL
         info = new UserBasicMap();
         info.setLabel(getString(R.string.modify_profile_str_age));
         info.setValue(String.valueOf(mCurUser.getAge()));
+        mList.add(info);
+
+        info = new UserBasicMap();
+        info.setLabel(getString(R.string.modify_profile_str_email));
+        info.setValue(mCurUser.getEmail());
         mList.add(info);
 
         User.CollegeInfo collegeInfo = mCurUser.getCollegeInfo();
@@ -217,15 +218,16 @@ public class EditBasicInfoActivity extends BaseActivity implements View.OnClickL
         user.setNickname((String) mList.get(2).getValue());
         user.setGender((String) mList.get(3).getValue());
         user.setAge(Integer.valueOf((String) mList.get(4).getValue()));
+        user.setEmail((String) mList.get(5).getValue());
 
         User.CollegeInfo info = new User.CollegeInfo();
-        info.setName((String) mList.get(5).getValue());
-        info.setDepartment((String) mList.get(6).getValue());
-        info.setMajor((String) mList.get(7).getValue());
-        info.setKlass((String) mList.get(8).getValue());
+        info.setName((String) mList.get(6).getValue());
+        info.setDepartment((String) mList.get(7).getValue());
+        info.setMajor((String) mList.get(8).getValue());
+        info.setKlass((String) mList.get(9).getValue());
         user.setCollegeInfo(info);
 
-        user.setDescription((String) mList.get(9).getValue());
+        user.setDescription((String) mList.get(10).getValue());
         CommonPoster.doModifyProfile(user, mNewAvatar);
     }
 

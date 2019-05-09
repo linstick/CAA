@@ -13,14 +13,15 @@ import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.bean.Function;
 import com.luoruiyong.caa.eventbus.LoginStateChangedEvent;
-import com.luoruiyong.caa.model.bean.GlobalSource;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.user.ModifyPasswordActivity;
+import com.luoruiyong.caa.utils.FileUtils;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.widget.UniversalFunctionContainer;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
     private UniversalFunctionContainer mFunctionContainer;
     private List<Function> mFunctionList;
 
+    private long mCacheSize = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,20 +53,11 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
         // 修改密码
         mFunctionList.add(new Function(Function.TYPE_ONLY_WITH_RIGHT_SIGN, getString(R.string.title_modify_password)));
 
-        // 绑定/解绑手机号
-        mFunctionList.add(new Function(Function.TYPE_ONLY_WITH_RIGHT_SIGN, getString(R.string.title_bind_cell_number)));
-
-        // 绑定/解绑邮箱
-        mFunctionList.add(new Function(Function.TYPE_ONLY_WITH_RIGHT_SIGN, getString(R.string.title_bind_email)));
-
         // 用户反馈
         mFunctionList.add(new Function(Function.TYPE_ONLY_WITH_RIGHT_SIGN, getString(R.string.settings_str_feedback)));
 
         // 清理缓存
         mFunctionList.add(new Function(Function.TYPE_ONLY_WITH_RIGHT_INFO, getString(R.string.settings_str_clear_cache)));
-
-        // 检查更新
-        mFunctionList.add(new Function(Function.TYPE_ONLY_WITH_LITTLE_RED_POINT, getString(R.string.settings_str_check_for_update)));
 
         // 关于我们
         mFunctionList.add(new Function(getString(R.string.settings_str_about_us)));
@@ -75,19 +68,21 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
         mFunctionContainer.setFunctionList(mFunctionList);
         mFunctionContainer.setOnFunctionClickListener(this);
 
-        // for test
-        mFunctionContainer.showRightInfo(4, "6.3M");
+        // 缓存大小
+        mCacheSize = FileUtils.getFileSizes(new File(Enviroment.getCacheFolder()));
+        mFunctionContainer.showRightInfo(2, FileUtils.formatFileSize(mCacheSize));
     }
 
     private void doClearCache(int position) {
         // do clear
-        mFunctionContainer.hideRightInfo(position);
-        Toast.makeText(this, R.string.settings_tip_clear_success, Toast.LENGTH_SHORT).show();
-    }
-
-    private void doCheckForUpdate(){
-        // do checkAndShowErrorTipIfNeed
-        Toast.makeText(this, R.string.settings_tip_no_new_version, Toast.LENGTH_SHORT).show();
+        if (mCacheSize > 0) {
+            FileUtils.deleteFiles(new File(Enviroment.getCacheFolder()));
+            mCacheSize = 0;
+            mFunctionContainer.hideRightInfo(position);
+            Toast.makeText(this, R.string.settings_tip_clear_success, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, R.string.settings_tip_no_cache_data, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void doLogout() {
@@ -114,29 +109,26 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
             case 0:
                 startActivity(new Intent(this, ModifyPasswordActivity.class));
                 break;
+//            case 1:
+//                Toast.makeText(this, "该功能正在开发，敬请期待", Toast.LENGTH_SHORT).show();
+//                break;
+//            case 2:
+//                Toast.makeText(this, "该功能正在开发，敬请期待", Toast.LENGTH_SHORT).show();
+//                break;
             case 1:
-                Toast.makeText(this, "该功能正在开发，敬请期待", Toast.LENGTH_SHORT).show();
-                break;
-            case 2:
-                Toast.makeText(this, "该功能正在开发，敬请期待", Toast.LENGTH_SHORT).show();
-                break;
-            case 3:
                 PageUtils.gotoFeedbackPage(this);
                 break;
-            case 4:
+            case 2:
                 doClearCache(position);
                 break;
-            case 5:
-                doCheckForUpdate();
-                break;
-            case 6:
+            case 3:
                 DialogHelper.showConfirmDialog(
                         this,
                         getString(R.string.settings_str_about_us),
                         getString(R.string.settings_tip_about_us_info),
                         getString(R.string.common_str_ok));
                 break;
-            case 7:
+            case 4:
                 doLogout();
                 break;
             default:
