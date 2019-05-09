@@ -121,6 +121,20 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivityData> {
         return Config.DEFAULT_TIME_STAMP;
     }
 
+    private int getFirstId() {
+        if (!ListUtils.isEmpty(mList)) {
+            return mList.get(0).getId();
+        }
+        return Config.DEFAULT_FRIST_OR_LAST_ID;
+    }
+
+    private int getLastId() {
+        if (!ListUtils.isEmpty(mList)) {
+            return mList.get(mList.size() - 1).getId();
+        }
+        return Config.DEFAULT_FRIST_OR_LAST_ID;
+    }
+
     @Override
     protected void onDeleteItem(int position) {
         CommonTargetOperator.doDeleteActivity(mList.get(position).getId());
@@ -160,13 +174,13 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivityData> {
         LogUtils.d(TAG, "doRefreshClick: " + mPageId);
         mRefreshLayout.setRefreshing(true);
         if (mPageId == Config.PAGE_ID_ACTIVITY_ALL) {
-            ActivityPuller.refreshAll(getFirstItemTime());
+            ActivityPuller.refreshAll(getFirstId());
         } else if (mPageId > 0 && mPageId < Config.PAGE_ID_ACTIVITY_ONE_KIND) {
-            ActivityPuller.refreshOneKind(mPageId, getFirstItemTime());
+            ActivityPuller.refreshOneKind(mPageId, getFirstId());
         } else if (mPageId == Config.PAGE_ID_ACTIVITY_SELF) {
-            ActivityPuller.refreshSelf(getFirstItemTime());
+            ActivityPuller.refreshSelf(getFirstId());
         } else if (mPageId == Config.PAGE_ID_ACTIVITY_OTHER_USER) {
-            ActivityPuller.refreshOtherUser(mOtherUid, getFirstItemTime());
+            ActivityPuller.refreshOtherUser(mOtherUid, getFirstId());
         } else if (mPageId == Config.PAGE_ID_ACTIVITY_SELF_COLLECT) {
             ActivityPuller.refreshSelfCollect(getFirstItemTime());
         } else if (mPageId == Config.PAGE_ID_ACTIVITY_SEARCH) {
@@ -184,13 +198,13 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivityData> {
             ((LoadMoreSupportAdapter) mAdapter).setLoadMoreTip(getString(R.string.common_str_loading_more));
         }
         if (mPageId == Config.PAGE_ID_ACTIVITY_ALL) {
-            ActivityPuller.loadMoreAll(getLastItemTime());
+            ActivityPuller.loadMoreAll(getLastId());
         } else if (mPageId > 0 && mPageId < Config.PAGE_ID_ACTIVITY_ONE_KIND) {
-            ActivityPuller.loadMoreOneKind(mPageId, getLastItemTime());
+            ActivityPuller.loadMoreOneKind(mPageId, getLastId());
         } else if (mPageId == Config.PAGE_ID_ACTIVITY_SELF) {
-            ActivityPuller.loadMoreSelf(getLastItemTime());
+            ActivityPuller.loadMoreSelf(getLastId());
         } else if (mPageId == Config.PAGE_ID_ACTIVITY_OTHER_USER) {
-            ActivityPuller.loadMoreOtherUser(mOtherUid, getLastItemTime());
+            ActivityPuller.loadMoreOtherUser(mOtherUid, getLastId());
         } else if (mPageId == Config.PAGE_ID_ACTIVITY_SELF_COLLECT) {
             ActivityPuller.loadMoreSelfCollect(getLastItemTime());
         } else if (mPageId == Config.PAGE_ID_ACTIVITY_SEARCH) {

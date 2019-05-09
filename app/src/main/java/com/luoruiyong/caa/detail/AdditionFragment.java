@@ -16,7 +16,6 @@ import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
 import com.luoruiyong.caa.bean.AdditionData;
-import com.luoruiyong.caa.bean.CommentData;
 import com.luoruiyong.caa.eventbus.CommonOperateEvent;
 import com.luoruiyong.caa.model.CommonTargetOperator;
 import com.luoruiyong.caa.model.puller.CommonPuller;
@@ -25,7 +24,6 @@ import com.luoruiyong.caa.utils.LogUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 import com.luoruiyong.caa.utils.TimeUtils;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -77,17 +75,24 @@ public class AdditionFragment extends BaseSwipeFragment<AdditionData> {
         mActivityId = bundle.getInt(KEY_TARGET_ID, -1);
     }
 
-    private String getLastItemTime() {
+    private int getFirstId() {
         if (!ListUtils.isEmpty(mList)) {
-            return mList.get(mList.size() - 1).getPublishTime();
+            return mList.get(0).getId();
         }
-        return Config.DEFAULT_TIME_STAMP;
+        return Config.DEFAULT_FRIST_OR_LAST_ID;
+    }
+
+    private int getLastId() {
+        if (!ListUtils.isEmpty(mList)) {
+            return mList.get(mList.size() - 1).getId();
+        }
+        return Config.DEFAULT_FRIST_OR_LAST_ID;
     }
 
     @Override
     protected void doRefresh() {
         mRefreshLayout.setRefreshing(true);
-        CommonPuller.refreshActivityAddition(mActivityId);
+        CommonPuller.refreshActivityAddition(mActivityId, getFirstId());
     }
 
     @Override
@@ -96,7 +101,7 @@ public class AdditionFragment extends BaseSwipeFragment<AdditionData> {
         if (mAdapter instanceof LoadMoreSupportAdapter) {
             ((LoadMoreSupportAdapter) mAdapter).setLoadMoreTip(getString(R.string.common_str_loading_more));
         }
-        CommonPuller.loadMoreActivityAddition(mActivityId, getLastItemTime());
+        CommonPuller.loadMoreActivityAddition(mActivityId, getLastId());
     }
 
     @Override

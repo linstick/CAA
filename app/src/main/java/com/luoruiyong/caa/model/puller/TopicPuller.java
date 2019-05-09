@@ -17,41 +17,41 @@ public class TopicPuller {
 
     private static final String TAG = "TopicPuller";
 
-    public static void refreshAll(String firstItemTime) {
+    public static void refreshAll(int firstId) {
         Map<String, String> params = new HashMap<>();
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(firstItemTime));
+        params.put(Config.PARAM_KEY_TOPIC_ID, String.valueOf(firstId));
         doPull(Config.PAGE_ID_TOPIC_ALL, Config.PULL_TYPE_REFRESH, params);
     }
 
-    public static void loadMoreAll(String lastItemTime) {
+    public static void loadMoreAll(int lastId) {
         Map<String, String> params = new HashMap<>();
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(lastItemTime));
+        params.put(Config.PARAM_KEY_TOPIC_ID, String.valueOf(lastId));
         doPull(Config.PAGE_ID_TOPIC_ALL, Config.PULL_TYPE_LOAD_MORE, params);
     }
 
-    public static void refreshSelf(String firstItemTime) {
+    public static void refreshSelf(int firstId) {
         Map<String, String> params = new HashMap<>();
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(firstItemTime));
+        params.put(Config.PARAM_KEY_TOPIC_ID, String.valueOf(firstId));
         doPull(Config.PAGE_ID_TOPIC_SELF, Config.PULL_TYPE_REFRESH, params);
     }
 
-    public static void loadMoreSelf(String lastItemTime) {
+    public static void loadMoreSelf(int lastId) {
         Map<String, String> params = new HashMap<>();
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(lastItemTime));
+        params.put(Config.PARAM_KEY_TOPIC_ID, String.valueOf(lastId));
         doPull(Config.PAGE_ID_TOPIC_SELF, Config.PULL_TYPE_LOAD_MORE, params);
     }
 
-    public static void refreshOtherUser(int uid, String firstItemTime) {
+    public static void refreshOtherUser(int uid, int firstId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_OTHER_UID, String.valueOf(uid));
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(firstItemTime));
+        params.put(Config.PARAM_KEY_TOPIC_ID, String.valueOf(firstId));
         doPull(Config.PAGE_ID_TOPIC_OTHER_USER, Config.PULL_TYPE_REFRESH, params);
     }
 
-    public static void loadMoreOtherUser(int uid, String lastItemTime) {
+    public static void loadMoreOtherUser(int uid, int lastId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_OTHER_UID, String.valueOf(uid));
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(lastItemTime));
+        params.put(Config.PARAM_KEY_TOPIC_ID, String.valueOf(lastId));
         doPull(Config.PAGE_ID_TOPIC_OTHER_USER, Config.PULL_TYPE_LOAD_MORE, params);
     }
 

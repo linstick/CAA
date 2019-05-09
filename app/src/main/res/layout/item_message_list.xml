@@ -91,12 +91,13 @@
         android:layout_height="wrap_content"
         android:background="#e9f4f2f2"
         android:orientation="horizontal"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="8dp"
+        android:padding="5dp">
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/iv_src_cover"
-            android:layout_width="74dp"
-            android:layout_height="74dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:src="@drawable/test_image"
             android:scaleType="fitXY"
             android:visibility="gone"
@@ -110,7 +111,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center_vertical"
-            android:padding="6dp">
+            android:layout_marginLeft="6dp"
+            android:layout_marginStart="6dp">
 
             <TextView
                 android:id="@+id/tv_src_title"

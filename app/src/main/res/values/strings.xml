@@ -346,11 +346,11 @@
     <string name="fm_activity_title_campus">校园</string>
 
     <!--消息页相关文案-->
-    <string name="fm_message_str_activity_comment">评论活动</string>
-    <string name="fm_message_str_activity_collect">收藏活动</string>
-    <string name="fm_message_str_topic_join">参与话题</string>
-    <string name="fm_message_str_discover_like">点赞动态</string>
-    <string name="fm_message_str_discover_comment">评论动态</string>
+    <string name="fm_message_str_activity_comment">活动评论</string>
+    <string name="fm_message_str_activity_collect">活动收藏</string>
+    <string name="fm_message_str_topic_join">话题参与</string>
+    <string name="fm_message_str_discover_like">动态点赞</string>
+    <string name="fm_message_str_discover_comment">动态评论</string>
     <string name="fm_message_str_activity_push">活动推送</string>
     <string name="fm_message_str_topic_push">话题推送</string>
 

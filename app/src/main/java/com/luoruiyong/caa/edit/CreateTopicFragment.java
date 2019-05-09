@@ -146,7 +146,7 @@ public class CreateTopicFragment extends BaseCreateFragment implements
 
     @Override
     public void onFinishClick() {
-        if (!mNameInputView.checkAndShowErrorTipIfNeed()) {
+        if (!mNameInputView.checkAndShowErrorTipIfNeed() && !mIntroduceInputView.checkAndShowErrorTipIfNeed()) {
             return;
         }
         TopicData topic = new TopicData();

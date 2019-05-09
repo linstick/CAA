@@ -15,9 +15,7 @@ import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
-import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.bean.DiscoverData;
-import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.common.viewholder.DiscoverItemViewHolder;
 import com.luoruiyong.caa.eventbus.CommonOperateEvent;
 import com.luoruiyong.caa.eventbus.PullFinishEvent;
@@ -35,7 +33,6 @@ import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -135,18 +132,18 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         return new ListAdapter(list);
     }
 
-    private String getFirstItemTime() {
+    private int getFirstId() {
         if (!ListUtils.isEmpty(mList)) {
-            return mList.get(0).getPublishTime();
+            return mList.get(0).getId();
         }
-        return Config.DEFAULT_TIME_STAMP;
+        return Config.DEFAULT_FRIST_OR_LAST_ID;
     }
 
-    private String getLastItemTime() {
+    private int getLastId() {
         if (!ListUtils.isEmpty(mList)) {
-            return mList.get(mList.size() - 1).getPublishTime();
+            return mList.get(mList.size() - 1).getId();
         }
-        return Config.DEFAULT_TIME_STAMP;
+        return Config.DEFAULT_FRIST_OR_LAST_ID;
     }
 
     private void doLike(DiscoverData data, int position) {
@@ -185,13 +182,13 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         mRefreshLayout.setRefreshing(true);
         switch (mPageId) {
             case Config.PAGE_ID_DISCOVER_ALL:
-                DiscoverPuller.refreshAll(getFirstItemTime());
+                DiscoverPuller.refreshAll(getFirstId());
                 break;
             case Config.PAGE_ID_DISCOVER_SELF:
-                DiscoverPuller.refreshSelf(getFirstItemTime());
+                DiscoverPuller.refreshSelf(getFirstId());
                 break;
             case Config.PAGE_ID_DISCOVER_OTHER_USER:
-                DiscoverPuller.refreshOtherUser(mOtherUid, getFirstItemTime());
+                DiscoverPuller.refreshOtherUser(mOtherUid, getFirstId());
                 break;
             case Config.PAGE_ID_DISCOVER_SEARCH:
                 DiscoverPuller.refreshSearch(mKeyword);
@@ -200,7 +197,7 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
                 DiscoverPuller.refreshTopicHot(mTopicId);
                 break;
             case Config.PAGE_ID_DISCOVER_TOPIC_LASTED:
-                DiscoverPuller.refreshTopicLasted(mTopicId,getFirstItemTime());
+                DiscoverPuller.refreshTopicLasted(mTopicId, getFirstId());
                 break;
             default:
                 LogUtils.d(TAG, "load more unknow type");
@@ -216,13 +213,13 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         }
         switch (mPageId) {
             case Config.PAGE_ID_DISCOVER_ALL:
-                DiscoverPuller.loadMoreAll(getLastItemTime());
+                DiscoverPuller.loadMoreAll(getLastId());
                 break;
             case Config.PAGE_ID_DISCOVER_SELF:
-                DiscoverPuller.loadMoreSelf(getLastItemTime());
+                DiscoverPuller.loadMoreSelf(getLastId());
                 break;
             case Config.PAGE_ID_DISCOVER_OTHER_USER:
-                DiscoverPuller.loadMoreOtherUser(mOtherUid, getLastItemTime());
+                DiscoverPuller.loadMoreOtherUser(mOtherUid, getLastId());
                 break;
             case Config.PAGE_ID_DISCOVER_SEARCH:
                 DiscoverPuller.loadMoreSearch(mKeyword, ListUtils.getSize(mList));
@@ -231,7 +228,7 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
                 DiscoverPuller.loadMoreTopicHot(mTopicId, ListUtils.getSize(mList));
                 break;
             case Config.PAGE_ID_DISCOVER_TOPIC_LASTED:
-                DiscoverPuller.loadMoreTopicLasted(mTopicId,getLastItemTime());
+                DiscoverPuller.loadMoreTopicLasted(mTopicId, getLastId());
                 break;
             default:
                 LogUtils.d(TAG, "load more unknow type");

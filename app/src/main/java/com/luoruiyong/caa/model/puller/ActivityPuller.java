@@ -16,69 +16,69 @@ import java.util.Map;
 public class ActivityPuller{
     private static final String TAG = "ActivityPuller";
 
-    public static void refreshAll(String firstItemTime) {
+    public static void refreshAll(int firstId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_TYPE, String.valueOf(Config.PAGE_ID_ACTIVITY_ALL));
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(firstItemTime));
+        params.put(Config.PARAM_KEY_ACTIVITY_ID, String.valueOf(firstId));
         doPull(Config.PAGE_ID_ACTIVITY_ALL, Config.PULL_TYPE_REFRESH, params);
     }
 
-    public static void loadMoreAll(String lastItemTime) {
+    public static void loadMoreAll(int lastId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_TYPE, String.valueOf(Config.PAGE_ID_ACTIVITY_ALL));
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(lastItemTime));
+        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(lastId));
         doPull(Config.PAGE_ID_ACTIVITY_ALL, Config.PULL_TYPE_LOAD_MORE, params);
     }
 
-    public static void refreshOneKind(int activityType, String firstItemTime) {
+    public static void refreshOneKind(int activityType, int firstId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_TYPE, String.valueOf(activityType));
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(firstItemTime));
+        params.put(Config.PARAM_KEY_ACTIVITY_ID, String.valueOf(firstId));
         doPull(activityType, Config.PULL_TYPE_REFRESH, params);
     }
 
-    public static void loadMoreOneKind(int activityType, String lastItemTime) {
+    public static void loadMoreOneKind(int activityType, int lastId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_TYPE, String.valueOf(activityType));
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(lastItemTime));
+        params.put(Config.PARAM_KEY_ACTIVITY_ID, String.valueOf(lastId));
         doPull(activityType, Config.PULL_TYPE_LOAD_MORE, params);
     }
 
-    public static void refreshSelf(String firstItemTime) {
+    public static void refreshSelf(int firstId) {
         Map<String, String> params = new HashMap<>();
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(firstItemTime));
+        params.put(Config.PARAM_KEY_ACTIVITY_ID, String.valueOf(firstId));
         doPull(Config.PAGE_ID_ACTIVITY_SELF, Config.PULL_TYPE_REFRESH, params);
     }
 
-    public static void loadMoreSelf(String lastItemTime) {
+    public static void loadMoreSelf(int lastId) {
         Map<String, String> params = new HashMap<>();
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(lastItemTime));
+        params.put(Config.PARAM_KEY_ACTIVITY_ID, String.valueOf(lastId));
         doPull(Config.PAGE_ID_ACTIVITY_SELF, Config.PULL_TYPE_LOAD_MORE, params);
     }
 
-    public static void refreshOtherUser(int uid, String firstItemTime) {
+    public static void refreshOtherUser(int uid, int firstId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_OTHER_UID, String.valueOf(uid));
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(firstItemTime));
+        params.put(Config.PARAM_KEY_ACTIVITY_ID, String.valueOf(firstId));
         doPull(Config.PAGE_ID_ACTIVITY_OTHER_USER, Config.PULL_TYPE_REFRESH, params);
     }
 
-    public static void loadMoreOtherUser(int uid, String lastItemTime) {
+    public static void loadMoreOtherUser(int uid, int lastId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_OTHER_UID, String.valueOf(uid));
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(lastItemTime));
+        params.put(Config.PARAM_KEY_ACTIVITY_ID, String.valueOf(lastId));
         doPull(Config.PAGE_ID_ACTIVITY_OTHER_USER, Config.PULL_TYPE_LOAD_MORE, params);
     }
 
     public static void refreshSelfCollect(String firstItemTime) {
         Map<String, String> params = new HashMap<>();
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(firstItemTime));
+        params.put(Config.PARAM_KEY_TIME_STAMP, firstItemTime);
         doPull(Config.PAGE_ID_ACTIVITY_SELF_COLLECT, Config.PULL_TYPE_REFRESH, params);
     }
 
     public static void loadMoreSelfCollect(String lastItemTime) {
         Map<String, String> params = new HashMap<>();
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(lastItemTime));
+        params.put(Config.PARAM_KEY_TIME_STAMP, lastItemTime);
         doPull(Config.PAGE_ID_ACTIVITY_SELF_COLLECT, Config.PULL_TYPE_LOAD_MORE, params);
     }
 

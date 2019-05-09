@@ -28,64 +28,64 @@ public class CommonPuller {
 
     private static final String TAG = "CommonPuller";
 
-    public static void refreshMessage(String firstTime) {
+    public static void refreshMessage(int firstId) {
         Map<String, String> params = new HashMap<>();
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(firstTime));
+        params.put(Config.PARAM_KEY_MESSAGE_ID, String.valueOf(firstId));
         doPull(Config.PAGE_ID_MESSAGE, Config.PULL_TYPE_REFRESH, Config.URL_MESSAGE_FETCH,
                 params, new TypeToken<PullFinishEvent<MessageData>>(){}.getType());
     }
 
-    public static void loadMoreMessage(String lastTime) {
+    public static void loadMoreMessage(int lastId) {
         Map<String, String> params = new HashMap<>();
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(lastTime));
+        params.put(Config.PARAM_KEY_MESSAGE_ID, String.valueOf(lastId));
         doPull(Config.PAGE_ID_MESSAGE, Config.PULL_TYPE_LOAD_MORE, Config.URL_MESSAGE_FETCH,
                 params, new TypeToken<PullFinishEvent<MessageData>>(){}.getType());
     }
 
-    public static void refreshActivityComment(int activityId) {
+    public static void refreshActivityComment(int activityId, int firstCommentId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_ACTIVITY_ID, String.valueOf(activityId));
-        params.put(Config.PARAM_KEY_TIME_STAMP, Config.DEFAULT_TIME_STAMP);
+        params.put(Config.PARAM_KEY_COMMENT_ID, String.valueOf(firstCommentId));
         doPull(Config.PAGE_ID_ACTIVITY_COMMENT, Config.PULL_TYPE_REFRESH, Config.URL_COMMENT_FETCH,
                 params, new TypeToken<PullFinishEvent<CommentData>>(){}.getType());
     }
 
-    public static void loadMoreActivityComment(int activityId, String lastTime) {
+    public static void loadMoreActivityComment(int activityId, int lastCommentId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_ACTIVITY_ID, String.valueOf(activityId));
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(lastTime));
+        params.put(Config.PARAM_KEY_COMMENT_ID, String.valueOf(lastCommentId));
         doPull(Config.PAGE_ID_ACTIVITY_COMMENT, Config.PULL_TYPE_LOAD_MORE, Config.URL_COMMENT_FETCH,
                 params, new TypeToken<PullFinishEvent<CommentData>>(){}.getType());
     }
 
-    public static void refreshActivityAddition(int activityId) {
+    public static void refreshActivityAddition(int activityId, int firstAdditionId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_ACTIVITY_ID, String.valueOf(activityId));
-        params.put(Config.PARAM_KEY_TIME_STAMP, Config.DEFAULT_TIME_STAMP);
+        params.put(Config.PARAM_KEY_ADDITION_ID, String.valueOf(firstAdditionId));
         doPull(Config.PAGE_ID_ACTIVITY_ADDITION, Config.PULL_TYPE_REFRESH, Config.URL_ADDITION_FETCH,
                 params, new TypeToken<PullFinishEvent<AdditionData>>(){}.getType());
     }
 
-    public static void loadMoreActivityAddition(int activityId, String lastTime) {
+    public static void loadMoreActivityAddition(int activityId, int lastAdditionId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_ACTIVITY_ID, String.valueOf(activityId));
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(lastTime));
+        params.put(Config.PARAM_KEY_ADDITION_ID, String.valueOf(lastAdditionId));
         doPull(Config.PAGE_ID_ACTIVITY_ADDITION, Config.PULL_TYPE_LOAD_MORE, Config.URL_ADDITION_FETCH,
                 params, new TypeToken<PullFinishEvent<AdditionData>>(){}.getType());
     }
 
-    public static void refreshDiscoverComment(int discoverId) {
+    public static void refreshDiscoverComment(int discoverId, int firstCommentId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_DISCOVER_ID, String.valueOf(discoverId));
-        params.put(Config.PARAM_KEY_TIME_STAMP, Config.DEFAULT_TIME_STAMP);
+        params.put(Config.PARAM_KEY_COMMENT_ID, String.valueOf(firstCommentId));
         doPull(Config.PAGE_ID_DISCOVER_COMMENT, Config.PULL_TYPE_REFRESH, Config.URL_COMMENT_FETCH,
                 params, new TypeToken<PullFinishEvent<CommentData>>(){}.getType());
     }
 
-    public static void loadMoreDiscoverComment(int discoverId, String lastTime) {
+    public static void loadMoreDiscoverComment(int discoverId, int lastCommentId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_DISCOVER_ID, String.valueOf(discoverId));
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(lastTime));
+        params.put(Config.PARAM_KEY_COMMENT_ID, String.valueOf(lastCommentId));
         doPull(Config.PAGE_ID_DISCOVER_COMMENT, Config.PULL_TYPE_LOAD_MORE, Config.URL_COMMENT_FETCH,
                 params, new TypeToken<PullFinishEvent<CommentData>>(){}.getType());
     }

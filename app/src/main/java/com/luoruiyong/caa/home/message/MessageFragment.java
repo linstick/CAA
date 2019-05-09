@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,10 +17,8 @@ import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
-import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.bean.MessageData;
 
-import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.eventbus.CommonOperateEvent;
 import com.luoruiyong.caa.login.LoginActivity;
@@ -39,7 +36,6 @@ import com.luoruiyong.caa.utils.TimeUtils;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.Iterator;
 import java.util.List;
 
 import static com.luoruiyong.caa.utils.PageUtils.DETAIL_TYPE_ACTIVITY_ID;
@@ -71,18 +67,18 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
         CommonTargetOperator.doDeleteMessage(mList.get(position).getId());
     }
 
-    private String getFirstItemTime() {
+    private int getFirstId() {
         if (!ListUtils.isEmpty(mList)) {
-            return mList.get(0).getPublishTime();
+            return mList.get(0).getId();
         }
-        return Config.DEFAULT_TIME_STAMP;
+        return Config.DEFAULT_FRIST_OR_LAST_ID;
     }
 
-    private String getLastItemTime() {
+    private int getLastId() {
         if (!ListUtils.isEmpty(mList)) {
-            return mList.get(mList.size() - 1).getPublishTime();
+            return mList.get(mList.size() - 1).getId();
         }
-        return Config.DEFAULT_TIME_STAMP;
+        return Config.DEFAULT_FRIST_OR_LAST_ID;
     }
 
     @Override
@@ -90,7 +86,7 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
         LogUtils.d(TAG, "doRefreshClick: " + mPageId);
         hideTipView();
         mRefreshLayout.setRefreshing(true);
-        CommonPuller.refreshMessage(getFirstItemTime());
+        CommonPuller.refreshMessage(getFirstId());
     }
 
     @Override
@@ -108,7 +104,7 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
         if (mAdapter instanceof LoadMoreSupportAdapter) {
             ((LoadMoreSupportAdapter) mAdapter).setLoadMoreTip(getString(R.string.common_str_loading_more));
         }
-        CommonPuller.loadMoreMessage(getLastItemTime());
+        CommonPuller.loadMoreMessage(getLastId());
     }
 
     private void gotoSrcDetailPage(int messageType, int id) {

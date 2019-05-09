@@ -15,41 +15,41 @@ import java.util.Map;
  **/
 public class DiscoverPuller {
 
-    public static void refreshAll(String firstItemTime) {
+    public static void refreshAll(int firstId) {
         Map<String, String> params = new HashMap<>();
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(firstItemTime));
+        params.put(Config.PARAM_KEY_DISCOVER_ID, String.valueOf(firstId));
         doPull(Config.PAGE_ID_DISCOVER_ALL, Config.PULL_TYPE_REFRESH, params);
     }
 
-    public static void loadMoreAll(String lastItemTime) {
+    public static void loadMoreAll(int lastId) {
         Map<String, String> params = new HashMap<>();
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(lastItemTime));
+        params.put(Config.PARAM_KEY_DISCOVER_ID, String.valueOf(lastId));
         doPull(Config.PAGE_ID_DISCOVER_ALL, Config.PULL_TYPE_LOAD_MORE, params);
     }
 
-    public static void refreshSelf(String firstItemTime) {
+    public static void refreshSelf(int firstId) {
         Map<String, String> params = new HashMap<>();
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(firstItemTime));
+        params.put(Config.PARAM_KEY_DISCOVER_ID, String.valueOf(firstId));
         doPull(Config.PAGE_ID_DISCOVER_SELF, Config.PULL_TYPE_REFRESH, params);
     }
 
-    public static void loadMoreSelf(String lastItemTime) {
+    public static void loadMoreSelf(int lastId) {
         Map<String, String> params = new HashMap<>();
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(lastItemTime));
+        params.put(Config.PARAM_KEY_DISCOVER_ID, String.valueOf(lastId));
         doPull(Config.PAGE_ID_DISCOVER_SELF, Config.PULL_TYPE_LOAD_MORE, params);
     }
 
-    public static void refreshOtherUser(int uid, String firstItemTime) {
+    public static void refreshOtherUser(int uid, int firstId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_OTHER_UID, String.valueOf(uid));
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(firstItemTime));
+        params.put(Config.PARAM_KEY_DISCOVER_ID, String.valueOf(firstId));
         doPull(Config.PAGE_ID_DISCOVER_OTHER_USER, Config.PULL_TYPE_REFRESH, params);
     }
 
-    public static void loadMoreOtherUser(int uid, String lastItemTime) {
+    public static void loadMoreOtherUser(int uid, int lastId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_OTHER_UID, String.valueOf(uid));
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(lastItemTime));
+        params.put(Config.PARAM_KEY_DISCOVER_ID, String.valueOf(lastId));
         doPull(Config.PAGE_ID_DISCOVER_OTHER_USER, Config.PULL_TYPE_LOAD_MORE, params);
     }
 
@@ -67,17 +67,17 @@ public class DiscoverPuller {
         doPull(Config.PAGE_ID_DISCOVER_TOPIC_HOT, Config.PULL_TYPE_LOAD_MORE, params);
     }
 
-    public static void refreshTopicLasted(int topicId, String firstItemTime) {
+    public static void refreshTopicLasted(int topicId, int firstId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_TOPIC_ID, String.valueOf(topicId));
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(firstItemTime));
+        params.put(Config.PARAM_KEY_DISCOVER_ID, String.valueOf(firstId));
         doPull(Config.PAGE_ID_DISCOVER_TOPIC_LASTED, Config.PULL_TYPE_REFRESH, params);
     }
 
-    public static void loadMoreTopicLasted(int topicId, String lastItemTime) {
+    public static void loadMoreTopicLasted(int topicId, int lastId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_TOPIC_ID, String.valueOf(topicId));
-        params.put(Config.PARAM_KEY_TIME_STAMP, String.valueOf(lastItemTime));
+        params.put(Config.PARAM_KEY_DISCOVER_ID, String.valueOf(lastId));
         doPull(Config.PAGE_ID_DISCOVER_TOPIC_LASTED, Config.PULL_TYPE_LOAD_MORE, params);
     }
 

@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -94,20 +93,27 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
         }
     }
 
-    private String getLastItemTime() {
+    private int getFirstId() {
         if (!ListUtils.isEmpty(mList)) {
-            return mList.get(mList.size() - 1).getPublishTime();
+            return mList.get(mList.size() - 1).getId();
         }
-        return Config.DEFAULT_TIME_STAMP;
+        return Config.DEFAULT_FRIST_OR_LAST_ID;
+    }
+
+    private int getLastId() {
+        if (!ListUtils.isEmpty(mList)) {
+            return mList.get(mList.size() - 1).getId();
+        }
+        return Config.DEFAULT_FRIST_OR_LAST_ID;
     }
 
     @Override
     protected void doRefresh() {
         mRefreshLayout.setRefreshing(true);
         if (mPageId == Config.PAGE_ID_ACTIVITY_COMMENT) {
-            CommonPuller.refreshActivityComment(mTargetId);
+            CommonPuller.refreshActivityComment(mTargetId, getFirstId());
         } else if (mPageId == Config.PAGE_ID_DISCOVER_COMMENT){
-            CommonPuller.refreshDiscoverComment(mTargetId);
+            CommonPuller.refreshDiscoverComment(mTargetId, getFirstId());
         } else {
             mRefreshLayout.setRefreshing(false);
             LogUtils.d(TAG, "Unknow type");
@@ -121,9 +127,9 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
             ((LoadMoreSupportAdapter) mAdapter).setLoadMoreTip(getString(R.string.common_str_loading_more));
         }
         if (mPageId == Config.PAGE_ID_ACTIVITY_COMMENT) {
-            CommonPuller.loadMoreActivityComment(mTargetId, getLastItemTime());
+            CommonPuller.loadMoreActivityComment(mTargetId, getLastId());
         } else if (mPageId == Config.PAGE_ID_DISCOVER_COMMENT){
-            CommonPuller.loadMoreDiscoverComment(mTargetId, getLastItemTime());
+            CommonPuller.loadMoreDiscoverComment(mTargetId, getLastId());
         } else {
             LogUtils.d(TAG, "Unknow type");
         }

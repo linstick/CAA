@@ -152,6 +152,8 @@ public class Config {
 
     // 默认列表更新请求时提供的时间
     public final static String DEFAULT_TIME_STAMP = "1970-1-1 00:00:00";
+    // 默认列表请求时提供的编号
+    public final static int DEFAULT_FRIST_OR_LAST_ID = 0;
     // 列表默认请求数量
     public final static int DEFAULT_REQUEST_COUNT = 50;
     // 关联话题页面中的提示列表请求数量

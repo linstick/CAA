@@ -14,8 +14,6 @@ import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
-import com.luoruiyong.caa.bean.DiscoverData;
-import com.luoruiyong.caa.bean.MessageData;
 import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.common.viewholder.TopicItemViewHolder;
 import com.luoruiyong.caa.eventbus.CommonOperateEvent;
@@ -30,7 +28,6 @@ import com.luoruiyong.caa.widget.TagInnerItemContainer;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -110,18 +107,18 @@ public class SwipeTopicFragment extends BaseSwipeFragment<TopicData> {
         return new ListAdapter(list);
     }
 
-    private String getFirstItemTime() {
+    private int getFirstId() {
         if (!ListUtils.isEmpty(mList)) {
-            return mList.get(0).getPublishTime();
+            return mList.get(0).getId();
         }
-        return Config.DEFAULT_TIME_STAMP;
+        return Config.DEFAULT_FRIST_OR_LAST_ID;
     }
 
-    private String getLastItemTime() {
+    private int getLastId() {
         if (!ListUtils.isEmpty(mList)) {
-            return mList.get(mList.size() - 1).getPublishTime();
+            return mList.get(mList.size() - 1).getId();
         }
-        return Config.DEFAULT_TIME_STAMP;
+        return Config.DEFAULT_FRIST_OR_LAST_ID;
     }
 
     @Override
@@ -130,13 +127,13 @@ public class SwipeTopicFragment extends BaseSwipeFragment<TopicData> {
         mRefreshLayout.setRefreshing(true);
         switch (mPageId) {
             case Config.PAGE_ID_TOPIC_ALL:
-                TopicPuller.refreshAll(getFirstItemTime());
+                TopicPuller.refreshAll(getFirstId());
                 break;
             case Config.PAGE_ID_TOPIC_SELF:
-                TopicPuller.refreshSelf(getFirstItemTime());
+                TopicPuller.refreshSelf(getFirstId());
                 break;
             case Config.PAGE_ID_TOPIC_OTHER_USER:
-                TopicPuller.refreshOtherUser(mOtherUid, getFirstItemTime());
+                TopicPuller.refreshOtherUser(mOtherUid, getFirstId());
                 break;
             case Config.PAGE_ID_TOPIC_SEARCH:
                 TopicPuller.refreshSearch(mKeyword);
@@ -155,13 +152,13 @@ public class SwipeTopicFragment extends BaseSwipeFragment<TopicData> {
         }
         switch (mPageId) {
             case Config.PAGE_ID_TOPIC_ALL:
-                TopicPuller.loadMoreAll(getLastItemTime());
+                TopicPuller.loadMoreAll(getLastId());
                 break;
             case Config.PAGE_ID_TOPIC_SELF:
-                TopicPuller.loadMoreSelf(getLastItemTime());
+                TopicPuller.loadMoreSelf(getLastId());
                 break;
             case Config.PAGE_ID_TOPIC_OTHER_USER:
-                TopicPuller.loadMoreOtherUser(mOtherUid, getLastItemTime());
+                TopicPuller.loadMoreOtherUser(mOtherUid, getLastId());
                 break;
             case Config.PAGE_ID_TOPIC_SEARCH:
                 TopicPuller.loadMoreSearch(mKeyword, ListUtils.getSize(mList));
