@@ -94,4 +94,9 @@ public class ActivityItemViewHolder extends RecyclerView.ViewHolder {
             mImageViewLayout.setVisibility(View.GONE);
         }
     }
+
+    public void onlyBindCollect(ActivityData data) {
+        mCollectTv.setText(data.getCollectCount() == 0 ? ResourcesUtils.getString(R.string.common_str_collect) : data.getCollectCount() + "");
+        mCollectTv.setSelected(data.isHasCollect());
+    }
 }

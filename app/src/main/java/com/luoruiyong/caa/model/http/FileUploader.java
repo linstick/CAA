@@ -31,7 +31,7 @@ import okhttp3.Response;
 /**
  * Author: luoruiyong
  * Date: 2019/4/18/018
- * Description:
+ * Description: 上传数据中带有文件的时候使用
  **/
 public class FileUploader {
 

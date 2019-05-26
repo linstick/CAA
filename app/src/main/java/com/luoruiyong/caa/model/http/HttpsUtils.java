@@ -29,7 +29,7 @@ import okhttp3.Response;
 /**
  * Author: luoruiyong
  * Date: 2019/4/10/010
- * Description:
+ * Description: 发送普通请求时使用
  **/
 public class HttpsUtils {
     private static final String TAG = "HttpsUtils";

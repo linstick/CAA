@@ -11,13 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
-import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
-import com.luoruiyong.caa.base.OnPermissionCallback;
+import com.luoruiyong.caa.base.BaseCreateFragment;
+import com.luoruiyong.caa.common.callback.OnPermissionCallback;
 import com.luoruiyong.caa.bean.DiscoverCreateResult;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.bean.ImageBean;
@@ -229,7 +228,7 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
             topic.setUid(Enviroment.getCurUid());
             topic.setName(mRelatedTopicInputView.getInputText());
             topic.setIntroduction(mIntroduceInputView.getInputText());
-            topic.setCover(ListUtils.getSize(mTopicCoverList) > 0 ? mTopicCoverList.get(0).toString() : null);
+            topic.setCover(ListUtils.getSize(mTopicCoverList) > 0 ? mTopicCoverList.get(0).toString() : "");
         }
 
         showLoadingDialog(R.string.common_tip_on_publish);
@@ -328,11 +327,10 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
                 if (event.getCode() == Config.CODE_OK) {
                     DiscoverData discover = event.getData().getDiscover();
                     TopicData topic = event.getData().getTopic();
-                    int resId = topic == null ? R.string.fm_create_discover_tip_publish_success : R.string.fm_create_discover_tip_publish_and_topic_success;
-                    Toast.makeText(MyApplication.getAppContext(), resId, Toast.LENGTH_SHORT).show();
+                    toast(topic == null ? R.string.fm_create_discover_tip_publish_success : R.string.fm_create_discover_tip_publish_and_topic_success);
                     finish();
                 } else {
-                    Toast.makeText(MyApplication.getAppContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             default:

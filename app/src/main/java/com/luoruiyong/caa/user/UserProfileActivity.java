@@ -74,8 +74,6 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
         initView();
 
         handleIntent();
-
-        initFragment();
     }
 
     @Override
@@ -142,10 +140,16 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
             mIsSelf = true;
             mUser = Enviroment.getCurUser();
             bindUserData();
+            initFragment();
         } else {
             // 网络获取用户数据
             showLoadingView();
-            CommonFetcher.doFetchOtherUserDetail(mUid);
+            getWindow().getDecorView().post(new Runnable() {
+                @Override
+                public void run() {
+                    CommonFetcher.doFetchOtherUserDetail(mUid);
+                }
+            });
         }
     }
 
@@ -220,6 +224,12 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
     }
 
     @Override
+    protected void onRefreshClick() {
+        showLoadingView();
+        CommonFetcher.doFetchOtherUserDetail(mUid);
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_back:
@@ -249,10 +259,13 @@ public class UserProfileActivity extends BaseActivity implements View.OnClickLis
     public void onCommonEvent(CommonEvent<User> event) {
         switch (event.getType()) {
             case FETCH_USER_DETAIL:
+                hideTipView();
                 if (event.getCode() == Config.CODE_OK) {
-                    hideTipView();
                     mUser = event.getData();
                     bindUserData();
+                    initFragment();
+                } else if (event.getCode() == Config.CODE_REQUEST_ERROR){
+                    showErrorView(R.drawable.bg_no_network, event.getStatus());
                 } else {
                     showErrorView(R.drawable.bg_load_fail, event.getStatus());
                 }

@@ -23,7 +23,7 @@ import okhttp3.Request;
 /**
  * Author: luoruiyong
  * Date: 2019/4/14/014
- * Description: 公共的拉去简单数据的通用类
+ * Description: 公共的拉取简单数据的通用类
  **/
 public class CommonFetcher {
 
@@ -89,12 +89,21 @@ public class CommonFetcher {
         doFetch(RequestType.FETCH_SIMPLE_TOPIC_LIST, Config.URL_TOPIC_SIMPLE_LIST, params, new TypeToken<CommonEvent<List<TopicData>>>(){}.getType());
     }
 
+    /**
+     * 拉取热门的话题列表，在关联话题页面中使用
+     * @param requestCount
+     */
     public static void doFetchHotSimpleTopicList(int requestCount) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_REQUEST_COUNT, String.valueOf(requestCount));
         doFetch(RequestType.FETCH_HOT_SIMPLE_TOPIC_LIST, Config.URL_TOPIC_HOT_SIMPLE_LIST, params, new TypeToken<CommonEvent<List<TopicData>>>(){}.getType());
     }
 
+    /**
+     * 根据关键字拉取热门相关联的信息列表，包括用户/活动/话题/动态
+     * @param keyword
+     * @param requestCount
+     */
     public static void doFetchCompositeSearchList(String keyword, int requestCount) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_UID, String.valueOf(Enviroment.getCurUid()));
@@ -104,19 +113,13 @@ public class CommonFetcher {
                 new TypeToken<CommonEvent<CompositeSearchData>>(){}.getType());
     }
 
-    public static void doFetchCompositeSearchSimpleList(String keyword, int requestCount) {
-        Map<String, String> params = new HashMap<>();
-        params.put(Config.PARAM_KEY_KEYWORD, keyword);
-        params.put(Config.PARAM_KEY_REQUEST_COUNT, String.valueOf(requestCount));
-        doFetch(RequestType.FETCH_COMPOSITE_SEARCH_SIMPLE_TIP, Config.URL_SEARCH_COMPOSITE_SIMPLE, params, new TypeToken<CommonEvent<CompositeSearchData>>(){}.getType());
-    }
-
-    public static void doFetchCompositeHotList(int requestCount) {
-        Map<String, String> params = new HashMap<>();
-        params.put(Config.PARAM_KEY_REQUEST_COUNT, String.valueOf(requestCount));
-        doFetch(RequestType.FETCH_COMPOSITE_SEARCH_HOT_TIP, Config.URL_SEARCH_COMPOSITE_HOT, params, new TypeToken<CommonEvent<CompositeSearchData>>(){}.getType());
-    }
-
+    /**
+     * 发起拉取信息请求
+     * @param requestType
+     * @param url
+     * @param params
+     * @param reflectType
+     */
     public static void doFetch(RequestType requestType, String url, Map<String, String> params, Type reflectType) {
         Request request = HttpsUtils.buildGetRequestWithParams(url, params);
         HttpsUtils.sendCommonRequest(requestType, request, reflectType);

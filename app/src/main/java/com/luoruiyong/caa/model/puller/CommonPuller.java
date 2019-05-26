@@ -28,6 +28,10 @@ public class CommonPuller {
 
     private static final String TAG = "CommonPuller";
 
+    /**
+     * 消息列表中的更新操作
+     * @param firstId 列表中第一条消息的编号
+     */
     public static void refreshMessage(int firstId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_MESSAGE_ID, String.valueOf(firstId));
@@ -35,6 +39,10 @@ public class CommonPuller {
                 params, new TypeToken<PullFinishEvent<MessageData>>(){}.getType());
     }
 
+    /**
+     * 消息列表中的加载更多操作
+     * @param lastId 列表中最后一条消息的编号
+     */
     public static void loadMoreMessage(int lastId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_MESSAGE_ID, String.valueOf(lastId));
@@ -42,6 +50,11 @@ public class CommonPuller {
                 params, new TypeToken<PullFinishEvent<MessageData>>(){}.getType());
     }
 
+    /**
+     * 活动评论列表中的刷新操作
+     * @param activityId 目标活动的编号
+     * @param firstCommentId 列表中第一条评论的编号
+     */
     public static void refreshActivityComment(int activityId, int firstCommentId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_ACTIVITY_ID, String.valueOf(activityId));
@@ -50,6 +63,11 @@ public class CommonPuller {
                 params, new TypeToken<PullFinishEvent<CommentData>>(){}.getType());
     }
 
+    /**
+     * 活动评论列表中的加载更多操作
+     * @param activityId 目标活动的编号
+     * @param lastCommentId 列表中最后一条评论的编号
+     */
     public static void loadMoreActivityComment(int activityId, int lastCommentId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_ACTIVITY_ID, String.valueOf(activityId));
@@ -58,6 +76,12 @@ public class CommonPuller {
                 params, new TypeToken<PullFinishEvent<CommentData>>(){}.getType());
     }
 
+
+    /**
+     * 活动补充内容列表中的更新操作
+     * @param activityId 目标活动的编号
+     * @param firstAdditionId 列表中第一条补充内容的编号
+     */
     public static void refreshActivityAddition(int activityId, int firstAdditionId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_ACTIVITY_ID, String.valueOf(activityId));
@@ -66,6 +90,11 @@ public class CommonPuller {
                 params, new TypeToken<PullFinishEvent<AdditionData>>(){}.getType());
     }
 
+    /**
+     * 活动补充内容列表中的加载操作
+     * @param activityId 目标活动的编号
+     * @param lastAdditionId 列表中最后一条补充内容的编号
+     */
     public static void loadMoreActivityAddition(int activityId, int lastAdditionId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_ACTIVITY_ID, String.valueOf(activityId));
@@ -74,6 +103,11 @@ public class CommonPuller {
                 params, new TypeToken<PullFinishEvent<AdditionData>>(){}.getType());
     }
 
+    /**
+     * 动态评论列表中的更新操作
+     * @param discoverId 目标动态的编号
+     * @param firstCommentId 列表中第一条评论的编号
+     */
     public static void refreshDiscoverComment(int discoverId, int firstCommentId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_DISCOVER_ID, String.valueOf(discoverId));
@@ -82,6 +116,11 @@ public class CommonPuller {
                 params, new TypeToken<PullFinishEvent<CommentData>>(){}.getType());
     }
 
+    /**
+     * 动态评论列表中的加载更多操作
+     * @param discoverId 目标动态的编号
+     * @param lastCommentId 列表中最后一条评论的编号
+     */
     public static void loadMoreDiscoverComment(int discoverId, int lastCommentId) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_DISCOVER_ID, String.valueOf(discoverId));
@@ -90,6 +129,10 @@ public class CommonPuller {
                 params, new TypeToken<PullFinishEvent<CommentData>>(){}.getType());
     }
 
+    /**
+     * 关键字搜索用户列表中的更新操作
+     * @param keyword 关键字
+     */
     public static void refreshUserSearch(String keyword) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_KEYWORD, keyword);
@@ -98,6 +141,11 @@ public class CommonPuller {
                 params, new TypeToken<PullFinishEvent<User>>(){}.getType());
     }
 
+    /**
+     * 关键字搜索用户列表中的加载更多操作
+     * @param keyword 关键字
+     * @param offset 偏移量
+     */
     public static void loadMoreUserSearch(String keyword, int offset) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_KEYWORD, keyword);
@@ -106,12 +154,20 @@ public class CommonPuller {
                 params, new TypeToken<PullFinishEvent<User>>(){}.getType());
     }
 
-    public static void doPull(int pageId, int pullType, String url, Map<String, String> params, Type type) {
+    /**
+     * 发起列表数据拉取请求
+     * @param pageId 列表页面编号
+     * @param pullType 拉取方式
+     * @param url 请求接口
+     * @param params 请求参数
+     * @param reflectType 响应数据对于的Java类的类型
+     */
+    public static void doPull(int pageId, int pullType, String url, Map<String, String> params, Type reflectType) {
         params.put(Config.PARAM_KEY_PAGE_ID, String.valueOf(pageId));
         params.put(Config.PARAM_KEY_PULL_TYPE, String.valueOf(pullType));
         params.put(Config.PARAM_KEY_UID, String.valueOf(Enviroment.getCurUid()));
         params.put(Config.PARAM_KEY_REQUEST_COUNT, String.valueOf(DEFAULT_REQUEST_COUNT));
         Request request = HttpsUtils.buildGetRequestWithParams(url, params);
-        HttpsUtils.sendPullRequest(pageId, pullType, request, type);
+        HttpsUtils.sendPullRequest(pageId, pullType, request, reflectType);
     }
 }

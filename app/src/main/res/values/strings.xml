@@ -100,7 +100,7 @@
 <!--</resources>-->
 
 <resources>
-    <string name="app_name">校园宣传助手</string>
+    <string name="app_name">高校学生交流小助手</string>
 
     <!--公共文案-->
     <string name="common_str_tip">温馨提示</string>
@@ -155,14 +155,41 @@
     <string name="common_tip_request_error">网络异常，请稍后再试</string>
     <string name="common_tip_server_error">服务器异常</string>
     <string name="common_tip_no_data">没有找到相关内容，可能已经被删除</string>
+    <string name="common_tip_turn_back">返回上一页</string>
+    <string name="common_tip_no_more_new_data">暂无更多新数据</string>
     <string name="common_tip_no_related_content">无相关内容</string>
     <string name="common_tip_comment_success">评论成功</string>
     <string name="common_tip_addition_success">补充成功</string>
     <string name="common_tip_no_operation">没有可操作项</string>
 
+    <string name="common_tip_go_to_create_activity">去创建活动</string>
+    <string name="common_tip_go_to_create_topic">去创建话题</string>
+    <string name="common_tip_go_to_create_discover">去创建动态</string>
+    <string name="common_tip_add_comment">添加评论</string>
 
     <string name="common_tip_on_publish">正在发布，请稍后...</string>
     <string name="common_tip_on_submit">正在提交，请稍后...</string>
+
+    <string name="common_tip_no_activity_data">暂无相关活动数据</string>
+    <string name="common_tip_no_topic_data">暂无话题数据</string>
+    <string name="common_tip_no_discover_data">暂无动态数据</string>
+    <string name="common_tip_no_message_data">暂无消息数据</string>
+    <string name="common_tip_no_self_activity_data">你还没有发布过活动哦~</string>
+    <string name="common_tip_no_self_topic_data">你还没有创建过话题哦~</string>
+    <string name="common_tip_no_self_discover_data">你还没有发表过动态哦~</string>
+    <string name="common_tip_no_self_collect_data">你还没收藏过活动哦~</string>
+    <string name="common_tip_no_other_user_activity_data">TA还没发布过活动~</string>
+    <string name="common_tip_no_other_user_topic_data">TA还没创建过话题~</string>
+    <string name="common_tip_no_other_user_discover_data">TA还没发表过动态~</string>
+    <string name="common_tip_no_user_join_topic">暂无用户参与，赶紧抢沙发吧~</string>
+    <string name="common_tip_no_comment">暂无评论内容，赶紧抢沙发吧~</string>
+    <string name="common_tip_no_addition">没有补充的内容了~</string>
+    <string name="common_tip_no_related_activity">没有搜索到相关的活动~</string>
+    <string name="common_tip_no_related_user">没有搜索到相关的用户~</string>
+    <string name="common_tip_no_related_topic">没有搜索到相关的话题~</string>
+    <string name="common_tip_no_related_discover">没有搜索到相关的动态~</string>
+    <string name="common_tip_no_related_search_content">没有搜索到相关内容~</string>
+    <string name="common_tip_press_again_for_exit">再按一次退出应用</string>
 
     <!--保存图片相关文案-->
     <string name="common_image_load_fail">图片下载失败</string>
@@ -248,7 +275,7 @@
     <string name="fm_find_password_str_get_verification_code">获取验证码</string>
     <string name="fm_find_password_str_resend">重新发送</string>
     <string name="fm_find_password_tip_empty_cell_phone_number">手机号不能为空，请重新输入。</string>
-    <string name="fm_find_password_tip_empty_verify_code">验证码不能为空，请重新输入。.</string>
+    <string name="fm_find_password_tip_empty_verify_code">验证码不能为空，请重新输入。</string>
 
     <!--修改密码页面相关文案-->
     <string name="modify_password_str_original_password">原密码</string>

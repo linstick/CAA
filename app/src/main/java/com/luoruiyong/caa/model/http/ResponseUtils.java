@@ -1,12 +1,8 @@
 package com.luoruiyong.caa.model.http;
 
-import com.luoruiyong.caa.Config;
-import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.eventbus.CommonEvent;
 import com.luoruiyong.caa.eventbus.CommonOperateEvent;
-import com.luoruiyong.caa.eventbus.DetailFinishEvent;
 import com.luoruiyong.caa.eventbus.PullFinishEvent;
-import com.luoruiyong.caa.eventbus.UserFinishEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -16,7 +12,6 @@ import org.greenrobot.eventbus.EventBus;
  * Description:
  **/
 public class ResponseUtils {
-
 
     public static void handleCommonOperateFailEvent(int targetId, RequestType type, int code, String status) {
         CommonOperateEvent event = new CommonOperateEvent();

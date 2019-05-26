@@ -122,28 +122,32 @@ public class CompositeListAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position, @NonNull List payloads) {
         if (viewHolder instanceof ActivityItemViewHolder) {
-            ActivityItemViewHolder holder = (ActivityItemViewHolder) viewHolder;
             int realPosition = position;
             ActivityData data = mActivityList.get(realPosition);
-            holder.bindData(data, -1);
-            holder.itemView.setOnClickListener(mActivityViewListener);
-            holder.mUserAvatarIv.setOnClickListener(mActivityViewListener);
-            holder.mNicknameTv.setOnClickListener(mActivityViewListener);
-            holder.mTopicTv.setOnClickListener(mActivityViewListener);
-            holder.mCollectTv.setOnClickListener(mActivityViewListener);
-            holder.mCommentTv.setOnClickListener(mActivityViewListener);
-            holder.mMoreIv.setOnClickListener(mActivityViewListener);
-            holder.mImageViewLayout.setOnImageClickListener(mActivityViewListener);
-            holder.itemView.setTag(realPosition);
-            holder.mUserAvatarIv.setTag(realPosition);
-            holder.mNicknameTv.setTag(realPosition);
-            holder.mTopicTv.setTag(realPosition);
-            holder.mCollectTv.setTag(realPosition);
-            holder.mCommentTv.setTag(realPosition);
-            holder.mMoreIv.setTag(realPosition);
-            holder.mImageViewLayout.setTag(data);
+            ActivityItemViewHolder holder = (ActivityItemViewHolder) viewHolder;
+            if (ListUtils.isEmpty(payloads)) {
+                holder.bindData(data, -1);
+                holder.itemView.setOnClickListener(mActivityViewListener);
+                holder.mUserAvatarIv.setOnClickListener(mActivityViewListener);
+                holder.mNicknameTv.setOnClickListener(mActivityViewListener);
+                holder.mTopicTv.setOnClickListener(mActivityViewListener);
+                holder.mCollectTv.setOnClickListener(mActivityViewListener);
+                holder.mCommentTv.setOnClickListener(mActivityViewListener);
+                holder.mMoreIv.setOnClickListener(mActivityViewListener);
+                holder.mImageViewLayout.setOnImageClickListener(mActivityViewListener);
+                holder.itemView.setTag(realPosition);
+                holder.mUserAvatarIv.setTag(realPosition);
+                holder.mNicknameTv.setTag(realPosition);
+                holder.mTopicTv.setTag(realPosition);
+                holder.mCollectTv.setTag(realPosition);
+                holder.mCommentTv.setTag(realPosition);
+                holder.mMoreIv.setTag(realPosition);
+                holder.mImageViewLayout.setTag(data);
+            } else {
+                holder.onlyBindCollect(data);
+            }
         } else if (viewHolder instanceof UserViewHolder) {
             UserViewHolder holder = (UserViewHolder) viewHolder;
             holder.bindData(mUserList);
@@ -165,23 +169,27 @@ public class CompositeListAdapter extends RecyclerView.Adapter<RecyclerView.View
             int realPosition = position - getDiscoverOffset();
             DiscoverData data = mDiscoverList.get(realPosition);
             DiscoverItemViewHolder holder = (DiscoverItemViewHolder) viewHolder;
-            holder.bindData(data);
-            holder.itemView.setOnClickListener(mDiscoverViewListener);
-            holder.mUserAvatarIv.setOnClickListener(mDiscoverViewListener);
-            holder.mNicknameTv.setOnClickListener(mDiscoverViewListener);
-            holder.mMoreIv.setOnClickListener(mDiscoverViewListener);
-            holder.mTopicTv.setOnClickListener(mDiscoverViewListener);
-            holder.mLikeTv.setOnClickListener(mDiscoverViewListener);
-            holder.mCommentTv.setOnClickListener(mDiscoverViewListener);
-            holder.mImageViewLayout.setOnImageClickListener(mDiscoverViewListener);
-            holder.itemView.setTag(realPosition);
-            holder.mUserAvatarIv.setTag(realPosition);
-            holder.mNicknameTv.setTag(realPosition);
-            holder.mMoreIv.setTag(realPosition);
-            holder.mTopicTv.setTag(realPosition);
-            holder.mLikeTv.setTag(realPosition);
-            holder.mCommentTv.setTag(realPosition);
-            holder.mImageViewLayout.setTag(data);
+            if (ListUtils.isEmpty(payloads)) {
+                holder.bindData(data);
+                holder.itemView.setOnClickListener(mDiscoverViewListener);
+                holder.mUserAvatarIv.setOnClickListener(mDiscoverViewListener);
+                holder.mNicknameTv.setOnClickListener(mDiscoverViewListener);
+                holder.mMoreIv.setOnClickListener(mDiscoverViewListener);
+                holder.mTopicTv.setOnClickListener(mDiscoverViewListener);
+                holder.mLikeTv.setOnClickListener(mDiscoverViewListener);
+                holder.mCommentTv.setOnClickListener(mDiscoverViewListener);
+                holder.mImageViewLayout.setOnImageClickListener(mDiscoverViewListener);
+                holder.itemView.setTag(realPosition);
+                holder.mUserAvatarIv.setTag(realPosition);
+                holder.mNicknameTv.setTag(realPosition);
+                holder.mMoreIv.setTag(realPosition);
+                holder.mTopicTv.setTag(realPosition);
+                holder.mLikeTv.setTag(realPosition);
+                holder.mCommentTv.setTag(realPosition);
+                holder.mImageViewLayout.setTag(data);
+            } else {
+                holder.onlyBindLike(data);
+            }
         } else if (viewHolder instanceof TipViewHolder) {
             TipViewHolder holder = (TipViewHolder) viewHolder;
             String data;
@@ -202,6 +210,11 @@ public class CompositeListAdapter extends RecyclerView.Adapter<RecyclerView.View
             holder.bindData(data);
             holder.itemView.setOnClickListener(this);
         }
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+
     }
 
     @Override
@@ -250,23 +263,23 @@ public class CompositeListAdapter extends RecyclerView.Adapter<RecyclerView.View
         return TYPE_NONE;
     }
 
-    private TipViewHolder createTipViewHolder(ViewGroup parent, int type) {
+    public TipViewHolder createTipViewHolder(ViewGroup parent, int type) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_tips, parent, false);
         TipViewHolder holder = new TipViewHolder(view);
         holder.itemView.setTag(type);
         return holder;
     }
 
-    private int getUserOffset() {
+    public int getUserOffset() {
         int activityCount = ListUtils.getSize(mActivityList);
         return activityCount + (activityCount == Config.COMPOSITE_SEARCH_REQUEST_COUNT ? 1 : 0);
     }
 
-    private int getTopicOffset() {
+    public int getTopicOffset() {
         return getUserOffset() + (ListUtils.isEmpty(mUserList) ? 0 : 1);
     }
 
-    private int getDiscoverOffset() {
+    public int getDiscoverOffset() {
         int topicCount = ListUtils.getSize(mTopicList);
         return getTopicOffset() + topicCount +  (topicCount == Config.COMPOSITE_SEARCH_REQUEST_COUNT ? 1 : 0);
 }

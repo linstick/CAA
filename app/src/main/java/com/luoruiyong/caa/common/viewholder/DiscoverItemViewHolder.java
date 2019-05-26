@@ -88,4 +88,11 @@ public class DiscoverItemViewHolder extends RecyclerView.ViewHolder {
             mImageViewLayout.setVisibility(View.GONE);
         }
     }
+
+    public void onlyBindLike(DiscoverData data) {
+        mLikeTv.setSelected(data.isHasLike());
+        mTopLikeTv.setSelected(data.isHasLike());
+        mLikeTv.setText(data.getLikeCount() == 0 ? ResourcesUtils.getString(R.string.common_str_like) : data.getLikeCount() + "");
+        mTopLikeTv.setText(data.getLikeCount() == 0 ? ResourcesUtils.getString(R.string.common_str_like) : data.getLikeCount() + "");
+    }
 }

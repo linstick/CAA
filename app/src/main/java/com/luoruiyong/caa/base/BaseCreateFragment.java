@@ -1,26 +1,13 @@
-package com.luoruiyong.caa.edit;
+package com.luoruiyong.caa.base;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.widget.Toast;
 
 import com.luoruiyong.caa.R;
-import com.luoruiyong.caa.base.BaseFragment;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.utils.DialogHelper;
 
-import java.security.Permission;
-
-import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 /**
  * Author: luoruiyong
@@ -68,12 +55,5 @@ public class BaseCreateFragment extends BaseFragment {
                 })
                 .build()
                 .show();
-    }
-
-    protected void finish() {
-        Activity activity = getActivity();
-        if (activity != null && !activity.isFinishing()) {
-            activity.finish();
-        }
     }
 }

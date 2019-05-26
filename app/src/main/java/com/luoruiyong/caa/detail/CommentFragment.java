@@ -8,14 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
-import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
+import com.luoruiyong.caa.common.adapter.LoadMoreSupportAdapter;
 import com.luoruiyong.caa.bean.CommentData;
 import com.luoruiyong.caa.eventbus.CommonOperateEvent;
 import com.luoruiyong.caa.model.CommonTargetOperator;
@@ -40,6 +39,7 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
     private static final String TAG = "CommentFragment";
 
     private int mTargetId;
+    private OnAddCommentClickListener mListener;
 
     public static CommentFragment newInstance(int type, int id) {
         CommentFragment fm = new CommentFragment();
@@ -48,6 +48,10 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
         bundle.putInt(KEY_TARGET_ID, id);
         fm.setArguments(bundle);
         return fm;
+    }
+
+    public void setOnAddCommentClickListener(OnAddCommentClickListener listener) {
+        this.mListener = listener;
     }
 
     @Override
@@ -97,14 +101,25 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
         if (!ListUtils.isEmpty(mList)) {
             return mList.get(mList.size() - 1).getId();
         }
-        return Config.DEFAULT_FRIST_OR_LAST_ID;
+        return Config.DEFAULT_FIRST_OR_LAST_ID;
     }
 
     private int getLastId() {
         if (!ListUtils.isEmpty(mList)) {
             return mList.get(mList.size() - 1).getId();
         }
-        return Config.DEFAULT_FRIST_OR_LAST_ID;
+        return Config.DEFAULT_FIRST_OR_LAST_ID;
+    }
+
+    @Override
+    protected void onRefreshClick() {
+        if (mIsNoData && (mPageId == Config.PAGE_ID_ACTIVITY_COMMENT || mPageId == Config.PAGE_ID_DISCOVER_COMMENT)) {
+            if (mListener != null) {
+                mListener.onAddCommentClick();
+            }
+        } else {
+            super.onRefreshClick();
+        }
     }
 
     @Override
@@ -154,7 +169,7 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
                     initAdapterIfNeed();
                     mAdapter.notifyDataSetChanged();
                 } else {
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             case DELETE_ACTIVITY_COMMENT:
@@ -169,10 +184,10 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
                         }
                     }
                     if (ListUtils.isEmpty(mList)) {
-                        showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_related_content));
+                        showErrorView(Enviroment.getNoDataTipByPageId(mPageId));
                     }
                 } else {
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             default:
@@ -214,7 +229,7 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
                     @Override
                     public boolean onLongClick(View v) {
                         if (Enviroment.isVisitor()) {
-                            Toast.makeText(getContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                            toast(R.string.fm_login_tip_login_before);
                             return false;
                         }
                         int itemPosition = (int) v.getTag();
@@ -267,5 +282,9 @@ public class CommentFragment extends BaseSwipeFragment<CommentData> {
                 mContentTv.setText(data.getContent());
             }
         }
+    }
+
+    public interface OnAddCommentClickListener {
+        void onAddCommentClick();
     }
 }

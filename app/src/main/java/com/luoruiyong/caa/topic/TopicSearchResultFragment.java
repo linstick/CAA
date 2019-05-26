@@ -12,20 +12,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseFragment;
-import com.luoruiyong.caa.base.BaseSwipeFragment;
 import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.eventbus.CommonEvent;
-import com.luoruiyong.caa.model.CommonChecker;
 import com.luoruiyong.caa.model.CommonFetcher;
-import com.luoruiyong.caa.model.http.ResponseUtils;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.PageUtils;
-import com.luoruiyong.caa.utils.ResourcesUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

@@ -1,17 +1,22 @@
 package com.luoruiyong.caa.base;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.Settings;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.view.View;
 import android.view.ViewStub;
+import android.widget.Toast;
 
+import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.common.callback.OnPermissionCallback;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.widget.TipView;
 
@@ -31,6 +36,12 @@ public class BaseFragment extends Fragment {
     protected ViewStub mErrorTipViewStub;
     protected TipView mTipView;
     private boolean mRefreshNeedHide;
+
+    // 提示控件是否展示，在ViewPager中使用左右滑动会出现Fragment回收重新创建等情况
+    private @DrawableRes int mTipImageResId = R.drawable.bg_load_fail;
+    private String mTipContent;
+    private String mRefreshText;
+    protected boolean mHasTipViewShow = false;
 
     protected void setUpErrorViewStub(ViewStub viewStub) {
         mErrorTipViewStub = viewStub;
@@ -56,34 +67,41 @@ public class BaseFragment extends Fragment {
     }
 
     protected void showErrorView() {
-        initErrorViewIfNeed();
-        mTipView.showError();
+        showErrorView(mTipImageResId, mTipContent, mRefreshText);
     }
 
     protected void showErrorView(String info) {
-        initErrorViewIfNeed();
-        mTipView.showError(info);
+        showErrorView(info, getString(R.string.common_str_refresh));
+    }
+
+    protected void showErrorView(String info, String refreshText) {
+        showErrorView(R.drawable.bg_load_fail, info, refreshText);
     }
 
     protected void showErrorView(int imageResId, String info) {
-        initErrorViewIfNeed();
-        mTipView.showError(imageResId, info);
+        showErrorView(imageResId, info, getString(R.string.common_str_refresh));
     }
 
     protected void showErrorView(int imageResId, String info, String refreshText) {
         initErrorViewIfNeed();
+        mTipImageResId = imageResId;
+        mTipContent = info;
+        mRefreshText = refreshText;
         mTipView.showError(imageResId, info, refreshText);
+        mHasTipViewShow = true;
     }
 
     protected void showLoadingView() {
         initErrorViewIfNeed();
         mTipView.showProgressBar();
+        mHasTipViewShow = true;
     }
 
     protected void hideTipView() {
         if (mTipView != null) {
             mTipView.hide();
         }
+        mHasTipViewShow = false;
     }
 
     private void initErrorViewIfNeed() {
@@ -208,10 +226,33 @@ public class BaseFragment extends Fragment {
     }
 
     protected void onRefreshClick() {
-
+        if (!mRefreshNeedHide) {
+            mTipView.showProgressBar();
+        } else {
+            mTipView.hide();
+        }
     }
 
-    protected void doRefresh() {
+    protected void toast(String text) {
+        Toast.makeText(MyApplication.getAppContext(), text, Toast.LENGTH_SHORT).show();
+    }
 
+    protected void toast(@StringRes int resId) {
+        toast(getString(resId));
+    }
+
+    protected void longToast(String text) {
+        Toast.makeText(MyApplication.getAppContext(), text, Toast.LENGTH_LONG).show();
+    }
+
+    protected void longToast(@StringRes int resId) {
+        longToast(getString(resId));
+    }
+
+    protected void finish() {
+        Activity activity = getActivity();
+        if (activity != null && !activity.isFinishing()) {
+            activity.finish();
+        }
     }
 }

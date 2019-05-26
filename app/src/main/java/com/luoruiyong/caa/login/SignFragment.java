@@ -15,13 +15,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.base.BaseFragment;
 import com.luoruiyong.caa.eventbus.CommonEvent;
 import com.luoruiyong.caa.model.CommonChecker;
 import com.luoruiyong.caa.utils.KeyboardUtils;
@@ -34,7 +33,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 
-public class SignFragment extends Fragment implements View.OnClickListener{
+public class SignFragment extends BaseFragment implements View.OnClickListener{
 
     private final int CHOOSE_AVATAR_REQUEST_CODE = 1;
 
@@ -135,7 +134,7 @@ public class SignFragment extends Fragment implements View.OnClickListener{
 
     private void checkAndSignUp() {
         if (mHasCheckAccount && mIsAccountExists) {
-            Toast.makeText(getContext(), getString(R.string.fm_sign_tip_account_exist), Toast.LENGTH_SHORT).show();
+            toast(R.string.fm_sign_tip_account_exist);
             return;
         }
         String account = mAccountEt.getText().toString().trim();
@@ -143,23 +142,23 @@ public class SignFragment extends Fragment implements View.OnClickListener{
         String password = mPasswordEt.getText().toString().trim();
         String confirmPassword = mConfirmPasswordEt.getText().toString().trim();
         if (TextUtils.isEmpty(account)) {
-            Toast.makeText(getContext(), getString(R.string.fm_sign_tip_sign_up_success), Toast.LENGTH_SHORT).show();
+            toast(R.string.fm_sign_tip_sign_up_success);
             return;
         }
         if (TextUtils.isEmpty(nickname)) {
-            Toast.makeText(getContext(), getString(R.string.fm_sign_tip_empty_nickname), Toast.LENGTH_SHORT).show();
+            toast(R.string.fm_sign_tip_empty_nickname);
             return;
         }
         if (TextUtils.isEmpty(password)) {
-            Toast.makeText(getContext(), getString(R.string.fm_sign_tip_empty_password), Toast.LENGTH_SHORT).show();
+            toast(R.string.fm_sign_tip_empty_password);
             return;
         }
         if (TextUtils.isEmpty(confirmPassword)) {
-            Toast.makeText(getContext(), getString(R.string.fm_sign_tip_empty_confirm_password), Toast.LENGTH_SHORT).show();
+            toast(R.string.fm_sign_tip_empty_confirm_password);
             return;
         }
         if (!TextUtils.equals(password, confirmPassword)) {
-            Toast.makeText(getContext(), getString(R.string.fm_sign_tip_different_password), Toast.LENGTH_SHORT).show();
+            toast(R.string.fm_sign_tip_different_password);
             return;
         }
         if (mCallBack != null) {

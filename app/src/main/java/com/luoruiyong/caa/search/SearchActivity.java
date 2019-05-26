@@ -5,34 +5,20 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
-import com.luoruiyong.caa.bean.CompositeSearchData;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.common.fragment.SwipeActivityFragment;
 import com.luoruiyong.caa.common.fragment.SwipeDiscoverFragment;
 import com.luoruiyong.caa.common.fragment.SwipeTopicFragment;
-import com.luoruiyong.caa.eventbus.CommonEvent;
-import com.luoruiyong.caa.model.CommonFetcher;
 import com.luoruiyong.caa.utils.KeyboardUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
-
-import org.greenrobot.eventbus.EventBus;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SearchActivity extends BaseActivity implements
         View.OnClickListener,
@@ -107,7 +93,7 @@ public class SearchActivity extends BaseActivity implements
 
     private void checkAndSearch(String keyword) {
         if (TextUtils.isEmpty(keyword)) {
-            Toast.makeText(this, getString(R.string.search_tip_empty_search_input), Toast.LENGTH_SHORT).show();
+            toast(R.string.search_tip_empty_search_input);
             return;
         }
         // do search

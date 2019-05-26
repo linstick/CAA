@@ -11,7 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
@@ -24,7 +23,10 @@ import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.eventbus.CommonEvent;
+import com.luoruiyong.caa.eventbus.CommonOperateEvent;
+import com.luoruiyong.caa.login.LoginActivity;
 import com.luoruiyong.caa.model.CommonFetcher;
+import com.luoruiyong.caa.model.CommonTargetOperator;
 import com.luoruiyong.caa.search.adapter.CompositeListAdapter;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.utils.DialogHelper;
@@ -52,6 +54,7 @@ public class CompositeFragment extends BaseFragment {
     private SwipeRefreshLayout mRefreshLayout;
     private RecyclerView mRecyclerView;
     private CompositeListAdapter mAdapter;
+    private LinearLayoutManager mLayoutManager;
 
     private String mKeyword;
     private List<User> mUserList;
@@ -121,7 +124,8 @@ public class CompositeFragment extends BaseFragment {
         mAdapter.setOnDiscoverViewClickListener(new OnDiscoverViewClickListener());
         mAdapter.setOnMoreViewClickListener(new OnMoreViewClickListenerImpl());
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
         setUpErrorViewStub(view.findViewById(R.id.vs_error_view));
@@ -137,6 +141,71 @@ public class CompositeFragment extends BaseFragment {
         hideTipView();
         // 请求综合搜索数据
         CommonFetcher.doFetchCompositeSearchList(keyword, Config.COMPOSITE_SEARCH_REQUEST_COUNT);
+    }
+
+    private void doCollect(ActivityData data, int position) {
+        // 收藏时先修改本地的数量，等请求结果回来时，如果收藏失败(几率比较小)，再把数据修改回来
+        boolean isCollect = !data.isHasCollect();
+        data.setHasCollect(isCollect);
+        data.setCollectCount(data.getCollectCount() + (isCollect ? 1 : -1));
+        mAdapter.notifyItemChanged(position, 0);
+        CommonTargetOperator.doCollectActivity(data.getId(), isCollect);
+    }
+
+    private void rollbackCollectData(int targetId) {
+        int i = 0;
+        for (ActivityData data : mActivityList) {
+            if (data.getId() == targetId) {
+                boolean isCollect = !data.isHasCollect();
+                data.setHasCollect(isCollect);
+                data.setCollectCount(data.getCollectCount() + (isCollect ? 1 : -1));
+                if (isItemVisible(i)) {
+                    mAdapter.notifyItemChanged(i, 0);
+                }
+                break;
+            }
+            i++;
+        }
+    }
+
+    private void doLike(DiscoverData data, int position) {
+        // 点赞时先修改本地的数量，等请求结果回来时，如果点赞失败(几率比较小)，再把数据修改回来
+        boolean isLike = !data.isHasLike();
+        data.setHasLike(isLike);
+        data.setLikeCount(data.getLikeCount() + (isLike ? 1 : -1));
+        mAdapter.notifyItemChanged(position, 0);
+        CommonTargetOperator.doLikeDiscover(data.getId(), isLike);
+    }
+
+    private void rollbackLikeData(int targetId) {
+        int i = 0;
+        for (DiscoverData data : mDiscoverList) {
+            if (data.getId() == targetId) {
+                // 反向操作
+                boolean isLike = !data.isHasLike();
+                data.setHasLike(isLike);
+                data.setLikeCount(data.getLikeCount() + (isLike ? 1 : -1));
+                int position = i + mAdapter.getDiscoverOffset();
+                if (isItemVisible(position)) {
+                    mAdapter.notifyItemChanged(position, 0);
+                }
+                break;
+            }
+            i++;
+        }
+    }
+
+    private boolean isItemVisible(int position) {
+        return mLayoutManager.findFirstVisibleItemPosition() <= position && mLayoutManager.findLastVisibleItemPosition() >= position;
+    }
+
+    private boolean checkLoginIfNeed() {
+        if (Enviroment.isVisitor()) {
+            toast(R.string.fm_login_tip_login_before);
+            LoginActivity.startAction(getContext(), LoginActivity.LOGIN_TAB);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -171,6 +240,36 @@ public class CompositeFragment extends BaseFragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommonOperateEvent(CommonOperateEvent event) {
+        switch (event.getType()) {
+            case COLLECT_ACTIVITY:
+                if (event.getCode() == Config.CODE_OK) {
+                    // 收藏成功
+                    // do nothing
+                } else {
+                    // 收藏失败，需要回滚收藏数据
+                    int activity_id = event.getTargetId();
+                    rollbackCollectData(activity_id);
+                    toast(event.getStatus());
+                }
+                break;
+            case LIKE_DISCOVER:
+                if (event.getCode() == Config.CODE_OK) {
+                    // 点赞成功
+                    // do nothing
+                } else {
+                    // 点赞失败，需要回滚点赞数据
+                    int discover_id = event.getTargetId();
+                    rollbackLikeData(discover_id);
+                    toast(event.getStatus());
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCommonEvent(CommonEvent<CompositeSearchData> event) {
         switch (event.getType()) {
             case FETCH_COMPOSITE_SEARCH_LIST:
@@ -182,8 +281,12 @@ public class CompositeFragment extends BaseFragment {
                     mDiscoverList.addAll(data.getDiscovers());
                     mTopicList.addAll(data.getTopics());
                     mAdapter.notifyDataSetChanged();
+                } else if (event.getCode() == Config.CODE_NO_DATA) {
+                    showErrorView(getString(R.string.common_tip_no_related_search_content), null);
+                } else if (event.getCode() == Config.CODE_REQUEST_ERROR) {
+                    showErrorView(R.drawable.bg_no_network, getString(R.string.common_tip_no_network));
                 } else {
-                    showErrorView(R.drawable.bg_load_fail, event.getStatus());
+                    showErrorView(event.getStatus());
                 }
                 break;
             default:
@@ -215,13 +318,19 @@ public class CompositeFragment extends BaseFragment {
                     PageUtils.gotoTopicPage(getContext(), data.getTopicId());
                     break;
                 case R.id.tv_collect:
-                    Toast.makeText(getContext(), "click collect", Toast.LENGTH_SHORT).show();
+                    if (!checkLoginIfNeed()) {
+                        doCollect(data, position);
+                    }
                     break;
                 case R.id.tv_comment:
-                    PageUtils.gotoActivityDetailPage(getContext(), data, true);
+                    if (!checkLoginIfNeed()) {
+                        PageUtils.gotoActivityDetailPage(getContext(), data, true);
+                    }
                     break;
                 case R.id.tv_more:
-                    showMoreOperateDialog(mActivityList.get(position));
+                    if (!checkLoginIfNeed()) {
+                        showMoreOperateDialog(mActivityList.get(position));
+                    }
                     break;
                 default:
                     break;
@@ -246,7 +355,9 @@ public class CompositeFragment extends BaseFragment {
                     PageUtils.gotoTopicPage(getContext(), data.getId());
                     break;
                 case R.id.iv_more:
-                    showMoreOperateDialog(data);
+                    if (!checkLoginIfNeed()) {
+                        showMoreOperateDialog(data);
+                    }
                     break;
                 default:
                     break;
@@ -275,16 +386,22 @@ public class CompositeFragment extends BaseFragment {
                     PageUtils.gotoUserProfilePage(getContext(), data.getUid());
                     break;
                 case R.id.iv_more:
-                    showMoreOperateDialog(data);
+                    if (!checkLoginIfNeed()) {
+                        showMoreOperateDialog(data);
+                    }
                     break;
                 case R.id.tv_topic:
                     PageUtils.gotoTopicPage(getContext(), data.getTopicId());
                     break;
                 case R.id.tv_like:
-                    Toast.makeText(getContext(), "click collect", Toast.LENGTH_SHORT).show();
+                    if (!checkLoginIfNeed()) {
+                        doLike(data, position + mAdapter.getDiscoverOffset());
+                    }
                     break;
                 case R.id.tv_comment:
-                    PageUtils.gotoActivityDetailPage(getContext(), data, true);
+                    if (!checkLoginIfNeed()) {
+                        PageUtils.gotoActivityDetailPage(getContext(), data, true);
+                    }
                     break;
                 default:
                     break;

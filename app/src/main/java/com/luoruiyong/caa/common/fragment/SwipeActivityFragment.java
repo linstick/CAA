@@ -7,15 +7,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
-import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
+import com.luoruiyong.caa.common.adapter.LoadMoreSupportAdapter;
 import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
+import com.luoruiyong.caa.edit.EditorActivity;
 import com.luoruiyong.caa.eventbus.CommonOperateEvent;
 import com.luoruiyong.caa.model.CommonTargetOperator;
 import com.luoruiyong.caa.model.bean.GlobalSource;
@@ -31,7 +31,6 @@ import com.luoruiyong.caa.widget.imageviewlayout.ImageViewLayout;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -125,14 +124,14 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivityData> {
         if (!ListUtils.isEmpty(mList)) {
             return mList.get(0).getId();
         }
-        return Config.DEFAULT_FRIST_OR_LAST_ID;
+        return Config.DEFAULT_FIRST_OR_LAST_ID;
     }
 
     private int getLastId() {
         if (!ListUtils.isEmpty(mList)) {
             return mList.get(mList.size() - 1).getId();
         }
-        return Config.DEFAULT_FRIST_OR_LAST_ID;
+        return Config.DEFAULT_FIRST_OR_LAST_ID;
     }
 
     @Override
@@ -141,10 +140,6 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivityData> {
     }
 
     private void doCollect(ActivityData data, int position) {
-        if (Enviroment.isVisitor()) {
-            Toast.makeText(getContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
-            return;
-        }
         // 收藏时先修改本地的数量，等请求结果回来时，如果收藏失败(几率比较小)，再把数据修改回来
         boolean isCollect = !data.isHasCollect();
         data.setHasCollect(isCollect);
@@ -170,8 +165,17 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivityData> {
     }
 
     @Override
+    protected void onRefreshClick() {
+        if (mIsNoData && mPageId == Config.PAGE_ID_ACTIVITY_SELF) {
+            EditorActivity.startAction(getContext(), EditorActivity.TAB_CREATE_ACTIVITY);
+        } else {
+            super.onRefreshClick();
+        }
+    }
+
+    @Override
     protected void doRefresh() {
-        LogUtils.d(TAG, "doRefreshClick: " + mPageId);
+        LogUtils.d(TAG, "onRefreshClick: " + mPageId);
         mRefreshLayout.setRefreshing(true);
         if (mPageId == Config.PAGE_ID_ACTIVITY_ALL) {
             ActivityPuller.refreshAll(getFirstId());
@@ -226,7 +230,7 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivityData> {
                     // 收藏失败，需要回滚收藏数据
                     int activity_id = event.getTargetId();
                     rollbackCollectData(activity_id);
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             default:
@@ -245,12 +249,13 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivityData> {
                         ListUtils.deleteActivityItem(mList, event.getData());
                     }
                     mAdapter.notifyDataSetChanged();
-                    Toast.makeText(getContext(), R.string.common_str_delete_success, Toast.LENGTH_SHORT).show();
+                    toast(R.string.common_str_delete_success);
                     if (ListUtils.isEmpty(mList)) {
-                        showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_related_content));
+                        mIsNoData = true;
+                        showErrorView(Enviroment.getNoDataTipByPageId(mPageId), Enviroment.getNoDataOperateTipByPageId(mPageId));
                     }
                 } else {
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             default:
@@ -333,21 +338,19 @@ public class SwipeActivityFragment extends BaseSwipeFragment<ActivityData> {
                    PageUtils.gotoTopicPage(getContext(), data.getTopicId());
                     break;
                 case R.id.tv_collect:
-                    doCollect(data, position);
+                    if (!checkLoginIfNeed()) {
+                        doCollect(data, position);
+                    }
                     break;
                 case R.id.tv_comment:
-                    if (Enviroment.isVisitor()) {
-                        Toast.makeText(getContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
-                        return;
+                    if (!checkLoginIfNeed()) {
+                        PageUtils.gotoActivityDetailPage(getContext(), data, true);
                     }
-                    PageUtils.gotoActivityDetailPage(getContext(), data, true);
                     break;
                 case R.id.tv_more:
-                    if (Enviroment.isVisitor()) {
-                        Toast.makeText(getContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
-                        return;
+                    if (!checkLoginIfNeed()) {
+                        showMoreOperateDialog(position, data.getUid());
                     }
-                    showMoreOperateDialog(position, data.getUid());
                     break;
                 default:
                     break;

@@ -30,7 +30,9 @@
         app:type="input"
         app:labelText="@string/common_str_introduce"
         app:minLines="3"
-        app:maxLines="5"/>
+        app:maxLines="5"
+        app:nullable="false"
+        app:errorText="@string/common_tip_no_empty"/>
 
     <com.luoruiyong.caa.widget.dynamicinputview.DynamicInputView
         android:id="@+id/input_view_topic_cover"

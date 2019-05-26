@@ -38,8 +38,8 @@ public class CommonPoster {
 
     /**
      * 用户登录
-     * @param account
-     * @param password
+     * @param account 账号
+     * @param password 密码
      */
     public static void doLogin(String account, String password) {
         Map<String, String> params = new HashMap<>();
@@ -51,10 +51,10 @@ public class CommonPoster {
 
     /**
      * 用户注册
-     * @param account
-     * @param nickname
-     * @param password
-     * @param avatarPath
+     * @param account 账号
+     * @param nickname 昵称
+     * @param password 密码
+     * @param avatarPath 头像资源文件路径，可为空
      */
     public static void doSignUp(String account, String nickname, String password, String avatarPath) {
         Map<String, String> params = new HashMap<>();
@@ -79,8 +79,8 @@ public class CommonPoster {
 
     /**
      * 修改用户资料
-     * @param user
-     * @param avatarPath
+     * @param user 修改之后的用户信息
+     * @param avatarPath 修改之后的用户头像本地路径
      */
     public static void doModifyProfile(User user, String avatarPath) {
         Map<String, String> params = new HashMap<>();
@@ -112,8 +112,8 @@ public class CommonPoster {
 
     /**
      * 修改用户密码
-     * @param password
-     * @param newPassword
+     * @param password  原密码
+     * @param newPassword 新密码
      */
     public static void doModifyPassword(String password, String newPassword) {
         Map<String, String> params = new HashMap<>();
@@ -125,8 +125,8 @@ public class CommonPoster {
 
     /**
      * 创建活动（可能会同时创建一个关联话题）
-     * @param activity
-     * @param topic
+     * @param activity  带创建的活动信息
+     * @param topic 待创建活动所关联的话题信息，可为空
      */
     public static void doCreateActivity(ActivityData activity, TopicData topic) {
         Map<String, String> params = new HashMap<>();
@@ -160,7 +160,7 @@ public class CommonPoster {
 
     /**
      * 创建话题
-     * @param topic
+     * @param topic 待创建的话题信息
      */
     public static void doCreateTopic(TopicData topic) {
         Map<String, String> params = new HashMap<>();
@@ -181,8 +181,8 @@ public class CommonPoster {
 
     /**
      * 创建动态（可能会同时创建一个关联话题）
-     * @param discover
-     * @param topic
+     * @param discover 待创建的动态信息
+     * @param topic 待创建的动态所关联的话题信息
      */
     public static void doCreateDiscover(DiscoverData discover, TopicData topic) {
         Map<String, String> params = new HashMap<>();
@@ -214,6 +214,10 @@ public class CommonPoster {
         }
     }
 
+    /**
+     * 用户反馈
+     * @param data 反馈信息
+     */
     public static void doFeedback(Feedback data) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_UID, String.valueOf(Enviroment.getCurUid()));
@@ -232,6 +236,10 @@ public class CommonPoster {
         }
     }
 
+    /**
+     * 举报
+     * @param data 举报信息
+     */
     public static void doImpeach(ImpeachData data) {
         Map<String, String> params = new HashMap<>();
         params.put(Config.PARAM_KEY_UID, String.valueOf(Enviroment.getCurUid()));
@@ -254,6 +262,13 @@ public class CommonPoster {
         doPost(requestType, url, params, CommonEvent.class);
     }
 
+    /**
+     * 提交表单
+     * @param requestType 请求功能类型
+     * @param url 请求的接口
+     * @param params 请求的参数
+     * @param reflectType 响应结果数据所对应的Java类的类型
+     */
     public static void doPost(RequestType requestType, String url, Map<String, String> params, Type reflectType) {
         Request request = HttpsUtils.buildPostRequestWithParams(url, params);
         HttpsUtils.sendCommonRequest(requestType, request, reflectType);

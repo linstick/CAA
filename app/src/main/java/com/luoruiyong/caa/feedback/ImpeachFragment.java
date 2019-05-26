@@ -9,13 +9,10 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
-import com.luoruiyong.caa.Enviroment;
-import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
-import com.luoruiyong.caa.base.OnPermissionCallback;
+import com.luoruiyong.caa.common.callback.OnPermissionCallback;
 import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.bean.CommentData;
 import com.luoruiyong.caa.bean.DiscoverData;
@@ -24,8 +21,7 @@ import com.luoruiyong.caa.bean.ImageBean;
 import com.luoruiyong.caa.bean.ImpeachData;
 import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.bean.User;
-import com.luoruiyong.caa.edit.BaseCreateFragment;
-import com.luoruiyong.caa.edit.CreateActivityFragment;
+import com.luoruiyong.caa.base.BaseCreateFragment;
 import com.luoruiyong.caa.edit.EditorActivity;
 import com.luoruiyong.caa.eventbus.CommonEvent;
 import com.luoruiyong.caa.model.CommonPoster;
@@ -309,19 +305,19 @@ public class ImpeachFragment extends BaseCreateFragment implements
             case FEEDBACK:
                 hideLoadingDialog();
                 if (event.getCode() == Config.CODE_OK) {
-                    Toast.makeText(MyApplication.getAppContext(), R.string.feedback_tip_feedback_success, Toast.LENGTH_SHORT).show();
+                    toast(R.string.feedback_tip_feedback_success);
                     finish();
                 } else {
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             case IMPEACH:
                 hideLoadingDialog();
                 if (event.getCode() == Config.CODE_OK) {
-                    Toast.makeText(MyApplication.getAppContext(), R.string.feedback_tip_impeach_success, Toast.LENGTH_LONG).show();
+                    toast(R.string.feedback_tip_impeach_success);
                     finish();
                 } else {
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             default:

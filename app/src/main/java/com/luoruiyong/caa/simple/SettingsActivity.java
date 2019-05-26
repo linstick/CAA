@@ -5,10 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.luoruiyong.caa.Enviroment;
-import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.bean.Function;
@@ -78,17 +76,17 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
         if (mCacheSize > 0) {
             FileUtils.deleteFiles(new File(Enviroment.getCacheFolder()));
             mCacheSize = 0;
-            mFunctionContainer.hideRightInfo(position);
-            Toast.makeText(this, R.string.settings_tip_clear_success, Toast.LENGTH_SHORT).show();
+            mFunctionContainer.showRightInfo(2, FileUtils.formatFileSize(mCacheSize));
+            toast(R.string.settings_tip_clear_success);
         } else {
-            Toast.makeText(this, R.string.settings_tip_no_cache_data, Toast.LENGTH_SHORT).show();
+            toast(R.string.settings_tip_no_cache_data);
         }
     }
 
     private void doLogout() {
         Enviroment.clearCurUser();
         EventBus.getDefault().postSticky(LoginStateChangedEvent.LOGOUT_SUCCESS);
-        Toast.makeText(MyApplication.getAppContext(), getString(R.string.settings_str_has_logout), Toast.LENGTH_SHORT).show();
+        toast(R.string.settings_str_has_logout);
         finish();
     }
 

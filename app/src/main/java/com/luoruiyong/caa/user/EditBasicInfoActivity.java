@@ -9,17 +9,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
-import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.bean.ImageBean;
@@ -43,8 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EditBasicInfoActivity extends BaseActivity implements View.OnClickListener{
-
-    private final static int CHOOSE_PICTURE_REQUEST_CODE = 1;
 
     private TextView mTitleTv;
     private TextView mFinishTv;
@@ -171,7 +166,7 @@ public class EditBasicInfoActivity extends BaseActivity implements View.OnClickL
         if (position == 0) {
             showChoosePictureTypeDialog();
         } else if (position == 1) {
-            Toast.makeText(this, R.string.modify_profile_tip_can_no_modify_id, Toast.LENGTH_SHORT).show();
+            toast(R.string.modify_profile_tip_can_no_modify_id);
         } else {
             UserBasicMap data = mList.get(position);
             CommonDialog dialog = new CommonDialog.Builder(this)
@@ -281,10 +276,10 @@ public class EditBasicInfoActivity extends BaseActivity implements View.OnClickL
                 }
                 if (event.getCode() == Config.CODE_OK) {
                     Enviroment.setCurUser(event.getData());
-                    Toast.makeText(MyApplication.getAppContext(), R.string.modify_profile_tip_modify_success, Toast.LENGTH_SHORT).show();
+                    toast(R.string.modify_profile_tip_modify_success);
                     finish();
                 } else {
-                    Toast.makeText(this, event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
         }

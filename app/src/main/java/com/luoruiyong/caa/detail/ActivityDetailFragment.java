@@ -15,16 +15,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
-import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseFragment;
 import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.bean.ActivityDynamicData;
-import com.luoruiyong.caa.bean.CommentData;
 import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.common.viewholder.ActivityItemViewHolder;
@@ -45,7 +42,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +59,8 @@ import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_BROWSE_COMMENT;
 public class ActivityDetailFragment extends BaseFragment implements
         View.OnClickListener,
         ImageViewLayout.OnImageClickListener,
-        DetailActivity.OnBackClickListener{
+        DetailActivity.OnBackClickListener,
+        CommentFragment.OnAddCommentClickListener{
 
     private static final int INPUT_TYPE_COMMENT = 1;
     private static final int INPUT_TYPE_ADDITION = 2;
@@ -87,6 +84,8 @@ public class ActivityDetailFragment extends BaseFragment implements
     private ViewPagerAdapter mAdapter;
 
     private int mInputType = INPUT_TYPE_COMMENT;
+
+    private boolean mMaybeDelete = false;
 
     public static ActivityDetailFragment newInstance(int id) {
         ActivityDetailFragment fm = new ActivityDetailFragment();
@@ -158,7 +157,6 @@ public class ActivityDetailFragment extends BaseFragment implements
     }
 
     private void handleArguments() {
-        showLoadingView();
         Bundle bundle = getArguments();
         int type;
         if (bundle == null || (type = bundle.getInt(KEY_DETAIL_PAGE_TYPE, -1)) == -1) {
@@ -171,13 +169,18 @@ public class ActivityDetailFragment extends BaseFragment implements
                 return;
             }
             // 联网获取活动详情数据
-            CommonFetcher.doFetchActivityDetail(mActivityId);
+            showLoadingView();
+            getActivity().getWindow().getDecorView().post(new Runnable() {
+                @Override
+                public void run() {
+                    CommonFetcher.doFetchActivityDetail(mActivityId);
+                }
+            });
         } else {
             if ((mData = (ActivityData) bundle.getSerializable(KEY_DETAIL_PAGE_DATA)) == null) {
                 getActivity().finish();
                 return;
             }
-            hideTipView();
             mActivityId = mData.getId();
             mViewHolder.bindData(mData);
             bindExtrasInfo();
@@ -194,7 +197,10 @@ public class ActivityDetailFragment extends BaseFragment implements
         mFragmentList = new ArrayList<>();
 
         mTitleList.add(String.format(getString(R.string.activity_detail_str_comment), mData.getCommentCount()));
-        mFragmentList.add(CommentFragment.newInstance(Config.PAGE_ID_ACTIVITY_COMMENT, mData.getId()));
+        CommentFragment commentFragment = CommentFragment.newInstance(Config.PAGE_ID_ACTIVITY_COMMENT, mData.getId());
+        commentFragment.setOnAddCommentClickListener(this);
+        mFragmentList.add(commentFragment);
+
         mTitleList.add(String.format(getString(R.string.activity_detail_str_addition), mData.getAdditionCount()));
         mFragmentList.add(AdditionFragment.newInstance(mData.getUid(), mData.getId()));
 
@@ -259,11 +265,9 @@ public class ActivityDetailFragment extends BaseFragment implements
     private void checkAndSendComment() {
         String text = mCommentInputEt.getText().toString().trim();
         if (TextUtils.isEmpty(text)) {
-            Toast.makeText(getContext(),
-                    mInputType == INPUT_TYPE_COMMENT
+            toast( mInputType == INPUT_TYPE_COMMENT
                     ? R.string.activity_detail_tip_empty_comment_input
-                    : R.string.activity_detail_tip_empty_addition_input,
-                    Toast.LENGTH_SHORT).show();
+                    : R.string.activity_detail_tip_empty_addition_input);
             return;
         }
         if (mInputType == INPUT_TYPE_COMMENT) {
@@ -293,7 +297,7 @@ public class ActivityDetailFragment extends BaseFragment implements
                 break;
             case R.id.tv_collect:
                 if (Enviroment.isVisitor()) {
-                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                    toast(R.string.fm_login_tip_login_before);
                     LoginActivity.startAction(getActivity(), LoginActivity.LOGIN_TAB);
                     return;
                 }
@@ -302,7 +306,7 @@ public class ActivityDetailFragment extends BaseFragment implements
                 break;
             case R.id.tv_more:
                 if (Enviroment.isVisitor()) {
-                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                    toast(R.string.fm_login_tip_login_before);
                     LoginActivity.startAction(getActivity(), LoginActivity.LOGIN_TAB);
                     return;
                 }
@@ -326,12 +330,7 @@ public class ActivityDetailFragment extends BaseFragment implements
                 });
                 break;
             case R.id.iv_add_operate:
-                if (Enviroment.isVisitor()) {
-                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
-                    LoginActivity.startAction(getActivity(), LoginActivity.LOGIN_TAB);
-                    return;
-                }
-                toggleCommentBar();
+                addOperate();
                 break;
             case R.id.iv_send:
                 checkAndSendComment();
@@ -339,6 +338,15 @@ public class ActivityDetailFragment extends BaseFragment implements
             default:
                 break;
         }
+    }
+
+    private void addOperate() {
+        if (Enviroment.isVisitor()) {
+            toast(R.string.fm_login_tip_login_before);
+            LoginActivity.startAction(getActivity(), LoginActivity.LOGIN_TAB);
+            return;
+        }
+        toggleCommentBar();
     }
 
     @Override
@@ -362,9 +370,13 @@ public class ActivityDetailFragment extends BaseFragment implements
     }
 
     @Override
-    protected void doRefresh() {
-        showLoadingView();
-        CommonFetcher.doFetchActivityDetail(mActivityId);
+    protected void onRefreshClick() {
+        if (mMaybeDelete) {
+            getActivity().finish();
+        } else {
+            showLoadingView();
+            CommonFetcher.doFetchActivityDetail(mActivityId);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -378,11 +390,12 @@ public class ActivityDetailFragment extends BaseFragment implements
                     bindExtrasInfo();
                     initFragment();
                 } else if (event.getCode() == Config.CODE_NO_DATA) {
-                    showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_data));
+                    mMaybeDelete = true;
+                    showErrorView(getString(R.string.common_tip_no_data), getString(R.string.common_tip_turn_back));
                 } else if (event.getCode() == Config.CODE_REQUEST_ERROR) {
                     showErrorView(R.drawable.bg_no_network, getString(R.string.common_tip_no_network));
                 } else {
-                    showErrorView(R.drawable.bg_load_fail, event.getStatus());
+                    showErrorView(event.getStatus());
                 }
                 break;
             default:
@@ -396,6 +409,15 @@ public class ActivityDetailFragment extends BaseFragment implements
             return;
         }
         switch (event.getType()) {
+            case DELETE_ACTIVITY:
+                if (event.getCode() == Config.CODE_OK) {
+                    // 清除相应的全局动态数据
+                    GlobalSource.deleteActivityItemIfNeed((ActivityData) event.getData());
+                    getActivity().finish();
+                } else {
+                    toast(event.getStatus());
+                }
+                break;
             case COLLECT_ACTIVITY:
                 if (event.getCode() == Config.CODE_OK) {
                     boolean isCollect = !mData.isHasCollect();
@@ -405,7 +427,7 @@ public class ActivityDetailFragment extends BaseFragment implements
                     mViewHolder.mCollectTv.setSelected(isCollect);
                     mViewHolder.mCollectTv.setText(collectCount <= 0 ? getString(R.string.common_str_collect) : String.valueOf(collectCount));
                 } else {
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             case ADD_ACTIVITY_COMMENT:
@@ -414,18 +436,18 @@ public class ActivityDetailFragment extends BaseFragment implements
                     onCommentCountOrAdditionCountChanged();
                     mCommentInputEt.setText(null);
                     toggleCommentBar();
-                    Toast.makeText(getContext(), R.string.common_tip_comment_success, Toast.LENGTH_SHORT).show();
+                    toast(R.string.common_tip_comment_success);
                 } else {
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             case DELETE_ACTIVITY_COMMENT:
                 if (event.getCode() == Config.CODE_OK) {
                     mData.setCommentCount(mData.getCommentCount() - 1);
                     onCommentCountOrAdditionCountChanged();
-                    Toast.makeText(getContext(), R.string.common_str_delete_success, Toast.LENGTH_SHORT).show();
+                    toast(R.string.common_str_delete_success);
                 } else {
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             case ADD_ACTIVITY_ADDITION:
@@ -434,18 +456,18 @@ public class ActivityDetailFragment extends BaseFragment implements
                     onCommentCountOrAdditionCountChanged();
                     mCommentInputEt.setText(null);
                     toggleCommentBar();
-                    Toast.makeText(getContext(), R.string.common_tip_addition_success, Toast.LENGTH_SHORT).show();
+                    toast(R.string.common_tip_addition_success);
                 } else {
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             case DELETE_ACTIVITY_ADDITION:
                 if (event.getCode() == Config.CODE_OK) {
                     mData.setAdditionCount(mData.getAdditionCount() - 1);
                     onCommentCountOrAdditionCountChanged();
-                    Toast.makeText(getContext(), R.string.common_str_delete_success, Toast.LENGTH_SHORT).show();
+                    toast(R.string.common_str_delete_success);
                 } else {
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             case FETCH_ACTIVITY_DYNAMIC_DATA:
@@ -469,5 +491,10 @@ public class ActivityDetailFragment extends BaseFragment implements
     @Override
     public void onBackClick() {
         GlobalSource.updateActivityItemDataIfNeed(mData);
+    }
+
+    @Override
+    public void onAddCommentClick() {
+        addOperate();
     }
 }

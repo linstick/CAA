@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import com.facebook.common.executors.CallerThreadExecutor;
 import com.facebook.common.references.CloseableReference;
@@ -18,9 +17,9 @@ import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.postprocessors.IterativeBoxBlurPostProcessor;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
-import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.bean.ImageBean;
+import com.luoruiyong.caa.common.callback.OnLoadAndSaveCallback;
 import com.luoruiyong.caa.utils.PictureUtils;
 import com.luoruiyong.caa.utils.ResourcesUtils;
 
@@ -29,10 +28,15 @@ import java.io.File;
 /**
  * Author: luoruiyong
  * Date: 2019/4/15/015
- * Description:
+ * Description: 图片处理相关类
  **/
 public class ImageLoader {
 
+    /**
+     * 图片下载保存到本地
+     * @param url 待下载图片的资源路径
+     * @param callback
+     */
     public static void loadAndSave(String url, OnLoadAndSaveCallback callback) {
         Uri uri = Uri.parse(url);
         ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri).setProgressiveRenderingEnabled(true).build();
@@ -63,11 +67,18 @@ public class ImageLoader {
         }, CallerThreadExecutor.getInstance());
     }
 
+    /**
+     * 对图片进行高斯模糊处理，并展示到指定控件
+     * @param draweeView 目标控件
+     * @param url 待展示图片的资源路径
+     * @param iterations 迭代次数
+     * @param blurRadius 模糊半径
+     */
     public static void showUrlBlur(SimpleDraweeView draweeView, String url, int iterations, int blurRadius) {
         try {
             Uri uri = Uri.parse(url);
             ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
-                    .setPostprocessor(new IterativeBoxBlurPostProcessor(6, blurRadius))
+                    .setPostprocessor(new IterativeBoxBlurPostProcessor(iterations, blurRadius))
                     .build();
             AbstractDraweeController controller = Fresco.newDraweeControllerBuilder()
                     .setOldController(draweeView.getController())
@@ -79,6 +90,11 @@ public class ImageLoader {
         }
     }
 
+    /**
+     * 在指定的控件上展示图片，不使用Fresco的缓存机制
+     * @param draweeView 目标控件
+     * @param bean 待展示的图片信息，其中待展示的图片可以是本地图片，服务器图片以及工程资源图片
+     */
     public static void setImageSourceWithoutCache(SimpleDraweeView draweeView, ImageBean bean) {
         if (draweeView == null || bean == null) {
             return;
@@ -110,6 +126,11 @@ public class ImageLoader {
         }
     }
 
+    /**
+     * 在指定的控件上展示图片
+     * @param draweeView 目标控件
+     * @param bean 待展示的图片信息
+     */
     public static void setImageSource(SimpleDraweeView draweeView, ImageBean bean) {
         if (draweeView == null || bean == null) {
             return;
@@ -127,10 +148,5 @@ public class ImageLoader {
             default:
                 break;
         }
-    }
-
-    public interface OnLoadAndSaveCallback {
-        void onSuccess(Bitmap bitmap, String path);
-        void onFail(String error);
     }
 }

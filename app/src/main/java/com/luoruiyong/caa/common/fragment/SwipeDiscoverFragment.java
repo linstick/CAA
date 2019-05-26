@@ -8,15 +8,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
-import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
+import com.luoruiyong.caa.common.adapter.LoadMoreSupportAdapter;
 import com.luoruiyong.caa.bean.DiscoverData;
 import com.luoruiyong.caa.common.viewholder.DiscoverItemViewHolder;
+import com.luoruiyong.caa.edit.EditorActivity;
 import com.luoruiyong.caa.eventbus.CommonOperateEvent;
 import com.luoruiyong.caa.eventbus.PullFinishEvent;
 import com.luoruiyong.caa.model.CommonTargetOperator;
@@ -116,7 +116,9 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
             } else if (mPageId == Config.PAGE_ID_DISCOVER_OTHER_USER) {
                 mOtherUid = bundle.getInt(KEY_OTHER_UID, -1);
             }
-            if (mPageId != Config.PAGE_ID_DISCOVER_ALL && mPageId != Config.PAGE_ID_DISCOVER_TOPIC_LASTED) {
+            if (mPageId != Config.PAGE_ID_DISCOVER_ALL
+                    && mPageId != Config.PAGE_ID_DISCOVER_TOPIC_LASTED
+                    && mPageId != Config.PAGE_ID_DISCOVER_TOPIC_HOT) {
                 setCanPullRefresh(false);
             }
         }
@@ -136,21 +138,17 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
         if (!ListUtils.isEmpty(mList)) {
             return mList.get(0).getId();
         }
-        return Config.DEFAULT_FRIST_OR_LAST_ID;
+        return Config.DEFAULT_FIRST_OR_LAST_ID;
     }
 
     private int getLastId() {
         if (!ListUtils.isEmpty(mList)) {
             return mList.get(mList.size() - 1).getId();
         }
-        return Config.DEFAULT_FRIST_OR_LAST_ID;
+        return Config.DEFAULT_FIRST_OR_LAST_ID;
     }
 
     private void doLike(DiscoverData data, int position) {
-        if (Enviroment.isVisitor()) {
-            Toast.makeText(getContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
-            return;
-        }
         // 点赞时先修改本地的数量，等请求结果回来时，如果点赞失败(几率比较小)，再把数据修改回来
         boolean isLike = !data.isHasLike();
         data.setHasLike(isLike);
@@ -177,8 +175,17 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
     }
 
     @Override
+    protected void onRefreshClick() {
+        if (mIsNoData && mPageId == Config.PAGE_ID_DISCOVER_SELF) {
+            EditorActivity.startAction(getContext(), EditorActivity.TAB_CREATE_DISCOVER);
+        } else {
+            super.onRefreshClick();
+        }
+    }
+
+    @Override
     protected void doRefresh() {
-        LogUtils.d(TAG, "doRefreshClick: " + mPageId);
+        LogUtils.d(TAG, "onRefreshClick: " + mPageId);
         mRefreshLayout.setRefreshing(true);
         switch (mPageId) {
             case Config.PAGE_ID_DISCOVER_ALL:
@@ -194,6 +201,10 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
                 DiscoverPuller.refreshSearch(mKeyword);
                 break;
             case Config.PAGE_ID_DISCOVER_TOPIC_HOT:
+                if (mList != null) {
+                    mList.clear();
+                    mAdapter.notifyDataSetChanged();
+                }
                 DiscoverPuller.refreshTopicHot(mTopicId);
                 break;
             case Config.PAGE_ID_DISCOVER_TOPIC_LASTED:
@@ -247,7 +258,7 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
                     // 点赞失败，需要回滚点赞数据
                     int discover_id = event.getTargetId();
                     rollbackLikeData(discover_id);
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             default:
@@ -266,12 +277,13 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
                         ListUtils.deleteDiscoverItem(mList, event.getData());
                     }
                     mAdapter.notifyDataSetChanged();
-                    Toast.makeText(getContext(), R.string.common_str_delete_success, Toast.LENGTH_SHORT).show();
+                    toast(R.string.common_str_delete_success);
                     if (ListUtils.isEmpty(mList)) {
-                        showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_related_content));
+                        mIsNoData = true;
+                        showErrorView(Enviroment.getNoDataTipByPageId(mPageId), Enviroment.getNoDataOperateTipByPageId(mPageId));
                     }
                 } else {
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             default:
@@ -359,24 +371,22 @@ public class SwipeDiscoverFragment extends BaseSwipeFragment<DiscoverData> {
                     PageUtils.gotoUserProfilePage(getContext(), data.getUid());
                     break;
                 case R.id.iv_more:
-                    if (Enviroment.isVisitor()) {
-                        Toast.makeText(getContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
-                        return;
+                    if (!checkLoginIfNeed()) {
+                        showMoreOperateDialog(position, data.getUid());
                     }
-                    showMoreOperateDialog(position, data.getUid());
                     break;
                 case R.id.tv_topic:
                     PageUtils.gotoTopicPage(getContext(), data.getTopicId());
                     break;
                 case R.id.tv_like:
-                    doLike(data, position);
+                    if (!checkLoginIfNeed()) {
+                        doLike(data, position);
+                    }
                     break;
                 case R.id.tv_comment:
-                    if (Enviroment.isVisitor()) {
-                        Toast.makeText(getContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
-                        return;
+                    if (!checkLoginIfNeed()) {
+                        PageUtils.gotoActivityDetailPage(getContext(), data, true);
                     }
-                    PageUtils.gotoActivityDetailPage(getContext(), data, true);
                     break;
                 default:
                     break;

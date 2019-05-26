@@ -6,6 +6,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +20,7 @@ import com.luoruiyong.caa.utils.ResourcesUtils;
 /**
  * Author: luoruiyong
  * Date: 2019/4/9/009
- * Description:
+ * Description: 错误提示控件
  **/
 public class TipView extends NestedScrollView implements View.OnClickListener{
 
@@ -83,6 +84,10 @@ public class TipView extends NestedScrollView implements View.OnClickListener{
         mErrorInfoTv.setText(info);
     }
 
+    public void setRefreshStatus(boolean hide) {
+        mRefreshTv.setVisibility(hide ? GONE : VISIBLE);
+    }
+
     public void setRefreshText(String text) {
         mRefreshTv.setText(text);
     }
@@ -111,7 +116,11 @@ public class TipView extends NestedScrollView implements View.OnClickListener{
     public void showError(int resId, String info, String refreshText) {
         setErrorImage(resId);
         setErrorInfo(info);
-        setRefreshText(refreshText);
+        if (TextUtils.isEmpty(refreshText)) {
+            setRefreshStatus(true);
+        } else {
+            setRefreshText(refreshText);
+        }
         showError();
     }
 
@@ -140,12 +149,6 @@ public class TipView extends NestedScrollView implements View.OnClickListener{
     public void onClick(View v) {
         if (mCallback != null) {
             mCallback.onRefreshClick();
-            if (!mRefreshNeedHide) {
-                mProgressBar.setVisibility(VISIBLE);
-                mErrorLayout.setVisibility(GONE);
-            } else {
-                setVisibility(GONE);
-            }
         }
     }
 

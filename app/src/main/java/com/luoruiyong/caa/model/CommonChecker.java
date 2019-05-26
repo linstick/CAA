@@ -15,7 +15,7 @@ import okhttp3.Request;
 /**
  * Author: luoruiyong
  * Date: 2019/4/15/015
- * Description: 简单查询通用类
+ * Description: 简单联网查询通用类
  **/
 public class CommonChecker {
 

@@ -8,13 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
-import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
+import com.luoruiyong.caa.common.adapter.LoadMoreSupportAdapter;
 import com.luoruiyong.caa.bean.AdditionData;
 import com.luoruiyong.caa.eventbus.CommonOperateEvent;
 import com.luoruiyong.caa.model.CommonTargetOperator;
@@ -77,16 +76,16 @@ public class AdditionFragment extends BaseSwipeFragment<AdditionData> {
 
     private int getFirstId() {
         if (!ListUtils.isEmpty(mList)) {
-            return mList.get(0).getId();
+            return mList.get(mList.size() - 1).getId();
         }
-        return Config.DEFAULT_FRIST_OR_LAST_ID;
+        return Config.DEFAULT_FIRST_OR_LAST_ID;
     }
 
     private int getLastId() {
         if (!ListUtils.isEmpty(mList)) {
             return mList.get(mList.size() - 1).getId();
         }
-        return Config.DEFAULT_FRIST_OR_LAST_ID;
+        return Config.DEFAULT_FIRST_OR_LAST_ID;
     }
 
     @Override
@@ -136,7 +135,7 @@ public class AdditionFragment extends BaseSwipeFragment<AdditionData> {
                     initAdapterIfNeed();
                     mAdapter.notifyDataSetChanged();
                 } else {
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             case DELETE_ACTIVITY_ADDITION:
@@ -153,7 +152,7 @@ public class AdditionFragment extends BaseSwipeFragment<AdditionData> {
                         showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_related_content));
                     }
                 } else {
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             default:
@@ -190,7 +189,7 @@ public class AdditionFragment extends BaseSwipeFragment<AdditionData> {
                     @Override
                     public boolean onLongClick(View v) {
                         if (Enviroment.isVisitor()) {
-                            Toast.makeText(getContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                            toast(R.string.fm_login_tip_login_before);
                             return false;
                         }
                         int itemPosition = (int) v.getTag();

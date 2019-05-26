@@ -10,13 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
-import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
-import com.luoruiyong.caa.base.OnPermissionCallback;
+import com.luoruiyong.caa.base.BaseCreateFragment;
+import com.luoruiyong.caa.common.callback.OnPermissionCallback;
 import com.luoruiyong.caa.bean.ActivityCreateResult;
 import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.bean.ImageBean;
@@ -346,10 +345,10 @@ public class CreateActivityFragment extends BaseCreateFragment implements
                     ActivityData activity = event.getData().getActivity();
                     TopicData topic = event.getData().getTopic();
                     int resId = topic == null ? R.string.fm_create_activity_tip_publish_success : R.string.fm_create_activity_tip_publish_and_topic_success;
-                    Toast.makeText(MyApplication.getAppContext(), resId, Toast.LENGTH_SHORT).show();
+                    toast(resId);
                     finish();
                 } else {
-                    Toast.makeText(MyApplication.getAppContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             default:

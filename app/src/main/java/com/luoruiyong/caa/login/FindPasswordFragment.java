@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +11,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.base.BaseFragment;
 
-public class FindPasswordFragment extends Fragment implements View.OnClickListener{
+public class FindPasswordFragment extends BaseFragment implements View.OnClickListener{
 
     private ImageView mUserAvatarIv;
     private EditText mCellPhoneNumberEt;
@@ -56,7 +55,7 @@ public class FindPasswordFragment extends Fragment implements View.OnClickListen
     private void checkAndRequestCode() {
         String cellPhoneNumber = mCellPhoneNumberEt.getText().toString().trim();
         if (TextUtils.isEmpty(cellPhoneNumber)) {
-            Toast.makeText(getContext(), getString(R.string.fm_find_password_tip_empty_cell_phone_number), Toast.LENGTH_SHORT).show();
+            toast(R.string.fm_find_password_tip_empty_cell_phone_number);
             return;
         }
         if (mCallback != null) {
@@ -68,22 +67,15 @@ public class FindPasswordFragment extends Fragment implements View.OnClickListen
         String cellPhoneNumber = mCellPhoneNumberEt.getText().toString().trim();
         String verifyCode = mVerifyCodeEt.getText().toString().trim();
         if (TextUtils.isEmpty(cellPhoneNumber)) {
-            Toast.makeText(getContext(), getString(R.string.fm_find_password_tip_empty_cell_phone_number), Toast.LENGTH_SHORT).show();
+            toast(R.string.fm_find_password_tip_empty_cell_phone_number);
             return;
         }
         if (TextUtils.isEmpty(cellPhoneNumber)) {
-            Toast.makeText(getContext(), getString(R.string.fm_find_password_tip_empty_verify_code), Toast.LENGTH_SHORT).show();
+            toast(R.string.fm_find_password_tip_empty_verify_code);
             return;
         }
         if (mCallback != null) {
             mCallback.doVerifyAuth(cellPhoneNumber, verifyCode);
-        }
-    }
-
-    private void checkAndFetchAvatar() {
-        String account = mCellPhoneNumberEt.getText().toString().trim();
-        if (TextUtils.isEmpty(account)) {
-            return;
         }
     }
 

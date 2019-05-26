@@ -1,4 +1,4 @@
-package com.luoruiyong.caa.base;
+package com.luoruiyong.caa.common.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;

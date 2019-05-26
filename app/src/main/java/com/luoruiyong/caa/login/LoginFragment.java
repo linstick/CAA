@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -14,20 +13,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.base.BaseFragment;
 import com.luoruiyong.caa.eventbus.CommonEvent;
 import com.luoruiyong.caa.model.CommonFetcher;
-import com.luoruiyong.caa.utils.KeyboardUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class LoginFragment extends Fragment implements View.OnClickListener{
+public class LoginFragment extends BaseFragment implements View.OnClickListener{
 
     private SimpleDraweeView mUserAvatarIv;
     private EditText mAccountEt;
@@ -112,11 +110,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         String account = mAccountEt.getText().toString().trim();
         String password = mPasswordEt.getText().toString().trim();
         if (TextUtils.isEmpty(account)) {
-            Toast.makeText(getContext(), getString(R.string.fm_login_tip_empty_account), Toast.LENGTH_SHORT).show();
+            toast(R.string.fm_login_tip_empty_account);
             return;
         }
         if (TextUtils.isEmpty(password)) {
-            Toast.makeText(getContext(), getString(R.string.fm_login_tip_empty_password), Toast.LENGTH_SHORT).show();
+            toast(R.string.fm_login_tip_empty_password);
             return;
         }
         if (mCallBack != null) {

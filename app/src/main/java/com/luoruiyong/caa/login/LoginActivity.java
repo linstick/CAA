@@ -11,18 +11,15 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
-import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.bean.User;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.eventbus.CommonEvent;
 import com.luoruiyong.caa.eventbus.LoginStateChangedEvent;
-import com.luoruiyong.caa.eventbus.UserFinishEvent;
 import com.luoruiyong.caa.model.CommonPoster;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.KeyboardUtils;
@@ -30,8 +27,6 @@ import com.luoruiyong.caa.utils.KeyboardUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import static com.luoruiyong.caa.eventbus.UserFinishEvent.TYPE_LOGIN;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
@@ -159,11 +154,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     }
 
     public void doRequestCode(String cellPhoneNumber) {
-        Toast.makeText(this, "doRequestCode", Toast.LENGTH_SHORT).show();
+        toast("doRequestCode");
     }
 
     public void doVerifyAuth(String cellPhoneNumber, String code) {
-        Toast.makeText(this, "doVerifyAuth", Toast.LENGTH_SHORT).show();
+        toast("doVerifyAuth");
     }
 
     @Override
@@ -206,10 +201,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                 if (event.getCode() == Config.CODE_OK) {
                     Enviroment.setCurUser(event.getData());
                     EventBus.getDefault().postSticky(LoginStateChangedEvent.LOGIN_SUCCESS);
-                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_login_tip_login_success, Toast.LENGTH_SHORT).show();
+                    toast(R.string.fm_login_tip_login_success);
                     finish();
                 } else {
-                    Toast.makeText(this, event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             case SIGN_UP:
@@ -227,20 +222,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                     // 注册成功，顺便帮用户登录
                     Enviroment.setCurUser(event.getData());
                     EventBus.getDefault().postSticky(LoginStateChangedEvent.LOGIN_SUCCESS);
-                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_sign_tip_sign_up_success, Toast.LENGTH_SHORT).show();
+                    toast(R.string.fm_sign_tip_sign_up_success);
                     finish();
                 } else {
-                    Toast.makeText(this, event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
-                break;
-            case FETCH_AVATAR:
-
-                break;
-            case CHECK_ACCOUNT:
-
-                break;
-            case MODIFY_PASSWORD:
-
                 break;
             default:
                 break;

@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +15,12 @@ import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
+import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
+import com.luoruiyong.caa.common.adapter.LoadMoreSupportAdapter;
 import com.luoruiyong.caa.common.dialog.CommonDialog;
 import com.luoruiyong.caa.eventbus.PullFinishEvent;
+import com.luoruiyong.caa.login.LoginActivity;
 import com.luoruiyong.caa.model.bean.GlobalSource;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.utils.DisplayUtils;
@@ -93,6 +95,8 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
     // 当数据加载更多失败是会置为false，网络原因或者服务器异常
     // 需要用户手动点击才会重新获取数据
     private boolean mCanLoadMore = true;
+    // 列表所需要的数据是否为空，当加载数据请求成功但数据为空时置为ture
+    protected boolean mIsNoData = false;
 
     // 页面是否对用户可见
     protected boolean mHasVisible;
@@ -188,6 +192,10 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
                 }
             }
         });
+        //恢复提示控件
+        if (mHasTipViewShow) {
+            showErrorView();
+        }
     }
 
     protected boolean isVisibleToUser() {
@@ -207,7 +215,8 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
                 mList = GlobalSource.getData(mPageId);
             }
             initAdapterIfNeed();
-            if (mCanLoadMore && mAutoRefreshForEmpty && mList == null && !mRefreshLayout.isRefreshing()) {
+            if (!mIsNoData && mAutoRefreshForEmpty && mList == null && !mRefreshLayout.isRefreshing()) {
+                hideTipView();
                 doRefresh();
             }
         }
@@ -405,6 +414,7 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
 
     @Override
     protected void onRefreshClick() {
+        hideTipView();
         doRefresh();
     }
 
@@ -484,11 +494,22 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
         int code = event.getCode();
         String error = event.getStatus();
         switch (code) {
-            case Config.CODE_NO_DATA:
-                showErrorView(R.drawable.bg_load_fail, error);
+            case Config.CODE_OK_BUT_EMPTY:
+                if (ListUtils.isEmpty(mList)) {
+                    // 第一次刷新时请求成功，但无数据
+                    mIsNoData = true;
+                    showErrorView(Enviroment.getNoDataTipByPageId(mPageId), Enviroment.getNoDataOperateTipByPageId(mPageId));
+                } else {
+                    // 非第一次刷新请求成功，但无数据
+                    Toast.makeText(getContext(), getString(R.string.common_tip_no_more_new_data), Toast.LENGTH_SHORT).show();
+                }
                 break;
             case Config.CODE_REQUEST_ERROR:
-                showErrorView(R.drawable.bg_no_network, error);
+                if (ListUtils.isEmpty(mList)) {
+                    showErrorView(R.drawable.bg_no_network, error);
+                } else {
+                    Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+                }
                 break;
             default:
                 Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
@@ -527,9 +548,10 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
                 showTopTip(ListUtils.getSize(result));
             }
             if (mPageId <= Config.MAX_GLOBAL_CACHE_ID) {
-                GlobalSource.appendData(mPageId, result);
+                GlobalSource.insertData(mPageId, result);
+            } else {
+                mList.addAll(0, result);
             }
-            mList.addAll(0, result);
         }
 
         mAdapter.notifyDataSetChanged();
@@ -577,5 +599,14 @@ public abstract class BaseSwipeFragment<Item> extends BaseFragment {
         }
         mAdapter.notifyDataSetChanged();
         LogUtils.d(TAG, "load more success: " + result);
+    }
+
+    protected boolean checkLoginIfNeed() {
+        if (Enviroment.isVisitor()) {
+            Toast.makeText(MyApplication.getAppContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+            LoginActivity.startAction(getContext(), LoginActivity.LOGIN_TAB);
+            return true;
+        }
+        return false;
     }
 }

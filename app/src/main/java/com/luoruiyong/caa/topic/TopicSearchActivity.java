@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
@@ -94,7 +93,7 @@ public class TopicSearchActivity extends BaseActivity implements View.OnClickLis
                 if (!TextUtils.isEmpty(text)) {
                     mFragment.doSearch(text);
                 } else {
-                    Toast.makeText(this, R.string.topic_relate_tip_no_search_input, Toast.LENGTH_SHORT).show();
+                    toast(R.string.topic_relate_tip_no_search_input);
                 }
                 break;
         }

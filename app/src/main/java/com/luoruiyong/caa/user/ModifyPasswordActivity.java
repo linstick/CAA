@@ -6,15 +6,11 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
-import com.luoruiyong.caa.Enviroment;
-import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.eventbus.CommonEvent;
-import com.luoruiyong.caa.model.CommonFetcher;
 import com.luoruiyong.caa.model.CommonPoster;
 import com.luoruiyong.caa.utils.DialogHelper;
 
@@ -73,19 +69,19 @@ public class ModifyPasswordActivity extends BaseActivity implements View.OnClick
         String newPass = mNewPassEt.getText().toString().trim();
         String confirmNewPass = mConfirmNewPassEt.getText().toString().trim();
         if (TextUtils.isEmpty(originalPass)){
-            Toast.makeText(this, getString(R.string.modify_password_tip_empty_original_pass), Toast.LENGTH_SHORT).show();
+            toast(R.string.modify_password_tip_empty_original_pass);
             return;
         }
         if (TextUtils.isEmpty(newPass)){
-            Toast.makeText(this, getString(R.string.modify_password_tip_empty_new_pass), Toast.LENGTH_SHORT).show();
+            toast(R.string.modify_password_tip_empty_new_pass);
             return;
         }
         if (TextUtils.isEmpty(confirmNewPass)){
-            Toast.makeText(this, getString(R.string.modify_password_tip_empty_confirm_new_pass), Toast.LENGTH_SHORT).show();
+            toast(R.string.modify_password_tip_empty_confirm_new_pass);
             return;
         }
         if (!TextUtils.equals(newPass, confirmNewPass)){
-            Toast.makeText(this, getString(R.string.modify_password_tip_different_new_pass), Toast.LENGTH_SHORT).show();
+            toast(R.string.modify_password_tip_different_new_pass);
             return;
         }
         DialogHelper.showLoadingDialog(this, getString(R.string.modify_password_str_on_modify), false);
@@ -114,10 +110,10 @@ public class ModifyPasswordActivity extends BaseActivity implements View.OnClick
         switch (event.getType()) {
             case MODIFY_PASSWORD:
                 if (event.getCode() == Config.CODE_OK) {
-                    Toast.makeText(MyApplication.getAppContext(), R.string.modify_password_tip_modify_success, Toast.LENGTH_SHORT).show();
+                    toast(R.string.modify_password_tip_modify_success);
                     finish();
                 } else {
-                    Toast.makeText(this, event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             default:

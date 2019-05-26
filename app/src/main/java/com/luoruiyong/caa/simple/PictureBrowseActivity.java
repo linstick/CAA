@@ -1,7 +1,6 @@
 package com.luoruiyong.caa.simple;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -13,27 +12,21 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
+import com.luoruiyong.caa.common.callback.OnLoadAndSaveCallback;
 import com.luoruiyong.caa.model.ImageLoader;
 import com.luoruiyong.caa.utils.ListUtils;
-import com.luoruiyong.caa.utils.ResourcesUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
 /**
  * Author: luoruiyong
  * Date: 2019/3/16/016
@@ -185,15 +178,15 @@ public class PictureBrowseActivity extends BaseActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_download:
-                ImageLoader.loadAndSave(mUrls.get(mCurPosition), new ImageLoader.OnLoadAndSaveCallback() {
+                ImageLoader.loadAndSave(mUrls.get(mCurPosition), new OnLoadAndSaveCallback() {
                     @Override
                     public void onSuccess(Bitmap bitmap, String path) {
-                        Toast.makeText(PictureBrowseActivity.this, String.format(getString(R.string.common_image_save_success), path), Toast.LENGTH_SHORT).show();
+                        toast(String.format(getString(R.string.common_image_save_success), path));
                     }
 
                     @Override
                     public void onFail(String error) {
-                        Toast.makeText(PictureBrowseActivity.this, error, Toast.LENGTH_SHORT).show();
+                        toast(error);
                     }
                 });
                 break;

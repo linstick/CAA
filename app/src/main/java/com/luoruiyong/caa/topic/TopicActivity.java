@@ -13,15 +13,12 @@ import android.view.View;
 
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
-import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
-import com.luoruiyong.caa.bean.DiscoverDynamicData;
 import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.bean.TopicDynamicData;
 import com.luoruiyong.caa.common.adapter.ViewPagerAdapter;
@@ -269,7 +266,7 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
             case R.id.tv_join_in:
                 if (Enviroment.isVisitor()) {
                     LoginActivity.startAction(this, LoginActivity.LOGIN_TAB);
-                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                    toast(R.string.fm_login_tip_login_before);
                 } else {
                     EditorActivity.startAction(this, mData.getId(), mData.getName());
                 }
@@ -289,11 +286,11 @@ public class TopicActivity extends BaseActivity implements View.OnClickListener{
                     initFragment();
                     mJoinInTv.setVisibility(View.VISIBLE);
                 } else if (event.getCode() == Config.CODE_NO_DATA) {
-                    Toast.makeText(this, R.string.common_tip_no_data, Toast.LENGTH_SHORT).show();
+                    toast(R.string.common_tip_no_data);
                 } else if (event.getCode() == Config.CODE_REQUEST_ERROR) {
-                    Toast.makeText(this, R.string.common_tip_no_network, Toast.LENGTH_SHORT).show();
+                    toast(R.string.common_tip_no_network);
                 } else {
-                    Toast.makeText(this, event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             default:

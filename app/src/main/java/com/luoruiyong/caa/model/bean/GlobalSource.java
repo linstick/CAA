@@ -1,7 +1,5 @@
 package com.luoruiyong.caa.model.bean;
 
-import android.widget.ListView;
-
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.bean.ActivityData;
 import com.luoruiyong.caa.bean.DiscoverData;
@@ -17,7 +15,7 @@ import java.util.Map;
 /**
  * Author: luoruiyong
  * Date: 2019/4/11/011
- * Description:
+ * Description: 全局缓存列表数据
  **/
 public class GlobalSource {
 
@@ -71,9 +69,9 @@ public class GlobalSource {
         if (pageId < Config.PAGE_ID_TOPIC_ALL) {
            insertActivityData(pageId, data);
         } else if (pageId < Config.PAGE_ID_DISCOVER_ALL) {
-            appendDiscoverData(pageId, data);
-        } else if (pageId < Config.PAGE_ID_MESSAGE) {
             insertTopicData(pageId, data);
+        } else if (pageId < Config.PAGE_ID_MESSAGE) {
+            insertDiscoverData(pageId, data);
         } else if (pageId == Config.PAGE_ID_MESSAGE) {
             insertMessageData(data);
         }
@@ -119,6 +117,7 @@ public class GlobalSource {
         if (!ListUtils.isEmpty(list)) {
             for (ActivityData item : list) {
                 if (item.getId() == data.getId()) {
+                    item.setHasCollect(data.isHasCollect());
                     item.setCollectCount(data.getCollectCount());
                     item.setAdditionCount(data.getAdditionCount());
                     item.setCommentCount(data.getCommentCount());
@@ -182,7 +181,9 @@ public class GlobalSource {
             while (iterator.hasNext()) {
                 DiscoverData item = iterator.next();
                 if (item.getId() == data.getId()) {
-                    iterator.remove();
+                    item.setHasLike(data.isHasLike());
+                    item.setLikeCount(data.getLikeCount());
+                    item.setCommentCount(data.getCommentCount());
                     break;
                 }
             }

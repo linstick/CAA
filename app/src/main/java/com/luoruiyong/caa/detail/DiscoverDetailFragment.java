@@ -11,11 +11,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
-import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseFragment;
 import com.luoruiyong.caa.bean.DiscoverData;
@@ -68,6 +66,8 @@ public class DiscoverDetailFragment extends BaseFragment implements
     private DiscoverItemViewHolder mViewHolder;
     private int mDiscoverId;
     private DiscoverData mData;
+
+    private boolean mMaybeDelete = false;
 
     public static DiscoverDetailFragment newInstance(int id) {
         DiscoverDetailFragment fm = new DiscoverDetailFragment();
@@ -125,7 +125,12 @@ public class DiscoverDetailFragment extends BaseFragment implements
                 return;
             }
             showLoadingView();
-            CommonFetcher.doFetchDiscoverDetail(mDiscoverId);
+            getActivity().getWindow().getDecorView().post(new Runnable() {
+                @Override
+                public void run() {
+                    CommonFetcher.doFetchDiscoverDetail(mDiscoverId);
+                }
+            });
         } else {
             if ((mData = (DiscoverData) bundle.getSerializable(KEY_DETAIL_PAGE_DATA)) == null) {
                 getActivity().finish();
@@ -171,13 +176,19 @@ public class DiscoverDetailFragment extends BaseFragment implements
 
     private void initFragment() {
         CommentFragment fm = CommentFragment.newInstance(Config.PAGE_ID_DISCOVER_COMMENT, mData.getId());
+        fm.setOnAddCommentClickListener(new CommentFragment.OnAddCommentClickListener() {
+            @Override
+            public void onAddCommentClick() {
+                addOperate();
+            }
+        });
         getChildFragmentManager().beginTransaction().replace(R.id.fl_container, fm).commit();
     }
 
     private void checkAndSendComment() {
         String text = mCommentInputEt.getText().toString().trim();
         if (TextUtils.isEmpty(text)) {
-            Toast.makeText(getContext(), R.string.activity_detail_tip_empty_comment_input, Toast.LENGTH_SHORT).show();
+            toast(R.string.activity_detail_tip_empty_comment_input);
             return;
         }
         CommonTargetOperator.doAddDiscoverComment(mDiscoverId, text);
@@ -192,7 +203,7 @@ public class DiscoverDetailFragment extends BaseFragment implements
                 break;
             case R.id.tv_top_like:
                 if (Enviroment.isVisitor()) {
-                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                    toast(R.string.fm_login_tip_login_before);
                     LoginActivity.startAction(getActivity(), LoginActivity.LOGIN_TAB);
                     return;
                 }
@@ -200,7 +211,7 @@ public class DiscoverDetailFragment extends BaseFragment implements
                 break;
             case R.id.iv_more:
                 if (Enviroment.isVisitor()) {
-                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                    toast(R.string.fm_login_tip_login_before);
                     LoginActivity.startAction(getActivity(), LoginActivity.LOGIN_TAB);
                     return;
                 }
@@ -227,18 +238,32 @@ public class DiscoverDetailFragment extends BaseFragment implements
                 PageUtils.gotoTopicPage(getContext(), mData.getTopicId());
                 break;
             case R.id.iv_add_comment:
-                if (Enviroment.isVisitor()) {
-                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
-                    LoginActivity.startAction(getActivity(), LoginActivity.LOGIN_TAB);
-                    return;
-                }
-                toggleCommentBar();
+                addOperate();
                 break;
             case R.id.iv_send:
                 checkAndSendComment();
                 break;
             default:
                 break;
+        }
+    }
+
+    private void addOperate() {
+        if (Enviroment.isVisitor()) {
+            toast(R.string.fm_login_tip_login_before);
+            LoginActivity.startAction(getActivity(), LoginActivity.LOGIN_TAB);
+            return;
+        }
+        toggleCommentBar();
+    }
+
+    @Override
+    protected void onRefreshClick() {
+        if (mMaybeDelete) {
+            getActivity().finish();
+        } else {
+            showLoadingView();
+            CommonFetcher.doFetchDiscoverDetail(mDiscoverId);
         }
     }
 
@@ -269,11 +294,12 @@ public class DiscoverDetailFragment extends BaseFragment implements
                     mCommentLabelTv.setText(String.format(getString(R.string.activity_detail_str_comment), mData.getCommentCount()));
                     initFragment();
                 } else if (event.getCode() == Config.CODE_NO_DATA) {
-                    showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_data));
+                    mMaybeDelete = true;
+                    showErrorView(getString(R.string.common_tip_no_data), getString(R.string.common_tip_turn_back));
                 } else if (event.getCode() == Config.CODE_REQUEST_ERROR) {
                     showErrorView(R.drawable.bg_no_network, getString(R.string.common_tip_no_network));
                 } else {
-                    showErrorView(R.drawable.bg_load_fail, event.getStatus());
+                    showErrorView(event.getStatus());
                 }
                 break;
             default:
@@ -296,7 +322,7 @@ public class DiscoverDetailFragment extends BaseFragment implements
                     mViewHolder.mTopLikeTv.setSelected(isLike);
                     mViewHolder.mTopLikeTv.setText(likeCount <= 0 ? getString(R.string.common_str_like) : String.valueOf(likeCount));
                 } else {
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             case ADD_DISCOVER_COMMENT:
@@ -305,18 +331,18 @@ public class DiscoverDetailFragment extends BaseFragment implements
                     mCommentLabelTv.setText(String.format(getString(R.string.activity_detail_str_comment), mData.getCommentCount()));
                     mCommentInputEt.setText(null);
                     toggleCommentBar();
-                    Toast.makeText(getContext(), R.string.common_tip_comment_success, Toast.LENGTH_SHORT).show();
+                    toast(R.string.common_tip_comment_success);
                 } else {
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             case DELETE_ACTIVITY_COMMENT:
                 if (event.getCode() == Config.CODE_OK) {
                     mData.setCommentCount(mData.getCommentCount() - 1);
                     mCommentLabelTv.setText(String.format(getString(R.string.activity_detail_str_comment), mData.getCommentCount()));
-                    Toast.makeText(getContext(), R.string.common_str_delete_success, Toast.LENGTH_SHORT).show();
+                    toast(R.string.common_str_delete_success);
                 } else {
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             case FETCH_DISCOVER_DYNAMIC_DATA:
@@ -332,7 +358,10 @@ public class DiscoverDetailFragment extends BaseFragment implements
                 break;
             case DELETE_DISCOVER:
                 if (event.getCode() == Config.CODE_OK) {
-
+                    GlobalSource.deleteDiscoverItemDataIfNeed((DiscoverData) event.getData());
+                    getActivity().finish();
+                } else {
+                    toast(event.getStatus());
                 }
                 break;
             default:

@@ -10,13 +10,12 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
-import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
-import com.luoruiyong.caa.base.OnPermissionCallback;
+import com.luoruiyong.caa.base.BaseCreateFragment;
+import com.luoruiyong.caa.common.callback.OnPermissionCallback;
 import com.luoruiyong.caa.bean.ImageBean;
 import com.luoruiyong.caa.bean.TopicData;
 import com.luoruiyong.caa.eventbus.CommonEvent;
@@ -51,6 +50,7 @@ public class CreateTopicFragment extends BaseCreateFragment implements
     private DynamicInputView mCoverInputView;
 
     private List<DynamicInputView> mCheckEmptyList;
+    private List<DynamicInputView> mCheckNonNullList;
     private List<ImageBean> mTopicCoverList;
     private String mLastTopicName;
 
@@ -97,6 +97,10 @@ public class CreateTopicFragment extends BaseCreateFragment implements
         mCheckEmptyList.add(mNameInputView);
         mCheckEmptyList.add(mIntroduceInputView);
         mCheckEmptyList.add(mCoverInputView);
+
+        mCheckNonNullList = new ArrayList<>();
+        mCheckNonNullList.add(mNameInputView);
+        mCheckNonNullList.add(mIntroduceInputView);
 
         mTopicCoverList = new ArrayList<>();
         mCoverInputView.setPictureDataList(mTopicCoverList);
@@ -146,14 +150,18 @@ public class CreateTopicFragment extends BaseCreateFragment implements
 
     @Override
     public void onFinishClick() {
-        if (!mNameInputView.checkAndShowErrorTipIfNeed() && !mIntroduceInputView.checkAndShowErrorTipIfNeed()) {
+        boolean canSend = true;
+        for (DynamicInputView view : mCheckNonNullList) {
+            canSend &= view.checkAndShowErrorTipIfNeed();
+        }
+        if (!canSend) {
             return;
         }
         TopicData topic = new TopicData();
         topic.setUid(Enviroment.getCurUid());
         topic.setName(mNameInputView.getInputText());
         topic.setIntroduction(mIntroduceInputView.getInputText());
-        topic.setCover(ListUtils.getSize(mTopicCoverList) > 0 ? mTopicCoverList.get(0).toString() : null);
+        topic.setCover(ListUtils.getSize(mTopicCoverList) > 0 ? mTopicCoverList.get(0).toString() : "");
 
         showLoadingDialog(R.string.common_tip_on_publish);
         CommonPoster.doCreateTopic(topic);
@@ -208,11 +216,11 @@ public class CreateTopicFragment extends BaseCreateFragment implements
             case CREATE_TOPIC:
                 if (event.getCode() == Config.CODE_OK) {
                     TopicData topic = (TopicData) event.getData();
-                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_create_topic_tip_publish_success, Toast.LENGTH_SHORT).show();
+                    toast(R.string.fm_create_topic_tip_publish_success);
                     finish();
                 } else {
                     hideLoadingDialog();
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             default:

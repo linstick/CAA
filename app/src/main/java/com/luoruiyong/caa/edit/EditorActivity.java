@@ -23,7 +23,7 @@ public class EditorActivity extends BaseActivity implements View.OnClickListener
     public final static String KEY_TOPIC_NAME = "key_topic_name";
 
     public final static String TAB_CREATE_ACTIVITY = "create_activity";
-    public final static String TAB_CREATE_TAG = "create_tag";
+    public final static String TAB_CREATE_TOPIC = "create_tag";
     public final static String TAB_CREATE_DISCOVER = "create_discover";
 
     public final static int BROWSE_PICTURE_REQUEST_CODE = 1;
@@ -83,7 +83,7 @@ public class EditorActivity extends BaseActivity implements View.OnClickListener
                 fm = CreateDiscoverFragment.newInstance(intent.getIntExtra(KEY_TOPIC_ID, -1), intent.getStringExtra(KEY_TOPIC_NAME));
                 titleResId = R.string.title_create_discover;
                 break;
-            case TAB_CREATE_TAG:
+            case TAB_CREATE_TOPIC:
                 fm = new CreateTopicFragment();
                 titleResId = R.string.title_create_topic;
                 break;

@@ -8,11 +8,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.Enviroment;
-import com.luoruiyong.caa.MyApplication;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.bean.User;
@@ -25,8 +23,6 @@ import com.luoruiyong.caa.login.LoginActivity;
 import com.luoruiyong.caa.model.bean.GlobalSource;
 import com.luoruiyong.caa.utils.DialogHelper;
 import com.luoruiyong.caa.edit.EditorActivity;
-import com.luoruiyong.caa.home.activity.ActivityFragment;
-import com.luoruiyong.caa.home.message.MessageFragment;
 import com.luoruiyong.caa.search.SearchActivity;
 import com.luoruiyong.caa.utils.PageUtils;
 
@@ -44,6 +40,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
     public final static int TAG_TAB_INDEX = 1;
     public final static int DISCOVER_TAB_INDEX = 2;
     public final static int MESSAGE_TAB_INDEX = 3;
+
+    private static long sLastBackPressTime = 0L;
 
     private TextView mTitleTv;
     private ViewPager mViewPager;
@@ -205,7 +203,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
                         EditorActivity.startAction(HomeActivity.this, EditorActivity.TAB_CREATE_ACTIVITY);
                         break;
                     case 1:
-                        EditorActivity.startAction(HomeActivity.this, EditorActivity.TAB_CREATE_TAG);
+                        EditorActivity.startAction(HomeActivity.this, EditorActivity.TAB_CREATE_TOPIC);
                         break;
                     case 2:
                         EditorActivity.startAction(HomeActivity.this, EditorActivity.TAB_CREATE_DISCOVER);
@@ -244,7 +242,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
                 break;
             case R.id.iv_add:
                 if (Enviroment.isVisitor()) {
-                    Toast.makeText(MyApplication.getAppContext(), R.string.fm_login_tip_login_before, Toast.LENGTH_SHORT).show();
+                    toast(R.string.fm_login_tip_login_before);
                     LoginActivity.startAction(this, LoginActivity.LOGIN_TAB);
                 } else {
                     showEditTypeChooseDialog();
@@ -276,6 +274,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
                 break;
             default:
                 break;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        long curTime = System.currentTimeMillis();
+        if (curTime - sLastBackPressTime > 1500) {
+            toast(R.string.common_tip_press_again_for_exit);
+        } else {
+            super.onBackPressed();
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.luoruiyong.caa.home.message;
+package com.luoruiyong.caa.home;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,14 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.luoruiyong.caa.Config;
 import com.luoruiyong.caa.Enviroment;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseSwipeFragment;
-import com.luoruiyong.caa.base.LoadMoreSupportAdapter;
+import com.luoruiyong.caa.common.adapter.LoadMoreSupportAdapter;
 import com.luoruiyong.caa.bean.MessageData;
 
 import com.luoruiyong.caa.common.dialog.CommonDialog;
@@ -71,19 +70,19 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
         if (!ListUtils.isEmpty(mList)) {
             return mList.get(0).getId();
         }
-        return Config.DEFAULT_FRIST_OR_LAST_ID;
+        return Config.DEFAULT_FIRST_OR_LAST_ID;
     }
 
     private int getLastId() {
         if (!ListUtils.isEmpty(mList)) {
             return mList.get(mList.size() - 1).getId();
         }
-        return Config.DEFAULT_FRIST_OR_LAST_ID;
+        return Config.DEFAULT_FIRST_OR_LAST_ID;
     }
 
     @Override
     protected void doRefresh() {
-        LogUtils.d(TAG, "doRefreshClick: " + mPageId);
+        LogUtils.d(TAG, "onRefreshClick: " + mPageId);
         hideTipView();
         mRefreshLayout.setRefreshing(true);
         CommonPuller.refreshMessage(getFirstId());
@@ -137,18 +136,14 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
         switch (event.getType()) {
             case DELETE_MESSAGE:
                 if (event.getCode() == Config.CODE_OK) {
-                    if (mPageId <= Config.MAX_GLOBAL_CACHE_ID) {
-                        GlobalSource.deleteMessageItemDataIfNeed(event.getData());
-                    } else {
-                        ListUtils.deleteMessageItem(mList, event.getData());
-                    }
+                    GlobalSource.deleteMessageItemDataIfNeed(event.getData());
                     mAdapter.notifyDataSetChanged();
-                    Toast.makeText(getContext(), R.string.common_str_delete_success, Toast.LENGTH_SHORT).show();
+                    toast(R.string.common_str_delete_success);
                     if (ListUtils.isEmpty(mList)) {
-                        showErrorView(R.drawable.bg_load_fail, getString(R.string.common_tip_no_related_content));
+                        showErrorView(Enviroment.getNoDataTipByPageId(mPageId));
                     }
                 } else {
-                    Toast.makeText(getContext(), event.getStatus(), Toast.LENGTH_SHORT).show();
+                    toast(event.getStatus());
                 }
                 break;
             default:
@@ -184,7 +179,7 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
                     public boolean onLongClick(View v) {
                         DialogHelper.showListDialog(getContext(), getString(R.string.common_str_delete), new CommonDialog.Builder.OnItemClickListener() {
                             @Override
-                            public void onItemClick(int position) {
+                            public void onItemClick(int pos) {
                                 CommonTargetOperator.doDeleteMessage(mList.get(position).getId());
                             }
                         });
@@ -261,11 +256,15 @@ public class MessageFragment extends BaseSwipeFragment<MessageData> {
                 if (!TextUtils.isEmpty(data.getTargetCoverUrl())) {
                     mSrcCoverIv.setVisibility(View.VISIBLE);
                     mSrcCoverIv.setImageURI(data.getTargetCoverUrl());
+                } else {
+                    mSrcCoverIv.setVisibility(View.GONE);
                 }
 
                 if (!TextUtils.isEmpty(data.getTargetTitle())) {
                     mSrcTitleTv.setVisibility(View.VISIBLE);
                     mSrcTitleTv.setText(data.getTargetTitle());
+                }  else {
+                    mSrcTitleTv.setVisibility(View.GONE);
                 }
 
                 if (!TextUtils.isEmpty(data.getTargetContent())) {

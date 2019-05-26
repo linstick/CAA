@@ -52,10 +52,10 @@ public enum  RequestType {
     ADD_DISCOVER_COMMENT,   // post
     DELETE_DISCOVER_COMMENT,   // post
 
-    // 改进
-    FEEDBACK,
-    IMPEACH,
+    // 改进相关
+    FEEDBACK,   // post
+    IMPEACH,    // post
 
-    // 消息
+    // 消息相关
     DELETE_MESSAGE,
 }

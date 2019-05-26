@@ -50,19 +50,4 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         }
         return super.getPageTitle(position);
     }
-
-    public void setFragments(List<Fragment> list) {
-        setFragments(list, null);
-    }
-
-    public void setFragments(List<Fragment> list, List<String> titleList) {
-        FragmentTransaction ft = mFm.beginTransaction();//获得FragmentTransaction 事务
-        for (Fragment f : this.mList) {
-            ft.remove(f); //遍历删除fragment
-        }
-        ft.commit();
-        mList = list;
-        mTitleList = titleList;
-        notifyDataSetChanged();
-    }
 }
