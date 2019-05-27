@@ -1,6 +1,5 @@
 package com.luoruiyong.caa.base;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.support.annotation.StringRes;
 

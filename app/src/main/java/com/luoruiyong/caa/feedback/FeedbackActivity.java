@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
 import com.luoruiyong.caa.edit.EditorActivity;
+import com.luoruiyong.caa.utils.KeyboardUtils;
 
 import static com.luoruiyong.caa.utils.PageUtils.FEEDBACK_TYPE_SUGGESTION_OR_PROBLEM;
 import static com.luoruiyong.caa.utils.PageUtils.KEY_DETAIL_PAGE_DATA;
@@ -70,6 +71,7 @@ public class FeedbackActivity extends BaseActivity implements View.OnClickListen
                 }
                 break;
             case R.id.iv_right_operate:
+                KeyboardUtils.hideKeyboard(mFinishIv);
                 if (mActionBarListener != null) {
                     mActionBarListener.onFinishClick();
                 }

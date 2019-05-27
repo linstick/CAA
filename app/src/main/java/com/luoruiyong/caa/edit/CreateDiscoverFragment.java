@@ -274,7 +274,7 @@ public class CreateDiscoverFragment extends BaseCreateFragment implements
             if (ListUtils.getSize(list) > 1) {
                 list.remove(list.size() - 1);
             }
-            PictureBrowseActivity.startAction(getActivity(), list, position, true, EditorActivity.BROWSE_PICTURE_REQUEST_CODE);
+            PictureBrowseActivity.startAction(this, list, position, true, EditorActivity.BROWSE_PICTURE_REQUEST_CODE);
         }
     }
 

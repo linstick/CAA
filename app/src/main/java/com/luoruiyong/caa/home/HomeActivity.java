@@ -281,6 +281,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
     public void onBackPressed() {
         long curTime = System.currentTimeMillis();
         if (curTime - sLastBackPressTime > 1500) {
+            sLastBackPressTime = curTime;
             toast(R.string.common_tip_press_again_for_exit);
         } else {
             super.onBackPressed();

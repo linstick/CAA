@@ -25,6 +25,7 @@ import com.luoruiyong.caa.location.LocationActivity;
 import com.luoruiyong.caa.model.CommonPoster;
 import com.luoruiyong.caa.simple.PictureBrowseActivity;
 import com.luoruiyong.caa.topic.TopicSearchActivity;
+import com.luoruiyong.caa.utils.KeyboardUtils;
 import com.luoruiyong.caa.utils.ListUtils;
 import com.luoruiyong.caa.utils.PageUtils;
 import com.luoruiyong.caa.utils.PictureUtils;

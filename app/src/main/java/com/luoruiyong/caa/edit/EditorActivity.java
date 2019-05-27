@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.luoruiyong.caa.R;
 import com.luoruiyong.caa.base.BaseActivity;
+import com.luoruiyong.caa.utils.KeyboardUtils;
 
 /**
  * Author: luoruiyong
@@ -110,6 +111,7 @@ public class EditorActivity extends BaseActivity implements View.OnClickListener
                 }
                 break;
             case R.id.iv_right_operate:
+                KeyboardUtils.hideKeyboard(mFinishIv);
                 if (mListener != null) {
                     mListener.onFinishClick();
                 }
